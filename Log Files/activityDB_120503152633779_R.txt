@@ -1,0 +1,36 @@
+120503152636762 + R + 105 + STARTING SESSION in Instruction tab + 2
+120503152636768 + R + 105 + Student chose to view the Instructions tab + 2
+120503152648787 + R + 105 + Student chose to go forward to the next slide:  1 + 2
+120503152653061 + R + 105 + Student chose to go forward to the next slide:  1 + 2
+120503152657549 + R + 105 + Student chose to go forward to the next slide:  1 + 2
+120503152659620 + R + 105 + Student changed to the Situation tab. + 2
+120503152708888 + R + 105 + Student changed to the Mental Model tab. + 2
+120503152728291 + R + 105 + Student changed to the Situation tab. + 2
+120503152729133 + R + 105 + Student changed to the Mental Model tab. + 2
+120503152730356 + R + 105 + Student opens the Node editor for :New Node + 2
+120503152730356 + R + 105 + Node editor opens at the Description Tab + 2
+120503152743236 + R + 105 + Student changed the description to -- :legal_chip_weight_ratio + 2
+120503152744697 + R + 105 + Student changed the description to -- :legal_fat_content + 2
+120503152746149 + R + 105 + Student chose to check his solution on the Description Panel + 2
+120503152746150 + R + 105 + Student created the node named: fat content + 2
+120503152746150 + R + 105 + Student got the answer right + 2
+120503152754365 + R + 105 + Student chose to close the Node editor + 2
+120503152756091 + R + 105 + Student opened the node editor for the node named :fat_content + 2
+120503152756263 + R + 105 + Student working in the plan tab + 2
+120503152756264 + R + 105 + Student opens the Node editor for :fat_content + 2
+120503152756264 + R + 105 + Node editor opens at the Calculations Tab + 2
+120503152759766 + R + 105 + Student selected the right principle. + 2
+120503152800717 + R + 105 + Go to inputs tab try + 2
+120503152800718 + R + 105 + Student working in the Inputs Tab + 2
+120503152801534 + R + 105 + Student changed the input type--:wrong + 2
+120503152801535 + R + 105 + Reset colors. + 2
+120503152801538 + R + 105 + Student changed the input type--:correct + 2
+120503152802421 + R + 105 + Click check button try + 2
+120503152802422 + R + 105 + Student chose to check his solution on the Inputs Panel + 2
+120503152802423 + R + 105 + Student got the answer right + 2
+120503152808469 + R + 105 + Go to calculations tab try + 2
+120503152808470 + R + 105 + Student working in the Calculations Tab + 2
+120503152831984 + R + 105 + Student working in the Description Tab + 2
+120503152839461 + R + 105 + Student chose to close the Node editor + 2
+120503152846518 + R + 105 + Student changed to the Situation tab. + 2
+120503152848825 + R + 105 + Student chose to view the Instructions tab + 2
