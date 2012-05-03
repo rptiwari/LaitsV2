@@ -1,0 +1,744 @@
+/*
+ * DescriptionPanel.java
+ *
+ * Created on Nov 21, 2010, 10:23:38 AM
+ */
+package amt.version2;
+
+import amt.BlockSocket;
+import amt.comm.CommException;
+import amt.data.DecisionTreeNode;
+import amt.data.TaskFactory;
+import amt.graph.GraphCanvas;
+import amt.data.Task;
+import amt.graph.Vertex;
+import amt.graph.Graph;
+import amt.log.Logger;
+import java.awt.Color;
+import java.util.LinkedList;
+import java.util.StringTokenizer;
+import javax.swing.JOptionPane;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreeSelectionModel;
+
+/**
+ *
+ * @author Megan
+ * @author Helen
+ */
+public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectionListener {
+
+  Vertex currentVertex;
+  TaskFactory server;
+  GraphCanvas gc;
+  private String undoName = "";
+  TabbedGUI parent;
+
+  Logger logger = Logger.getLogger();
+  private boolean initializing = false;
+
+  BlockSocket blockSocket=BlockSocket.getBlockSocket();
+  /** Creates new form DescriptionPanel */
+  public DescriptionPanel(TabbedGUI parent, Vertex v, Graph g, GraphCanvas gc) {
+    initComponents();
+    this.currentVertex = v;
+    this.parent = parent;
+    this.gc = gc;
+
+    try {
+      this.server = TaskFactory.getInstance();
+    } catch (CommException ex) {
+      //Add appropriate logger
+      logger.concatOut(Logger.DEBUG, "InputsPanel.InputsPanel.1", ex.toString());
+    }
+
+    nodeNameTextField.setText(currentVertex.nodeName);
+    this.parent.getCorrectDescriptionFromFile();
+    this.parent.getCorrectDescription();
+    descriptionAreaLabel.setText(currentVertex.correctDescription);
+    //quantityDescriptionTextField.setText(currentVertex.selectedDescription);
+    initValues();
+    initDescription();
+    initTree(parent.task);
+    initTreeSelectionListener();
+    hintLabel.setVisible(false);
+    
+    hintButton.setVisible(false);
+    hintLabel.setVisible(false);
+  }
+
+  /**
+   * This method initializes the panel if the user has already chosen a description, checked, given up, or chose a wrong answer
+   */
+  public void initValues() {
+    initializing = true;
+
+    // Depending on what type the current task is, checkButton oand giveUpButton should either be
+    // disabled or enabled
+    if(server.getActualTask().getType().equalsIgnoreCase("Model") ||
+       server.getActualTask().getType().equalsIgnoreCase("Construct"))
+    {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+    else if (server.getActualTask().getType().equalsIgnoreCase("Debug") ||
+             server.getActualTask().getType().equalsIgnoreCase("Whole") &&
+             gc.modelHasBeenRun != true)
+    {
+      checkButton.setEnabled(false);
+      giveUpButton.setEnabled(false);
+    }
+    else if (server.getActualTask().getType().equalsIgnoreCase("Debug") ||
+             server.getActualTask().getType().equalsIgnoreCase("Whole") &&
+             gc.modelHasBeenRun == true)
+    {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+
+    // Depending on what type the current task is, checkButton oand giveUpButton should either be
+    // disabled or enabled
+    if(server.getActualTask().getType().equalsIgnoreCase("Model") ||
+       server.getActualTask().getType().equalsIgnoreCase("Construct"))
+    {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+    else if (server.getActualTask().getType().equalsIgnoreCase("Debug") ||
+             server.getActualTask().getType().equalsIgnoreCase("Whole") &&
+             gc.modelHasBeenRun != true)
+    {
+      checkButton.setEnabled(false);
+      giveUpButton.setEnabled(false);
+    }
+    else if (server.getActualTask().getType().equalsIgnoreCase("Debug") ||
+             server.getActualTask().getType().equalsIgnoreCase("Whole") &&
+             gc.modelHasBeenRun == true)
+    {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+
+    quantityDescriptionTextField.setEditable(false);
+    nodeNameTextField.setEditable(false);
+    quantityDescriptionTextField.setBackground(new Color(240, 240, 240));
+    nodeNameTextField.setBackground(new Color(240, 240, 240));
+    descriptPanel.setBackground(new Color(240, 240, 240));
+
+    if (currentVertex.getDescriptionButtonStatus() == currentVertex.CORRECT) {
+      quantityDescriptionTextField.setBackground(Color.GREEN);
+      quantityDescriptionTextField.setEnabled(false);
+      nodeNameTextField.setEnabled(false);
+      nodeNameTextField.setBackground(Color.GREEN);
+      decisionTree.setEditable(false);
+      nodeNameTextField.setEnabled(false);
+      checkButton.setEnabled(false);
+      giveUpButton.setEnabled(false);
+      undoButton.setEnabled(false);
+      hintButton.setEnabled(false);
+    } else if (currentVertex.getDescriptionButtonStatus() == currentVertex.GAVEUP) {
+      quantityDescriptionTextField.setBackground(Color.YELLOW);
+      nodeNameTextField.setBackground(Color.YELLOW);
+      quantityDescriptionTextField.setEnabled(false);
+      nodeNameTextField.setEnabled(false);
+      decisionTree.setEditable(false);
+      nodeNameTextField.setEnabled(false);
+      checkButton.setEnabled(false);
+      giveUpButton.setEnabled(false);
+      undoButton.setEnabled(false);
+      hintButton.setEnabled(false);
+    } else if (currentVertex.getDescriptionButtonStatus() == currentVertex.WRONG) {
+      quantityDescriptionTextField.setBackground(Color.RED);
+      nodeNameTextField.setBackground(Color.RED);
+      quantityDescriptionTextField.setEnabled(false);
+      nodeNameTextField.setEnabled(false);
+    }
+
+    
+    initializing = false;
+  }
+
+  public void initDescription(){
+    descriptionAreaLabel.setText(currentVertex.situationDescription);
+  }
+
+  /**
+   * This method parse the decision tree of the task contained in the LinkedList 
+   * @param task
+   */
+  public void initTree(Task task){
+    DefaultMutableTreeNode root = null;
+    DefaultMutableTreeNode level1 = null;
+    DefaultMutableTreeNode level2 = null;
+    DefaultMutableTreeNode level3 = null;
+    DefaultMutableTreeNode level4 = null;
+    LinkedList <String> tree = new LinkedList<String>();
+    DecisionTreeNode dTreeNode;
+
+    tree = task.getTree();
+    if (tree != null){
+    root = new DefaultMutableTreeNode("Node");
+    String leaf = "";
+    StringTokenizer st;
+    String answer = "";
+
+    //Goes throught the whole list (tree)
+    //If the entry has a "period" it is a leaf and the word after the period is the label for the node
+    //The number of "-" indicates the level of the entry in the tree
+    //The current code allows four levels in depth in the tree if we need more we need to add extra if's
+    for (int i=0; i<tree.size(); i++){
+      leaf = tree.get(i);
+      if (leaf.startsWith("-:")){
+        if (leaf.contains(".")){
+          st = new StringTokenizer(leaf, ".");
+          leaf = st.nextToken();
+          answer = st.nextToken();
+        }
+        leaf=leaf.replace("-:", "");
+        dTreeNode = new DecisionTreeNode();
+        dTreeNode.setLabel(leaf);
+        dTreeNode.setAnswer(answer);
+        level1 = new DefaultMutableTreeNode(dTreeNode.getLabel());
+        level1.setUserObject(dTreeNode);
+        root.add(level1);
+      } else if (leaf.startsWith("--:")){
+          if (leaf.contains(".")){
+           st = new StringTokenizer(leaf, ".");
+           leaf = st.nextToken();
+           answer = st.nextToken();
+          }
+          leaf=leaf.replace("--:", "");
+          dTreeNode = new DecisionTreeNode();
+          dTreeNode.setLabel(leaf);
+          dTreeNode.setAnswer(answer);
+          level2= new DefaultMutableTreeNode(dTreeNode);
+          level1.add(level2);
+      } else if (leaf.startsWith("---:")){
+          if (leaf.contains(".")){
+           st = new StringTokenizer(leaf, ".");
+           leaf = st.nextToken();
+           answer = st.nextToken();
+          }
+          leaf=leaf.replace("---:", "");
+          dTreeNode = new DecisionTreeNode();
+          dTreeNode.setLabel(leaf);
+          dTreeNode.setAnswer(answer);
+          level3= new DefaultMutableTreeNode(dTreeNode);
+          level2.add(level3);
+      } else if (leaf.startsWith("----:")){
+          if (leaf.contains(".")){
+           st = new StringTokenizer(leaf, ".");
+           leaf = st.nextToken();
+           answer = st.nextToken();
+          }
+          leaf=leaf.replace("----:", "");
+          dTreeNode = new DecisionTreeNode();
+          dTreeNode.setLabel(leaf);
+          dTreeNode.setAnswer(answer);
+          level4= new DefaultMutableTreeNode(dTreeNode);
+          level3.add(level4);
+        }
+    }
+    decisionTree.setModel(new javax.swing.tree.DefaultTreeModel(root));
+    jScrollPane2.setViewportView(decisionTree);
+    }
+  }
+
+  public void initTreeSelectionListener() {
+    decisionTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+    decisionTree.addTreeSelectionListener(this);
+  }
+
+  public void valueChanged(TreeSelectionEvent e) {
+    DefaultMutableTreeNode node = (DefaultMutableTreeNode) decisionTree.getLastSelectedPathComponent();
+    DecisionTreeNode n = (DecisionTreeNode)node.getUserObject();
+
+    //change input button status so that the (g) graphic on the vertex turns white
+    currentVertex.setDescriptionButtonStatus(currentVertex.NOSTATUS);
+    //reset background colors
+    quantityDescriptionTextField.setBackground(new Color(240, 240, 240));
+    nodeNameTextField.setBackground(new Color(240, 240, 240));
+    quantityDescriptionTextField.setEnabled(true);
+    nodeNameTextField.setEnabled(true);
+    
+    if (node == null) {
+      return;
+    }
+
+    if (node.isLeaf()) {
+      //Get the data from the tree to fill the nodeName. A leaf node has a label and an answer.
+      nodeNameTextField.setText(n.getAnswer());
+      undoName = currentVertex.nodeName;
+      currentVertex.nodeName = nodeNameTextField.getText();
+      currentVertex.label=currentVertex.nodeName;
+      this.parent.getCorrectDescriptionFromFile();
+      this.parent.getCorrectDescription();
+      currentVertex.selectedDescription = currentVertex.correctDescription;
+      System.out.println("//label//"+currentVertex.label);
+      System.out.println("////"+currentVertex.correctDescription);
+      currentVertex.defaultLabel();
+      //nodeNameTextField.setBackground(Color.LIGHT_GRAY);
+      //quantityDescriptionTextField.setBackground(Color.LIGHT_GRAY);
+
+      //Populate the quantity description label
+      String description = "";
+      TreeNode[] ancestors = node.getPath();
+      for (int i = 0; i < ancestors.length; i++) {
+        if (!ancestors[i].toString().equalsIgnoreCase("Node")) {
+          if (!description.equals("")) {
+            description += " " + ancestors[i].toString();
+          } else {
+            description = ancestors[i].toString();
+          }
+        }
+      }
+      quantityDescriptionTextField.setText(description);
+      currentVertex.selectedDescription = description;
+      parent.getInputsPanel().updateDescription();
+      parent.getGraphsPanel().updateDescription();
+
+      if(currentVertex.correctDescription.trim().equals(description)){
+        logger.concatOut(Logger.ACTIVITY, "DescriptionPanel.valueChanged.1", "legal_"+currentVertex.nodeName);
+      }
+      else{
+        logger.concatOut(Logger.ACTIVITY, "DescriptionPanel.valueChanged.1", "!legal");
+      }
+    }
+  }
+
+  /** This method is called from within the constructor to
+   * initialize the form.
+   * WARNING: Do NOT modify this code. The content of this method is
+   * always regenerated by the Form Editor.
+   */
+  @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        contentPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        decisionTree = new javax.swing.JTree();
+        quantityLabel = new javax.swing.JLabel();
+        evenMorePreciseLabel = new javax.swing.JLabel();
+        descriptionScrollPane = new javax.swing.JScrollPane();
+        descriptPanel = new javax.swing.JPanel();
+        descriptionAreaLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        quantityDescriptionTextField = new javax.swing.JTextArea();
+        referencesLabel = new javax.swing.JLabel();
+        nodeNameTextField = new javax.swing.JTextField();
+        NodeNameLabel = new javax.swing.JLabel();
+        buttonPanel = new javax.swing.JPanel();
+        hintButton = new javax.swing.JButton();
+        checkButton = new javax.swing.JButton();
+        undoButton = new javax.swing.JButton();
+        giveUpButton = new javax.swing.JButton();
+        hintPanel = new javax.swing.JPanel();
+        hintLabel = new javax.swing.JLabel();
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("A count of");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("rabbits in the population");
+        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("at the beginning of the year");
+        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("and it is constant from year to year");
+        treeNode4.add(treeNode5);
+        treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("and it varies from year to year");
+        treeNode4.add(treeNode5);
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("totaled up across all years");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("averaged across all years");
+        treeNode3.add(treeNode4);
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("rabbits born into the population");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("during a year");
+        treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("and it is constant from year to year");
+        treeNode4.add(treeNode5);
+        treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("and it varies from year to year");
+        treeNode4.add(treeNode5);
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("across all years");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("per year on average");
+        treeNode3.add(treeNode4);
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("A ratio of");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("the number of rabbits in the population at the beginning of the year, divided by");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the number of rabbits added to the population during that same year");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the total number of rabbits added up across all years");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the average number of rabbits across all years");
+        treeNode3.add(treeNode4);
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("the number of rabbits added to the population during the year, divided by");
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the number of rabbits in the population at the beginning of that same year");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the total number of rabbits added to the population across all years");
+        treeNode3.add(treeNode4);
+        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("the average number of rabbits added to the population each year");
+        treeNode3.add(treeNode4);
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        decisionTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane2.setViewportView(decisionTree);
+
+        quantityLabel.setText("Precise description of the quantity:");
+
+        evenMorePreciseLabel.setText("Choose the more precise description for the quantity:");
+
+        descriptionScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        descriptPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        descriptionAreaLabel.setText("<html>Testing 123 Testing to see if the text wraps properly and no changes must be madeTesting 123 Testing to see if the text wraps properly and no changes must be madeTesting 123 Testing to see if the text wraps properly and no changes must be madeTesting test testing test testing test testing test testing test testing test testing alkj asdgt;lkjaew;lnaewtlk adfkjngk;ajndsfg;lkamestklmaw;eltkmra;lewkntkn gas;dkljgakljg;lknadf;hlkm  lds;klajgds;lkja;lkgja;wkl etj;lak la;sdnmg;l adsg;lkjasdkljgf ;lakdsjg;l ds j;alkdsjg;l asdjlkg a;dslkj gak;lsjd gkljaskldgja;l sd adgs;lkja ;ldskg dslk;ajsd;lkjf asd;lkja ds;flkjaw; e;lkjaetw; kajdgklj ak;lds gjk;lsad jgk;ldsjg;kladgj a;klsdj ;lkajds g;klajsdg;l as  slkjas;glkj a;klgjd ;lakdsjg a;kdjl sgkla jdsgk;laj sd;lgkj a;lskd jg;ja sdlgkj ads;lgk j;a dsgkljas;lkdgj ads g</html>");
+        descriptionAreaLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        javax.swing.GroupLayout descriptPanelLayout = new javax.swing.GroupLayout(descriptPanel);
+        descriptPanel.setLayout(descriptPanelLayout);
+        descriptPanelLayout.setHorizontalGroup(
+            descriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(descriptPanelLayout.createSequentialGroup()
+                .addComponent(descriptionAreaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                .addGap(50, 50, 50))
+        );
+        descriptPanelLayout.setVerticalGroup(
+            descriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(descriptPanelLayout.createSequentialGroup()
+                .addComponent(descriptionAreaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
+        );
+
+        descriptionScrollPane.setViewportView(descriptPanel);
+
+        quantityDescriptionTextField.setWrapStyleWord(true);
+        quantityDescriptionTextField.setColumns(20);
+        quantityDescriptionTextField.setLineWrap(true);
+        quantityDescriptionTextField.setRows(2);
+        jScrollPane1.setViewportView(quantityDescriptionTextField);
+
+        referencesLabel.setText("References to the quantities are underlined:");
+
+        nodeNameTextField.setEditable(false);
+        nodeNameTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nodeNameTextFieldActionPerformed(evt);
+            }
+        });
+
+        NodeNameLabel.setText("Node Name:");
+
+        buttonPanel.setMaximumSize(new java.awt.Dimension(540, 92));
+        buttonPanel.setMinimumSize(new java.awt.Dimension(540, 92));
+
+        hintButton.setText("Hint");
+        hintButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hintButtonActionPerformed(evt);
+            }
+        });
+
+        checkButton.setText("Check");
+        checkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkButtonActionPerformed(evt);
+            }
+        });
+
+        undoButton.setText("Undo");
+        undoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoButtonActionPerformed(evt);
+            }
+        });
+
+        giveUpButton.setText("Give Up");
+        giveUpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                giveUpButtonActionPerformed(evt);
+            }
+        });
+
+        hintLabel.setBackground(new java.awt.Color(0, 0, 0));
+        hintLabel.setText("Hint");
+
+        javax.swing.GroupLayout hintPanelLayout = new javax.swing.GroupLayout(hintPanel);
+        hintPanel.setLayout(hintPanelLayout);
+        hintPanelLayout.setHorizontalGroup(
+            hintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(hintPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hintLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        hintPanelLayout.setVerticalGroup(
+            hintPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(hintLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
+        buttonPanel.setLayout(buttonPanelLayout);
+        buttonPanelLayout.setHorizontalGroup(
+            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buttonPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(buttonPanelLayout.createSequentialGroup()
+                        .addComponent(hintButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(checkButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(giveUpButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(undoButton))
+                    .addComponent(hintPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(67, Short.MAX_VALUE))
+        );
+        buttonPanelLayout.setVerticalGroup(
+            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buttonPanelLayout.createSequentialGroup()
+                .addGroup(buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hintButton)
+                    .addComponent(checkButton)
+                    .addComponent(giveUpButton)
+                    .addComponent(undoButton))
+                .addGap(11, 11, 11)
+                .addComponent(hintPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
+        contentPanel.setLayout(contentPanelLayout);
+        contentPanelLayout.setHorizontalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contentPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(evenMorePreciseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(NodeNameLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(nodeNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(referencesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE))
+                        .addGap(53, 53, 53))
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(quantityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(350, Short.MAX_VALUE))
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(descriptionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(53, Short.MAX_VALUE))
+                    .addGroup(contentPanelLayout.createSequentialGroup()
+                        .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+        contentPanelLayout.setVerticalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contentPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(evenMorePreciseLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .addGap(21, 21, 21)
+                .addComponent(quantityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(descriptionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(referencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(NodeNameLabel))
+                .addGap(27, 27, 27)
+                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(156, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void nodeNameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeNameTextFieldActionPerformed
+      currentVertex.nodeName = nodeNameTextField.getText();
+    }//GEN-LAST:event_nodeNameTextFieldActionPerformed
+
+    private void hintButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hintButtonActionPerformed
+      if (!initializing) {
+        hintLabel.setVisible(true);
+        if (hintLabel.getForeground().equals(Color.BLACK)) {
+          hintLabel.setForeground(new Color(240, 240, 240));
+          hintPanel.setBackground(new Color(240, 240, 240));
+          logger.out(Logger.ACTIVITY, "DescriptionPanel.hintButtonActionPerformed.1");
+        } else {
+          hintLabel.setForeground(Color.BLACK);
+          hintPanel.setBackground(new Color(255, 204, 0));
+          logger.out(Logger.ACTIVITY, "DescriptionPanel.hintButtonActionPerformed.2");
+        }
+      }
+    }//GEN-LAST:event_hintButtonActionPerformed
+
+    /**
+     * &author curt
+     * @param evt
+     */
+    private void checkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkButtonActionPerformed
+      if (!initializing) {
+        logger.concatOut(Logger.ACTIVITY, "No message", "Click check button try");
+        String returnMsg=blockSocket.blockQuery(this,"Click check button");
+        if(!returnMsg.equals("allow")) //the action is not allowed by meta tutor
+        {
+          JOptionPane.showMessageDialog(this, returnMsg.split(":")[1]);
+          logger.concatOut(Logger.ACTIVITY, "No message", "Clicking is denied");
+          return;
+        }
+
+        System.out.println("currentVertex.correctDescription: "+currentVertex.correctDescription);
+        logger.out(Logger.ACTIVITY, "DescriptionPanel.checkButtonActionPerformed.1");
+        currentVertex.nodeName = nodeNameTextField.getText();
+        currentVertex.selectedDescription = quantityDescriptionTextField.getText();
+        currentVertex.defaultLabel();
+
+        if (currentVertex.correctDescription.trim().equals(quantityDescriptionTextField.getText().trim())){
+          logger.out(Logger.ACTIVITY, "DescriptionPanel.checkButtonActionPerformed.2");
+          quantityDescriptionTextField.setBackground(Color.GREEN);
+          nodeNameTextField.setBackground(Color.GREEN);
+          decisionTree.setEnabled(false);
+          undoButton.setEnabled(false);
+          checkButton.setEnabled(false);
+          giveUpButton.setEnabled(false);
+          hintButton.setEnabled(false);
+          currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
+          parent.setTitle(currentVertex.label);
+        } else {
+          logger.out(Logger.ACTIVITY, "DescriptionPanel.checkButtonActionPerformed.3");
+          quantityDescriptionTextField.setBackground(Color.RED);
+          nodeNameTextField.setBackground(Color.RED);
+          currentVertex.setDescriptionButtonStatus(currentVertex.WRONG);
+          parent.setTitle(currentVertex.nodeName);
+        }
+      }
+    }//GEN-LAST:event_checkButtonActionPerformed
+
+public boolean duplicatedNode(String nodeName)
+{
+      boolean duplicate = false;
+      for (int z = 0; z < gc.getGraph().getVertexes().size(); z++) {
+        if (((Vertex) gc.getGraph().getVertexes().get(z)).nodeName.equals(nodeName)) {
+          duplicate = true;
+          break;
+        }
+    }
+      return duplicate;
+}
+    /**
+     * @author curt
+     * @param evt
+     */
+    private void giveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giveUpButtonActionPerformed
+      if (!initializing) {
+        logger.concatOut(Logger.ACTIVITY, "No message", "Click giveup button try");
+        String returnMsg=blockSocket.blockQuery(this,"Click giveup button");
+        if(!returnMsg.equals("allow")) //the action is not allowed by meta tutor
+        {
+          JOptionPane.showMessageDialog(this, returnMsg.split(":")[1]);
+          logger.concatOut(Logger.ACTIVITY, "No message", "Clicking is denied");
+          return;
+        }
+
+        logger.out(Logger.ACTIVITY, "DescriptionPanel.giveUpButtonActionPerformed.1");
+        if(currentVertex.label.equals(""))
+        {
+          boolean duplicate = false;
+          for(int i=0;i< gc.listOfVertexes.size();i++)
+          {
+            duplicate = duplicatedNode(gc.listOfVertexes.get(i));
+            if(!duplicate)
+            {
+              currentVertex.label = gc.listOfVertexes.get(i);
+              break;
+            }
+          }
+        }
+        this.parent.getCorrectDescription();
+        nodeNameTextField.setText(currentVertex.label);
+        currentVertex.nodeName = currentVertex.label;
+        quantityDescriptionTextField.setText(currentVertex.correctDescription);
+        currentVertex.selectedDescription = currentVertex.correctDescription;
+        quantityDescriptionTextField.setBackground(Color.YELLOW);
+        nodeNameTextField.setBackground(Color.YELLOW);
+        nodeNameTextField.setEnabled(false);
+        quantityDescriptionTextField.setEnabled(false);
+        decisionTree.setEnabled(false);
+        undoButton.setEnabled(false);
+        checkButton.setEnabled(false);
+        giveUpButton.setEnabled(false);
+        hintButton.setEnabled(false);
+        parent.getInputsPanel().updateDescription();
+        parent.getGraphsPanel().updateDescription();
+        currentVertex.setDescriptionButtonStatus(currentVertex.GAVEUP);
+        currentVertex.defaultLabel();
+        parent.setTitle(currentVertex.label);
+      }
+    }//GEN-LAST:event_giveUpButtonActionPerformed
+
+    private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+      //Undo should clear the currentVertex.nodeName field, and the nodeNameTextField, and the currentVertex.correctDescription, AND quantityDescriptionTextField.
+      //Basically, the title and the text box where we enter the title.
+      if (!initializing) {
+        logger.out(Logger.ACTIVITY, "DescriptionPanel.undoButtonActionPerformed.1");
+        currentVertex.nodeName = undoName;
+        nodeNameTextField.setText("");
+        nodeNameTextField.setBackground(Color.WHITE);
+        currentVertex.selectedDescription = "";
+        quantityDescriptionTextField.setText("");
+        quantityDescriptionTextField.setBackground(Color.WHITE);
+        decisionTree.setEnabled(true);
+      }
+    }//GEN-LAST:event_undoButtonActionPerformed
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel NodeNameLabel;
+    private javax.swing.JPanel buttonPanel;
+    private javax.swing.JButton checkButton;
+    private javax.swing.JPanel contentPanel;
+    private javax.swing.JTree decisionTree;
+    private javax.swing.JPanel descriptPanel;
+    private javax.swing.JLabel descriptionAreaLabel;
+    private javax.swing.JScrollPane descriptionScrollPane;
+    private javax.swing.JLabel evenMorePreciseLabel;
+    private javax.swing.JButton giveUpButton;
+    private javax.swing.JButton hintButton;
+    private javax.swing.JLabel hintLabel;
+    private javax.swing.JPanel hintPanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField nodeNameTextField;
+    private javax.swing.JTextArea quantityDescriptionTextField;
+    private javax.swing.JLabel quantityLabel;
+    private javax.swing.JLabel referencesLabel;
+    private javax.swing.JButton undoButton;
+    // End of variables declaration//GEN-END:variables
+}

@@ -1,0 +1,136 @@
+************NODE #1**************
+Selectable Name: bilge water
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'bilge water'
+nodeName.............'bilge_water'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'flowlink - water leaked in per hour'
+correctOutputs.......'flowlink - water pumped out per hour'
+formula..............'current+water_leaked_in_per_hour-water_pumped_out_per_hour'
+correctValues: 
+
+	[1] = '10000.0'
+	[2] = '9600.0'
+	[3] = '9200.0'
+	[4] = '8800.0'
+	[5] = '8400.0'
+	[6] = '8000.0'
+	[7] = '7600.0'
+	[8] = '7200.0'
+	[9] = '6800.0'
+	[10] = '6400.0'
+	[11] = '6000.0'
+	[12] = '5600.0'
+	[13] = '5200.0'
+	[14] = '4800.0'
+	[15] = '4400.0'
+	[16] = '4000.0'
+	[17] = '3600.0'
+	[18] = '3200.0'
+	[19] = '2800.0'
+	[20] = '2400.0'
+	[21] = '2000.0'
+	[22] = '1600.0'
+	[23] = '1200.0'
+	[24] = '800.0'
+
+selectedDescription..'The amount of water in the bilge each hour'
+selectedPlan.........'ACC_BOTH'
+initialValue.........'10000.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #2**************
+Selectable Name: water leaked in per hour
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'water leaked in per hour'
+nodeName.............'water_leaked_in_per_hour'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '500.0'
+	[2] = '500.0'
+	[3] = '500.0'
+	[4] = '500.0'
+	[5] = '500.0'
+	[6] = '500.0'
+	[7] = '500.0'
+	[8] = '500.0'
+	[9] = '500.0'
+	[10] = '500.0'
+	[11] = '500.0'
+	[12] = '500.0'
+	[13] = '500.0'
+	[14] = '500.0'
+	[15] = '500.0'
+	[16] = '500.0'
+	[17] = '500.0'
+	[18] = '500.0'
+	[19] = '500.0'
+	[20] = '500.0'
+	[21] = '500.0'
+	[22] = '500.0'
+	[23] = '500.0'
+	[24] = '500.0'
+
+selectedDescription..'The amount of water leaked into the bilge each hour'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #3**************
+Selectable Name: water pumped out per hour
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'water pumped out per hour'
+nodeName.............'water_pumped_out_per_hour'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '900.0'
+	[2] = '900.0'
+	[3] = '900.0'
+	[4] = '900.0'
+	[5] = '900.0'
+	[6] = '900.0'
+	[7] = '900.0'
+	[8] = '900.0'
+	[9] = '900.0'
+	[10] = '900.0'
+	[11] = '900.0'
+	[12] = '900.0'
+	[13] = '900.0'
+	[14] = '900.0'
+	[15] = '900.0'
+	[16] = '900.0'
+	[17] = '900.0'
+	[18] = '900.0'
+	[19] = '900.0'
+	[20] = '900.0'
+	[21] = '900.0'
+	[22] = '900.0'
+	[23] = '900.0'
+	[24] = '900.0'
+
+selectedDescription..'The amount of water being pumped out of the bilge each hour'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+

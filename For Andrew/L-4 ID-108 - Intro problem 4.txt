@@ -1,0 +1,226 @@
+************NODE #1**************
+Selectable Name: growth rate
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'growth rate'
+nodeName.............'growth_rate'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '0.055'
+	[2] = '0.055'
+	[3] = '0.055'
+	[4] = '0.055'
+	[5] = '0.055'
+	[6] = '0.055'
+	[7] = '0.055'
+	[8] = '0.055'
+	[9] = '0.055'
+	[10] = '0.055'
+	[11] = '0.055'
+	[12] = '0.055'
+	[13] = '0.055'
+	[14] = '0.055'
+	[15] = '0.055'
+
+selectedDescription..'The rate that people move into the Phoenix Metro area during each year'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #2**************
+Selectable Name: population
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'population'
+nodeName.............'population'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'flowlink - new residents per year'
+correctOutputs.......'regularlink - new residents per year'
+formula..............'+ new_residents_per_year'
+correctValues: 
+
+	[1] = '4192887.0'
+	[2] = '4423495.785'
+	[3] = '4666788.0531750005'
+	[4] = '4923461.396099625'
+	[5] = '5194251.772885105'
+	[6] = '5479935.620393786'
+	[7] = '5781332.079515444'
+	[8] = '6099305.343888793'
+	[9] = '6434767.137802677'
+	[10] = '6788679.330381825'
+	[11] = '7162056.693552825'
+	[12] = '7555969.81169823'
+	[13] = '7971548.151341633'
+	[14] = '8409983.299665423'
+	[15] = '8872532.381147021'
+
+selectedDescription..'The number of people in the Phoenix Metro Area each year'
+selectedPlan.........'ACC_INC'
+initialValue.........'4192887.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #3**************
+Selectable Name: new residents per year
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'new residents per year'
+nodeName.............'new_residents_per_year'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'regularlink - population,regularlink - growth rate'
+correctOutputs.......'regularlink - population'
+formula..............'population * growth_rate'
+correctValues: 
+
+	[1] = '230608.785'
+	[2] = '243292.268175'
+	[3] = '256673.34292462503'
+	[4] = '270790.37678547937'
+	[5] = '285683.8475086808'
+	[6] = '301396.45912165823'
+	[7] = '317973.26437334943'
+	[8] = '335461.7939138836'
+	[9] = '353912.19257914723'
+	[10] = '373377.3631710004'
+	[11] = '393913.1181454054'
+	[12] = '415578.33964340267'
+	[13] = '438435.1483237898'
+	[14] = '462549.08148159826'
+	[15] = '487989.2809630862'
+
+selectedDescription..'The number of new residents that move into the Phoenix Metro Area each year'
+selectedPlan.........'FCT_PROP'
+initialValue.........'-Infinity'
+type.................'FLOW'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************DEBUG NODE #1*************
+Selectable Name: population
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'population'
+nodeName.............'population'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'flowlink - new residents per year'
+correctOutputs.......'regularlink - new residents per year'
+formula..............'+ new_residents_per_year'
+correctValues: 
+
+	[1] = '4192887.0'
+	[2] = '4423495.785'
+	[3] = '4666788.0531750005'
+	[4] = '4923461.396099625'
+	[5] = '5194251.772885105'
+	[6] = '5479935.620393786'
+	[7] = '5781332.079515444'
+	[8] = '6099305.343888793'
+	[9] = '6434767.137802677'
+	[10] = '6788679.330381825'
+	[11] = '7162056.693552825'
+	[12] = '7555969.81169823'
+	[13] = '7971548.151341633'
+	[14] = '8409983.299665423'
+	[15] = '8872532.381147021'
+
+selectedDescription..'The number of people in the Phoenix Metro Area each year'
+selectedPlan.........'ACC_INC'
+initialValue.........'4192887.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=100,y=120]'
+------------------------------------------------------------
+
+
+************DEBUG NODE #2*************
+Selectable Name: new residents per year
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'new residents per year'
+nodeName.............'new_residents_per_year'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'regularlink - population,regularlink - growth rate'
+correctOutputs.......'regularlink - population'
+formula..............'population + growth_rate'
+correctValues: 
+
+	[1] = '230608.785'
+	[2] = '243292.268175'
+	[3] = '256673.34292462503'
+	[4] = '270790.37678547937'
+	[5] = '285683.8475086808'
+	[6] = '301396.45912165823'
+	[7] = '317973.26437334943'
+	[8] = '335461.7939138836'
+	[9] = '353912.19257914723'
+	[10] = '373377.3631710004'
+	[11] = '393913.1181454054'
+	[12] = '415578.33964340267'
+	[13] = '438435.1483237898'
+	[14] = '462549.08148159826'
+	[15] = '487989.2809630862'
+
+selectedDescription..'The number of new residents that move into the Phoenix Metro Area each year'
+selectedPlan.........'ACC_INC'
+initialValue.........'-Infinity'
+type.................'FLOW'
+position.............'java.awt.Point[x=350,y=120]'
+------------------------------------------------------------
+
+
+************DEBUG NODE #3*************
+Selectable Name: growth rate
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'growth rate'
+nodeName.............'growth_rate'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '0.055'
+	[2] = '0.055'
+	[3] = '0.055'
+	[4] = '0.055'
+	[5] = '0.055'
+	[6] = '0.055'
+	[7] = '0.055'
+	[8] = '0.055'
+	[9] = '0.055'
+	[10] = '0.055'
+	[11] = '0.055'
+	[12] = '0.055'
+	[13] = '0.055'
+	[14] = '0.055'
+	[15] = '0.055'
+
+selectedDescription..'The rate that people move into the Phoenix Metro area during each year'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=225,y=120]'
+------------------------------------------------------------
+
+

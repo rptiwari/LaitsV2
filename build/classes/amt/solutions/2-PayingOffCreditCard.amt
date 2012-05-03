@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<graph>
+  <vertexes>
+    <vertex>
+      <id>460819724</id>
+      <label>payment amount</label>
+      <inedges/>
+      <outedges>
+        <outedge>1171070186</outedge>
+      </outedges>
+      <position>
+        <x>822</x>
+        <y>420</y>
+      </position>
+      <type>constant</type>
+      <equation>79</equation>
+    </vertex>
+    <vertex>
+      <id>488991347</id>
+      <label>frequency of payments</label>
+      <inedges/>
+      <outedges>
+        <outedge>57651960</outedge>
+      </outedges>
+      <position>
+        <x>463</x>
+        <y>422</y>
+      </position>
+      <type>constant</type>
+      <equation>2</equation>
+    </vertex>
+    <vertex>
+      <id>441366923</id>
+      <label>reducing</label>
+      <inedges>
+        <inedge>1171070186</inedge>
+        <inedge>57651960</inedge>
+        <inedge>645358123</inedge>
+      </inedges>
+      <outedges/>
+      <position>
+        <x>523</x>
+        <y>257</y>
+      </position>
+      <type>flow</type>
+      <equation>payment_amount*frequency_of_payments</equation>
+    </vertex>
+    <vertex>
+      <id>1741555911</id>
+      <label>credit card balance</label>
+      <inedges/>
+      <outedges>
+        <outedge>645358123</outedge>
+      </outedges>
+      <position>
+        <x>305</x>
+        <y>141</y>
+      </position>
+      <type>stock</type>
+      <equation>2000</equation>
+    </vertex>
+  </vertexes>
+  <edges>
+    <edge>
+      <id>1171070186</id>
+      <start>460819724</start>
+      <end>441366923</end>
+      <type>regularlink</type>
+    </edge>
+    <edge>
+      <id>57651960</id>
+      <start>488991347</start>
+      <end>441366923</end>
+      <type>regularlink</type>
+    </edge>
+    <edge>
+      <id>645358123</id>
+      <start>1741555911</start>
+      <end>441366923</end>
+      <type>flowlink</type>
+    </edge>
+  </edges>
+  <Task>
+    <TaskID>32</TaskID>
+  </Task>
+</graph>

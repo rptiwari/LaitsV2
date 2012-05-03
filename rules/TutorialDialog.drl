@@ -1,0 +1,196 @@
+package metatutor
+
+rule "guide to create the initial target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==false)
+		//eval($pm.getOnlineNodeByName($pm.initTNName).getCurStatus()==NodeStatus.NotCreated)
+	then
+		DialogMap.hintOnInitTargetNode($pm.underline);
+end
+
+rule "let student choose the new target node"
+  when
+    $a : Action( status ==Action.AfterDoing, type==Action.CloseANode )
+    $pm : ProblemMemory( targetVarPending==true )
+  then
+    Dialog.genChooseTNDialog($pm.getCandidates());
+end
+
+rule "student chose the new target node"
+  when
+    $d : Dialog( status==Dialog.IsShowing, type==Dialog.ChooseTN )
+    $a : Action( status ==Action.AfterDoing, type==Action.SubmitAns )
+    $pm : ProblemMemory()
+  then
+    $pm.setTargetNode($pm.getCandidates().get(Integer.parseInt($a.getParam())-1));
+    $d.setStatus(Dialog.IsNotShowing);
+end
+    
+rule "popup when student is gaming the check button"
+  when
+    $gs : RepeatCheckDetect( status==RepeatCheckDetect.Gaming )
+    Action (status ==Action.AfterDoing, type==Action.ClickCheck, param=="wrong")
+  then
+    DialogMap.showDialogMessageOnly("You should think carefully instead of gaming the system.");
+end
+
+rule "plan explanation to fixed number"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==1) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("<html><font COLOR = \"#0000FF\">To finish a node</font> whose value is fixed, first go to the input tab to select the radio 'Value is fixed, so no inputs'. Then go to the calculations tab to specify the value.</html>");
+end
+
+rule "plan explanation to fixed number22"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==2) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("To finish a node whose value is proportional change, find out the two inputs and include them in the inputs tab. One is the accumulator that the node is input to, the other is the node represent the proportion. Then multiple them in the calculations tab.");
+end
+
+rule "plan explanation to fixed number3"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==3) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("To finish an accumulator changed upon an increase, find out the node that represent the amount of the increase and include it in the inputs tab. Then fill out the corresponding equation as well as the initial value in the calculations tab.");
+end
+
+rule "plan explanation to fixed number4"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==4) from $pm.workingNode
+	then
+    DialogMap.showDialogMessageOnly("<font color=\"125131\">To finish an accumulator</font> changed upon a decrease, find out the node that represent the amount of the decrease and include it in the inputs tab. Then fill out the corresponding equation as well as the initial value in the calculations tab.");
+end
+
+rule "plan explanation to fixed number5"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("To finish an accumulator changed upon both increase and decrease, find out the two nodes that represent the amount of increase and the amount of the decrease seperately, include them in the inputs tab. Then fill out the corresponding equation as well as the initial value in the calculations tab.");
+end
+
+rule "plan explanation to fixed number6"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("To finish the node that represents the difference of two quantities, find out what the two quantities, are and include them in the inputs tab. Then put the substraction in the calculations tab. ");
+end
+
+rule "plan explanation to fixed number7"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("To finish the node that represents the ratio of two quantities, find out what the two quantities, are and include them in the inputs tab. Then put the division in the calculations tab. ");
+end
+
+rule "guide to create the proportion to target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==2) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the proportion (attetion: it must be a value smaller than 1).");
+end
+
+rule "guide to only create the increase node to target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==3) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the increase (attetion: it must be an amount instead of a percentage or a proportion).");
+end
+
+rule "guide to only create the decrease node to target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==4) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the decrease (attetion: it must be an amount instead of a percentage or a proportion).");
+end
+
+rule "guide to create one of the inputs for accumulator"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==false && $pm.workingNode.isDecreaseCreated()==false)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent either the increase or the decrease (attetion: it must be an amount instead of a percentage or a proportion).");
+end
+
+rule "guide to create the decrease to target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==true && $pm.workingNode.isDecreaseCreated()==false)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the decrease since you have created the node representing the increase.");
+end
+
+rule "guide to create the increase to target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==false && $pm.workingNode.isDecreaseCreated()==true)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the increase since you have created the node representing the decrease.");
+end
+
+rule "guide to create one of the inputs to function node-difference"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==0)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent either one of two quantities.");
+end
+
+rule "guide to create the other input to the function node-difference"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==1)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the rest quantity since you have created one.");
+end
+
+rule "guide to create one of the inputs to the function node-ratio"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==0)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent either one of two quantities.");
+end
+
+rule "guide to create the other input to the function node-ratio"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==1)
+	then
+		DialogMap.showDialogMessageOnly("Remind that your target node is \""+$pm.getTargetNodeName()+"\". Based on the plan that you have decided, you need to create the node to represent the rest quantity since you have created one.");
+end

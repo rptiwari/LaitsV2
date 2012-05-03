@@ -1,0 +1,30 @@
+************NODE #1**************
+Selectable Name: 
+Instance Variables of Selectable.java:
+--------------------------------------
+label................''
+nodeName.............'fat_content'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '0.35'
+	[2] = '0.35'
+	[3] = '0.35'
+	[4] = '0.35'
+	[5] = '0.35'
+	[6] = '0.35'
+	[7] = '0.35'
+	[8] = '0.35'
+	[9] = '0.35'
+	[10] = '0.35'
+
+selectedDescription..'The ratio of the weight of the fat in a potato chip to the weight of the potato chip'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+

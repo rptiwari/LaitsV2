@@ -1,0 +1,70 @@
+120503143429358 + sylvie + 105 + STARTING SESSION in Instruction tab + 2
+120503143429359 + sylvie + 105 + Student chose to view the Instructions tab + 2
+120503143436837 + sylvie + 105 + Student changed to the Situation tab. + 2
+120503143439335 + sylvie + 105 + Student changed to the Mental Model tab. + 2
+120503143442404 + sylvie + 105 + Student changed to the Situation tab. + 2
+120503143448218 + sylvie + 105 + Student changed to the Mental Model tab. + 2
+120503143450599 + sylvie + 105 + Student opens the Node editor for :New Node + 2
+120503143450599 + sylvie + 105 + Node editor opens at the Description Tab + 2
+120503143506723 + sylvie + 105 + Student changed to the Situation tab. + 2
+120503143540981 + sylvie + 105 + Student changed the description to -- :legal_potato_chip_fat + 2
+120503143544911 + sylvie + 105 + Student chose to check his solution on the Description Panel + 2
+120503143544912 + sylvie + 105 + Student got the answer wrong + 2
+120503143606690 + sylvie + 105 + Student changed the description to -- :legal_fat_content + 2
+120503143608750 + sylvie + 105 + Student chose to check his solution on the Description Panel + 2
+120503143608750 + sylvie + 105 + Student created the node named: fat content + 2
+120503143608750 + sylvie + 105 + Student got the answer right + 2
+120503143612590 + sylvie + 105 + Student chose to close the Node editor + 2
+120503143615065 + sylvie + 105 + Student changed to the Mental Model tab. + 2
+120503143616892 + sylvie + 105 + Student opened the node editor for the node named :fat_content + 2
+120503143616996 + sylvie + 105 + Student opens the Node editor for :fat_content + 2
+120503143616996 + sylvie + 105 + Node editor opens at the Calculations Tab + 2
+120503143624887 + sylvie + 105 + Student selected the right principle. + 2
+120503143628636 + sylvie + 105 + Student changed the input type--:wrong + 2
+120503143628636 + sylvie + 105 + Reset colors. + 2
+120503143628639 + sylvie + 105 + Student changed the input type--:correct + 2
+120503143632171 + sylvie + 105 + Click check button try + 2
+120503143632172 + sylvie + 105 + Student chose to check his solution on the Inputs Panel + 2
+120503143632173 + sylvie + 105 + Student got the answer right + 2
+120503143636517 + sylvie + 105 + Reset colors. + 2
+120503143637468 + sylvie + 105 + Reset colors. + 2
+120503143640549 + sylvie + 105 + Reset colors. + 2
+120503143650283 + sylvie + 105 + Reset colors. + 2
+120503143650505 + sylvie + 105 + Reset colors. + 2
+120503143650896 + sylvie + 105 + Reset colors. + 2
+120503143651130 + sylvie + 105 + Reset colors. + 2
+120503143652716 + sylvie + 105 + Reset colors. + 2
+120503143657440 + sylvie + 105 + Reset colors. + 2
+120503143657740 + sylvie + 105 + Reset colors. + 2
+120503143657972 + sylvie + 105 + Reset colors. + 2
+120503143703283 + sylvie + 105 + Reset colors. + 2
+120503143704668 + sylvie + 105 + Reset colors. + 2
+120503143711941 + sylvie + 105 + Reset colors. + 2
+120503143713165 + sylvie + 105 + Reset colors. + 2
+120503143713876 + sylvie + 105 + Reset colors. + 2
+120503143714924 + sylvie + 105 + Click check button try + 2
+120503143714925 + sylvie + 105 + Student chose to check his solution on the Calculations Panel + 2
+120503143714925 + sylvie + 105 + Student got the answer right + 2
+120503143733150 + sylvie + 105 + Student chose to close the Node editor + 2
+120503143736379 + sylvie + 105 + Student opened the node editor for the node named :fat_content + 2
+120503143736509 + sylvie + 105 + Student opens the Node editor for :fat_content + 2
+120503143736509 + sylvie + 105 + Node editor opens at the Calculations Tab + 2
+120503143759412 + sylvie + 105 + Student chose to close the Node editor + 2
+120503143800741 + sylvie + 105 + Student clicked the Run Model Button + 2
+120503143800874 + sylvie + 105 + Student ran the model successfully + 2
+120503143800874 + sylvie + 105 + The graph for the node:fat_content:green + 2
+120503143800874 + sylvie + 105 + The color of the graph for the node--fat_content is: green + 2
+120503143802569 + sylvie + 105 + All the node's information has been sent. + 2
+120503143803574 + sylvie + 105 + Student changed to the Situation tab. + 2
+120503143816145 + sylvie + 106 + Student submitted the expression :Student is least Excitement:excited + 2
+120503143818206 + sylvie + 106 + Student ran the model successfully + 2
+120503143818207 + sylvie + 106 + The color of the graph for the node--female_justices is: white + 2
+120503143818207 + sylvie + 106 + The color of the graph for the node--justices is: white + 2
+120503143818207 + sylvie + 106 + All the node's information has been sent. + 2
+120503143818207 + sylvie + 106 + Student changed to the Mental Model tab. + 2
+120503143818252 + sylvie + 106 + Student clicked Done button and moved to the next task: 107 + 2
+120503143821109 + sylvie + 106 + Student changed to the Situation tab. + 2
+120503143821963 + sylvie + 106 + Student chose to view the Instructions tab + 2
+120503143830356 + sylvie + 106 + Student got - points: 0 + 2
+120503143830390 + sylvie + 106 + ENDING SESSION + 2
+120503143831437 + sylvie + 106 + Logger is closing + 2

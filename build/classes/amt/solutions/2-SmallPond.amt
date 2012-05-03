@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<graph>
+  <vertexes>
+    <vertex>
+      <id>132715097</id>
+      <label>time to evaporate</label>
+      <inedges/>
+      <outedges>
+        <outedge>1454609693</outedge>
+      </outedges>
+      <position>
+        <x>222</x>
+        <y>154</y>
+      </position>
+      <type>constant</type>
+      <equation>48</equation>
+    </vertex>
+    <vertex>
+      <id>671272803</id>
+      <label>evaporating</label>
+      <inedges>
+        <inedge>1350402330</inedge>
+        <inedge>1604778814</inedge>
+        <inedge>1454609693</inedge>
+      </inedges>
+      <outedges/>
+      <position>
+        <x>305</x>
+        <y>276</y>
+      </position>
+      <type>flow</type>
+      <equation>pond_capacity/time_to_evaporate</equation>
+    </vertex>
+    <vertex>
+      <id>1270404225</id>
+      <label>pond capacity</label>
+      <inedges/>
+      <outedges>
+        <outedge>1604778814</outedge>
+      </outedges>
+      <position>
+        <x>376</x>
+        <y>154</y>
+      </position>
+      <type>constant</type>
+      <equation>500</equation>
+    </vertex>
+    <vertex>
+      <id>1401391101</id>
+      <label>water in pond</label>
+      <inedges/>
+      <outedges>
+        <outedge>1350402330</outedge>
+      </outedges>
+      <position>
+        <x>504</x>
+        <y>272</y>
+      </position>
+      <type>stock</type>
+      <equation>500</equation>
+    </vertex>
+  </vertexes>
+  <edges>
+    <edge>
+      <id>1350402330</id>
+      <start>1401391101</start>
+      <end>671272803</end>
+      <type>flowlink</type>
+    </edge>
+    <edge>
+      <id>1604778814</id>
+      <start>1270404225</start>
+      <end>671272803</end>
+      <type>regularlink</type>
+    </edge>
+    <edge>
+      <id>1454609693</id>
+      <start>132715097</start>
+      <end>671272803</end>
+      <type>regularlink</type>
+    </edge>
+  </edges>
+  <Task>
+    <TaskID>14</TaskID>
+  </Task>
+</graph>

@@ -1,0 +1,64 @@
+************NODE #1**************
+Selectable Name: annual tree deaths
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'annual tree deaths'
+nodeName.............'annual_tree_deaths'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '16.0'
+	[2] = '16.0'
+	[3] = '16.0'
+	[4] = '16.0'
+	[5] = '16.0'
+	[6] = '16.0'
+	[7] = '16.0'
+	[8] = '16.0'
+	[9] = '16.0'
+	[10] = '16.0'
+
+selectedDescription..'The number of trees that die each year'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #2**************
+Selectable Name: trees in orchard
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'trees in orchard'
+nodeName.............'trees_in_orchard'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........''
+correctOutputs.......'flowlink - annual tree deaths'
+formula..............'- annual_tree_deaths'
+correctValues: 
+
+	[1] = '256.0'
+	[2] = '240.0'
+	[3] = '224.0'
+	[4] = '208.0'
+	[5] = '192.0'
+	[6] = '176.0'
+	[7] = '160.0'
+	[8] = '144.0'
+	[9] = '128.0'
+	[10] = '112.0'
+
+selectedDescription..'The number of alive trees in the orchard each year'
+selectedPlan.........'ACC_DEC'
+initialValue.........'256.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+

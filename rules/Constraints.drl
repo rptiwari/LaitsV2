@@ -1,0 +1,49 @@
+package metatutor
+
+rule "description is correct but is not right for TNS and this is the first node"
+	when
+		$d : Decision()
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateANode )
+		$pm : ProblemMemory( soughtSet not contains $a.param, initCreated == false )	
+	then
+		$d.setDecisionInStr("deny:Your description is correct, but according to target node strategy, you should start with what the problem is seeking.");
+end
+
+rule "description is correct but is not right for TNS and this is not the first node"
+	when
+		$d : Decision()
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateANode )
+		$pm : ProblemMemory( soughtSet not contains $a.param, initCreated == true )
+	then
+		$d.setDecisionInStr("deny:Your description is correct, but according to target node strategy, you currently need to create the node as the input for --", $pm.preTargetVarName);
+end
+
+rule "go to input tab before finishing plan tab"
+	when
+		$d : Decision()
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.BeforeDoing, type==Action.ToInput )
+    eval($pm.workingNode.getStatus()==NodeStatus.Created)
+	then
+		$d.setDecisionInStr("deny:Plan first before the real working.");
+end
+
+rule "open the node that is not target node"
+	when
+		$a : Action( status ==Action.BeforeDoing, type==Action.OpenANode )
+		$pm : ProblemMemory( targetNodeName!=$a.param )
+		$d : Decision()
+	then
+System.out.println("taget node: "+$pm.getTargetNodeName());
+		$d.setDecisionInStr("deny:Focus on your target node \"--\"", $pm.getTargetNodeName());
+end
+
+rule "all the inputs for the current target node have been created, student shouldn't create any new nodes"
+  when
+    $d : Decision()
+    $pm : ProblemMemory()
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateNewNode )
+    eval($pm.getToBeCreated().size()==0)
+  then
+    $d.setDecisionInStr("deny: You have created all the inputs you need for the current target node, so no need to create any more now.");
+end

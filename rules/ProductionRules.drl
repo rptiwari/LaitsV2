@@ -1,0 +1,125 @@
+package metatutor
+
+rule "change to canvas"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type == Action.CloseANode )
+	then
+		$pm.setCurtab(Context.ModelTab);
+end
+
+rule "change to description tab"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToDescription )
+	then
+		$pm.setCurtab(Context.Description);
+end
+
+rule "change to plan tab"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToPlan )
+	then
+		$pm.setCurtab(Context.PlanTab);
+end
+
+rule "change to inputs tab"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToInput )
+	then
+		$pm.setCurtab(Context.InputTab);
+end
+
+rule "change to calculations tab"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToCalculation )
+	then
+		$pm.setCurtab(Context.CalculationTab);
+end
+		
+rule "change to graph tab"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToGraph )
+	then
+		$pm.setCurtab(Context.OtherTab);
+end
+
+rule "create a node"
+	when
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.AfterDoing, type==Action.CreateANode )
+		
+	then
+		$pm.createANodeUpdate( $a.getParam() );
+end
+
+rule "open only with description tab"
+	when
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.AfterDoing, type==Action.CreateNewNode, param=="only with description tab" )	
+	then
+		$pm.inNewNodePopup=true;
+end
+
+rule "delete a node"
+  when
+    $pm : ProblemMemory()
+    $a : Action( status==Action.AfterDoing, type==Action.DeleteNode)
+  then
+    if($pm.workingNode!=null)
+      $pm.workingNode.delete();
+end
+
+rule "finish the plan tab"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+	then
+		$pm.workingNode.planFinished();
+end
+
+rule "finish the input tab"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="correct" || type==Action.ClickGiveup )
+		$pm : ProblemMemory( curtab==Context.InputTab )
+	then
+		$pm.workingNode.inputFinished();
+end
+
+rule "finish the calculations tab"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="correct" || type==Action.ClickGiveup )
+		$pm : ProblemMemory( curtab==Context.CalculationTab )
+	then
+		$pm.calculationFinishedUpdate($pm.workingNode.name);
+end
+
+rule "close the node"
+	when
+		Action( status ==Action.AfterDoing, type==Action.CloseANode )
+		$pm : ProblemMemory()
+	then
+		$pm.workingNode=null;
+		$pm.setCurtab(Context.ModelTab);
+    $pm.inNewNodePopup=false;
+end
+
+rule "open a node"
+	when
+		$a : Action( status ==Action.AfterDoing, type==Action.OpenANode )
+		$pm : ProblemMemory()
+	then 
+		$pm.workingNode=$pm.getOnlineNodeByName($a.getParam());
+end
+
+rule "change to a new task"
+	when
+		$a : Action(status ==Action.AfterDoing, type==Action.ChangeToTask )
+		$pm : ProblemMemory()
+	then
+		$pm.changeTask( $a.getParam() );
+end

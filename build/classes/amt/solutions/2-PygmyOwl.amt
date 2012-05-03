@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<graph>
+  <vertexes>
+    <vertex>
+      <id>2039244428</id>
+      <label>deaths</label>
+      <inedges>
+        <inedge>1889578923</inedge>
+        <inedge>1164787025</inedge>
+        <inedge>114603123</inedge>
+      </inedges>
+      <outedges/>
+      <position>
+        <x>611</x>
+        <y>312</y>
+      </position>
+      <type>flow</type>
+      <equation>observed_deaths/time_between_observations</equation>
+    </vertex>
+    <vertex>
+      <id>1989340549</id>
+      <label>observed deaths</label>
+      <inedges/>
+      <outedges>
+        <outedge>114603123</outedge>
+      </outedges>
+      <position>
+        <x>493</x>
+        <y>143</y>
+      </position>
+      <type>constant</type>
+      <equation>6</equation>
+    </vertex>
+    <vertex>
+      <id>673706900</id>
+      <label>time between observations</label>
+      <inedges/>
+      <outedges>
+        <outedge>1164787025</outedge>
+      </outedges>
+      <position>
+        <x>685</x>
+        <y>57</y>
+      </position>
+      <type>constant</type>
+      <equation>2</equation>
+    </vertex>
+    <vertex>
+      <id>1458081316</id>
+      <label>pygmy owls</label>
+      <inedges/>
+      <outedges>
+        <outedge>1889578923</outedge>
+      </outedges>
+      <position>
+        <x>394</x>
+        <y>316</y>
+      </position>
+      <type>stock</type>
+      <equation>24</equation>
+    </vertex>
+  </vertexes>
+  <edges>
+    <edge>
+      <id>1889578923</id>
+      <start>1458081316</start>
+      <end>2039244428</end>
+      <type>flowlink</type>
+    </edge>
+    <edge>
+      <id>1164787025</id>
+      <start>673706900</start>
+      <end>2039244428</end>
+      <type>regularlink</type>
+    </edge>
+    <edge>
+      <id>114603123</id>
+      <start>1989340549</start>
+      <end>2039244428</end>
+      <type>regularlink</type>
+    </edge>
+  </edges>
+  <Task>
+    <TaskID>16</TaskID>
+  </Task>
+</graph>

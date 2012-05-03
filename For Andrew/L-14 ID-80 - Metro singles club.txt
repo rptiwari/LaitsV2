@@ -1,0 +1,290 @@
+************NODE #1**************
+Selectable Name: proportion women leaving
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'proportion women leaving'
+nodeName.............'proportion_women_leaving'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '0.1'
+	[2] = '0.1'
+	[3] = '0.1'
+	[4] = '0.1'
+	[5] = '0.1'
+	[6] = '0.1'
+	[7] = '0.1'
+	[8] = '0.1'
+	[9] = '0.1'
+	[10] = '0.1'
+
+selectedDescription..'The ratio of women leaving the club to women in the club'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #2**************
+Selectable Name: proportion men leaving
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'proportion men leaving'
+nodeName.............'proportion_men_leaving'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '0.06'
+	[2] = '0.06'
+	[3] = '0.06'
+	[4] = '0.06'
+	[5] = '0.06'
+	[6] = '0.06'
+	[7] = '0.06'
+	[8] = '0.06'
+	[9] = '0.06'
+	[10] = '0.06'
+
+selectedDescription..'The ratio of men leaving the club to men in the club'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #3**************
+Selectable Name: initial club membership
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'initial club membership'
+nodeName.............'initial_club_membership'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '225.0'
+	[2] = '225.0'
+	[3] = '225.0'
+	[4] = '225.0'
+	[5] = '225.0'
+	[6] = '225.0'
+	[7] = '225.0'
+	[8] = '225.0'
+	[9] = '225.0'
+	[10] = '225.0'
+
+selectedDescription..'The number of people in the club initially'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #4**************
+Selectable Name: initial female/male ratio
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'initial female/male ratio'
+nodeName.............'initial_female/male_ratio'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctValues: 
+
+	[1] = '1.25'
+	[2] = '1.25'
+	[3] = '1.25'
+	[4] = '1.25'
+	[5] = '1.25'
+	[6] = '1.25'
+	[7] = '1.25'
+	[8] = '1.25'
+	[9] = '1.25'
+	[10] = '1.25'
+
+selectedDescription..'The ratio of women in the club to men in the club initially'
+selectedPlan.........'FIXED_VALUE'
+type.................'CONSTANT'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #5**************
+Selectable Name: men
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'men'
+nodeName.............'men'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........''
+correctOutputs.......'flowlink - men leaving,regularlink - men leaving,regularlink - female/male ratio'
+formula..............'- men_leaving'
+correctValues: 
+
+	[1] = '100.0'
+	[2] = '94.0'
+	[3] = '88.36'
+	[4] = '83.0584'
+	[5] = '78.07489600000001'
+	[6] = '73.39040224000001'
+	[7] = '68.98697810560002'
+	[8] = '64.84775941926401'
+	[9] = '60.956893854108166'
+	[10] = '57.299480222861675'
+
+selectedDescription..'The number of men in the club each year'
+selectedPlan.........'ACC_DEC'
+initialValue.........'100.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #6**************
+Selectable Name: women
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'women'
+nodeName.............'women'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........''
+correctOutputs.......'flowlink - women leaving,regularlink - women leaving,regularlink - female/male ratio'
+formula..............'- women_leaving'
+correctValues: 
+
+	[1] = '125.0'
+	[2] = '25.0'
+	[3] = '-69.0'
+	[4] = '-157.36'
+	[5] = '-240.41840000000002'
+	[6] = '-318.49329600000004'
+	[7] = '-391.88369824000006'
+	[8] = '-460.8706763456001'
+	[9] = '-525.7184357648641'
+	[10] = '-586.6753296189723'
+
+selectedDescription..'The number of women in the club each year'
+selectedPlan.........'ACC_DEC'
+initialValue.........'125.0'
+type.................'STOCK'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #7**************
+Selectable Name: men leaving
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'men leaving'
+nodeName.............'men_leaving'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'regularlink - proportion men leaving,regularlink - men'
+correctOutputs.......''
+formula..............'men * proportion_men_leaving'
+correctValues: 
+
+	[1] = '6.0'
+	[2] = '5.64'
+	[3] = '5.3016'
+	[4] = '4.983504'
+	[5] = '4.6844937600000005'
+	[6] = '4.403424134400001'
+	[7] = '4.139218686336001'
+	[8] = '3.89086556515584'
+	[9] = '3.6574136312464898'
+	[10] = '3.4379688133717003'
+
+selectedDescription..'The number of men leaving the club each year'
+selectedPlan.........'FCT_PROP'
+initialValue.........'-Infinity'
+type.................'FLOW'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #8**************
+Selectable Name: female/male ratio
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'female/male ratio'
+nodeName.............'female/male_ratio'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'regularlink - men,regularlink - women'
+correctOutputs.......''
+formula..............'women / men'
+correctValues: 
+
+	[1] = '1.25'
+	[2] = '0.26595744680851063'
+	[3] = '-0.7808963331824355'
+	[4] = '-1.894570567215357'
+	[5] = '-3.079330390654635'
+	[6] = '-4.339713181547483'
+	[7] = '-5.680545937816472'
+	[8] = '-7.106963763634545'
+	[9] = '-8.624429535781433'
+	[10] = '-10.238754825299397'
+
+selectedDescription..'The ratio of women in the club to men in the club'
+selectedPlan.........'FCT_RATIO'
+initialValue.........'-Infinity'
+type.................'FLOW'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+
+************NODE #9**************
+Selectable Name: women leaving
+Instance Variables of Selectable.java:
+--------------------------------------
+label................'women leaving'
+nodeName.............'women_leaving'
+size.................'10'
+
+Instance Variables of Vertex.java:
+--------------------------------------
+correctInputs........'regularlink - proportion women leaving,regularlink - women'
+correctOutputs.......''
+formula..............'women * proportion_women_leaving'
+correctValues: 
+
+	[1] = '12.5'
+	[2] = '2.5'
+	[3] = '-6.9'
+	[4] = '-15.736000000000002'
+	[5] = '-24.041840000000004'
+	[6] = '-31.849329600000004'
+	[7] = '-39.188369824000006'
+	[8] = '-46.087067634560015'
+	[9] = '-52.571843576486415'
+	[10] = '-58.66753296189724'
+
+selectedDescription..'The number of women leaving the club each year'
+selectedPlan.........'FCT_PROP'
+initialValue.........'-Infinity'
+type.................'FLOW'
+position.............'java.awt.Point[x=0,y=0]'
+------------------------------------------------------------
+
+

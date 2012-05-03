@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Tasks>
+  <Task>
+    <TaskId>105</TaskId>
+    <TaskLevel>1</TaskLevel>
+    <TaskName>Intro problem 1</TaskName>
+  </Task>
+  <Task>
+    <TaskId>106</TaskId>
+    <TaskLevel>2</TaskLevel>
+    <TaskName>Intro problem 2</TaskName>
+  </Task>
+  <Task>
+    <TaskId>107</TaskId>
+    <TaskLevel>3</TaskLevel>
+    <TaskName>Intro problem 3</TaskName>
+  </Task>
+  <Task>
+    <TaskId>108</TaskId>
+    <TaskLevel>4</TaskLevel>
+    <TaskName>Intro problem 4</TaskName>
+  </Task>
+  <Task>
+    <TaskId>74</TaskId>
+    <TaskLevel>5</TaskLevel>
+    <TaskName>Dying orchard</TaskName>
+  </Task>
+  <Task>
+    <TaskId>92</TaskId>
+    <TaskLevel>6</TaskLevel>
+    <TaskName>Bilge water</TaskName>
+  </Task>
+  <Task>
+    <TaskId>94</TaskId>
+    <TaskLevel>7</TaskLevel>
+    <TaskName>Rust</TaskName>
+  </Task>
+  <Task>
+    <TaskId>95</TaskId>
+    <TaskLevel>8</TaskLevel>
+    <TaskName>Bus fleet</TaskName>
+  </Task>
+  <Task>
+    <TaskId>110</TaskId>
+    <TaskLevel>9</TaskLevel>
+    <TaskName>Chestnut blight</TaskName>
+  </Task>
+  <Task>
+    <TaskId>93</TaskId>
+    <TaskLevel>10</TaskLevel>
+    <TaskName>Rider gap</TaskName>
+  </Task>
+  <Task>
+    <TaskId>96</TaskId>
+    <TaskLevel>11</TaskLevel>
+    <TaskName>Capacity utilization</TaskName>
+  </Task>
+  <Task>
+    <TaskId>97</TaskId>
+    <TaskLevel>12</TaskLevel>
+    <TaskName>Bank account</TaskName>
+  </Task>
+  <Task>
+    <TaskId>98</TaskId>
+    <TaskLevel>13</TaskLevel>
+    <TaskName>Merchant marine</TaskName>
+  </Task>
+  <Task>
+    <TaskId>80</TaskId>
+    <TaskLevel>14</TaskLevel>
+    <TaskName>Metro singles club</TaskName>
+  </Task>
+  <Task>
+    <TaskId>102</TaskId>
+    <TaskLevel>15</TaskLevel>
+    <TaskName>BREAK</TaskName>
+  </Task>
+  <Task>
+    <TaskId>111</TaskId>
+    <TaskLevel>16</TaskLevel>
+    <TaskName>Bookworm</TaskName>
+  </Task>
+  <Task>
+    <TaskId>99</TaskId>
+    <TaskLevel>17</TaskLevel>
+    <TaskName>Venice</TaskName>
+  </Task>
+  <Task>
+    <TaskId>109</TaskId>
+    <TaskLevel>18</TaskLevel>
+    <TaskName>Giardia bacteria</TaskName>
+  </Task>
+  <Task>
+    <TaskId>100</TaskId>
+    <TaskLevel>19</TaskLevel>
+    <TaskName>Oil tanker</TaskName>
+  </Task>
+  <Task>
+    <TaskId>79</TaskId>
+    <TaskLevel>20</TaskLevel>
+    <TaskName>Hardwood Forest</TaskName>
+  </Task>
+  <Task>
+    <TaskId>101</TaskId>
+    <TaskLevel>21</TaskLevel>
+    <TaskName>ASU commuters</TaskName>
+  </Task>
+  <Task>
+    <TaskId>103</TaskId>
+    <TaskLevel>22</TaskLevel>
+    <TaskName>DONE!</TaskName>
+  </Task>
+</Tasks>
