@@ -1,19 +1,19 @@
-package amt;
+package laits;
 
-import amt.gui.dialog.HelpDialog;
-import amt.gui.dialog.ExitDialog;
-import amt.gui.dialog.SendTicketDialog;
-import amt.gui.dialog.MessageDialog;
-import amt.gui.dialog.AboutDialog;
-import amt.comm.CommException;
-import amt.data.DataException;
-import amt.data.Task;
-import amt.data.TaskFactory;
-import amt.graph.*;
-import amt.gui.*;
-import amt.log.Logger;
-import amt.gui.InstructionPanel;
-import amt.gui.NodeEditor;
+import laits.gui.dialog.HelpDialog;
+import laits.gui.dialog.ExitDialog;
+import laits.gui.dialog.SendTicketDialog;
+import laits.gui.dialog.MessageDialog;
+import laits.gui.dialog.AboutDialog;
+import laits.comm.CommException;
+import laits.data.DataException;
+import laits.data.Task;
+import laits.data.TaskFactory;
+import laits.graph.*;
+import laits.gui.*;
+import laits.log.Logger;
+import laits.gui.InstructionPanel;
+import laits.gui.NodeEditor;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -81,7 +81,7 @@ public class Main extends JFrame implements WindowListener {
    *
    * @param args the command line arguments
    */
-  public static void main(String args[]) {
+ /* public static void main(String args[]) {
 
     // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
     setMetaTutor();
@@ -97,7 +97,7 @@ public class Main extends JFrame implements WindowListener {
       }
     });
   }
-
+*/
   /**
    * Constructor
    *
@@ -196,7 +196,7 @@ public class Main extends JFrame implements WindowListener {
     ChangeListener changeListener = new ChangeListener() {
 
       public void stateChanged(ChangeEvent e) {
-        LinkedList<amt.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
+        LinkedList<laits.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
         int n = tabPane.getSelectedIndex();
         String tab = "";
         if (n == 0) {
@@ -345,7 +345,7 @@ public class Main extends JFrame implements WindowListener {
         for (Task i : taskFactory.getTasks()) {
 
           // add separators in the menu
-          if (level != i.getLevel()) {
+          if (level!=i.getLevel()) {
             menuItemNewTask.addSeparator();
             level = i.getLevel();
           }
@@ -373,25 +373,26 @@ public class Main extends JFrame implements WindowListener {
               }
 
               if (taskFactory.getActualTask().getTitle() != null) {
-                if (!debuggingModeOn) {
-                  String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
-                  MessageDialog.showYesNoDialog(m, true, msg, graph);
+                if (!debuggingModeOn){
+                String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
+                MessageDialog.showYesNoDialog(m, true, msg, graph);
 
-                  if (graph.getDialogueValue() == 0) {
-                    graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
+                if (graph.getDialogueValue() == 0) {
+                  graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
 // CALL TO SOLUTION THE DEBUG
-                    logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
-                    tabPane.setSelectedIndex(1);
-                    graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
-                    graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
+                  logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
+                  tabPane.setSelectedIndex(1);
+                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
+                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
 
-                    for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
-                      GraphCanvas.openTabs.get(i).dispose();
-                      GraphCanvas.openTabs.clear();
-                    }
-                    Main.dialogIsShowing = false;
+                  for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
+                    GraphCanvas.openTabs.get(i).dispose();
+                    GraphCanvas.openTabs.clear();
                   }
-                } else {
+                  Main.dialogIsShowing = false;
+                }
+                }
+                else {
                   graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
                   logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
                   tabPane.setSelectedIndex(1);
@@ -404,17 +405,18 @@ public class Main extends JFrame implements WindowListener {
                   }
                   Main.dialogIsShowing = false;
                 }
-
+                
               } else {
                 graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
                 tabPane.setSelectedIndex(1);
               }
               //close equationEditor
-/*
-               * if (graphCanvasScroll.getGraphCanvas().ee != null) { for (int i
-               * = 0; i < graphCanvasScroll.getGraphCanvas().ee.size(); i++) {
-               * graphCanvasScroll.getGraphCanvas().ee.get(i).dispose(); } }
-               */             //close plotDialog
+/*              if (graphCanvasScroll.getGraphCanvas().ee != null) {
+                for (int i = 0; i < graphCanvasScroll.getGraphCanvas().ee.size(); i++) {
+                  graphCanvasScroll.getGraphCanvas().ee.get(i).dispose();
+                }
+              }
+ */             //close plotDialog
               if (graph.getPlots() != null) {
                 for (int i = 0; i < graph.getPlots().size(); i++) {
                   graph.getPlots().get(i).dispose();
@@ -433,6 +435,7 @@ public class Main extends JFrame implements WindowListener {
       System.exit(0);
     }
   }
+
 
   /**
    * This method initializes all of the fonts to a standard type
@@ -775,9 +778,9 @@ public class Main extends JFrame implements WindowListener {
    */
   private void menuItemSaveTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveTaskActionPerformed
     JFileChooser fc = new JFileChooser();
-    String extension = ".amt";
+    String extension = ".laits";
     File newFile = null;
-    FileNameExtensionFilter fnef = new FileNameExtensionFilter("AMT file", "amt");
+    FileNameExtensionFilter fnef = new FileNameExtensionFilter("AMT file", "laits");
     fc.addChoosableFileFilter(fnef);
     fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
     int rc = fc.showSaveDialog(this);
@@ -835,7 +838,7 @@ public class Main extends JFrame implements WindowListener {
       File openFile = fc.getSelectedFile();
       try {
         graphCanvasScroll.getGraphCanvas().deleteAll();
-        //    graph.load(openFile);
+    //    graph.load(openFile);
         graphCanvasScroll.getGraphCanvas().setModelChanged(true);
         LinkedList l = graph.getVertexes();
         LinkedList<String> list = new LinkedList<String>();
