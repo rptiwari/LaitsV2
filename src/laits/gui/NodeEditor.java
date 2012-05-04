@@ -43,7 +43,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
   private static NodeEditor NodeEditor;
   private Logger logger = Logger.getLogger();
   private DescriptionPanel dPanel;
-  private PlanPanel pPanel;
+  private Plan pPanel;
   private InputsPanel iPanel;
   private CalculationsPanel cPanel;
   private GraphsPanel gPanel;
@@ -185,7 +185,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     descriptionPanel.setLayout(new java.awt.GridLayout(1, 1));
     descriptionPanel.add(dPanel);
 
-    pPanel = new PlanPanel(this, v, g, gc);
+    pPanel = new Plan(this, v, g, gc);
     planPanel.setLayout(new java.awt.GridLayout(1, 1));
     planPanel.add(pPanel);
 
@@ -388,7 +388,8 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
                   else // it is the PLAN pannel
                   {
                     currentIndex=tabPane.getSelectedIndex();
-                    pPanel.initSelected();
+                    //pPanel.initSelected();
+                    pPanel.initializePlan();
                     logger.concatOut(Logger.ACTIVITY, "No message", "Student working in the plan tab");
                   }
                     

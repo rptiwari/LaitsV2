@@ -528,7 +528,7 @@ public class MenuBar {
   public void setDoneButtonStatus(boolean enabled) {
     if (enabled) {
       if (!doneButton.isEnabled()) {
-        Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/GREEN_DONE.JPG"));
+        Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/GREEN_DONE.JPG"));
         ImageIcon icon = new ImageIcon(image);
         doneButton.setIcon(icon);
   //      doneButton.setBackground(Color.GREEN);
@@ -539,7 +539,7 @@ public class MenuBar {
       }
     } else {
       if (doneButton.isEnabled()) {
-        Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/BLANCK_DONE.JPG"));
+        Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/BLANCK_DONE.JPG"));
         ImageIcon icon = new ImageIcon(image);
         doneButton.setIcon(icon);
   //      doneButton.setBackground(new Color(212, 208, 200));
@@ -557,7 +557,7 @@ public class MenuBar {
    * with the level
    */
   private void initDoneButton() {
-    doneButton = new JButton(new ImageIcon("images/BLANCK_DONE.JPG"));
+    doneButton = new JButton(new ImageIcon("/amt/images/BLANCK_DONE.JPG"));
 //    doneButton = new JButton("Done");
     
     Font normal = new Font("Arial", Font.PLAIN, 16);

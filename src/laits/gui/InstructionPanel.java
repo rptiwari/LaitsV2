@@ -16,7 +16,7 @@ import javax.swing.tree.*;
 /**
  * This is the updated version of TaskView.java that completely controls the
  * interface now
- *
+ *g
  *
  * @author Andrew Williamson
  */
@@ -47,12 +47,12 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   private static int SECOND_STOP = 60;
   private static int THIRD_STOP = 69;
   // creates the images that go under the slide
-  public Image partInit = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/INIT.jpg"));  
-  public Image partBasics = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/BASICS.jpg"));
-  public Image partConstruct = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/CONSTRUCT.jpg"));
-  public Image partFix = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/FIX.jpg"));
-  public Image partCreate = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/CREATE.jpg"));
-  public Image partEnd = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/END.jpg"));
+  public Image partInit = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/INIT.jpg"));  
+  public Image partBasics = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/BASICS.jpg"));
+  public Image partConstruct = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/CONSTRUCT.jpg"));
+  public Image partFix = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/FIX.jpg"));
+  public Image partCreate = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/CREATE.jpg"));
+  public Image partEnd = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/END.jpg"));
   DefaultMutableTreeNode treeRoot = new DefaultMutableTreeNode("Slide List"); // The root of the entire tree
   DefaultMutableTreeNode basicRoot = new DefaultMutableTreeNode("Basic:"); // the root of the first phase of slides
   DefaultMutableTreeNode constructRoot = new DefaultMutableTreeNode("Construct:"); // the root of the second phase of slides
@@ -391,403 +391,13 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     slideList.setCurrentSlide(slide);
     SlideObject preSlide = slide;
     
-    slide = new SlideObject(2, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    preSlide.setNext(slide);
-    slide.setPrevious(preSlide);
-    preSlide = slide;
-
-    slide = new SlideObject(3, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(4, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(5, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(6, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(7, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(8, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(9, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(10, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(11, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(12, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(13, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(14, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(15, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(16, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(17, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(18, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(19, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(21, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(22, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(23, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(24, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(25, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(26, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(27, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(28, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(29, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(30, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(31, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(32, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(33, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(34, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(35, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(36, SlideObject.STOP_RUN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(37, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(38, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(39, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(40, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(41, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(42, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
+    for(int i=2;i<82;i++){
+      slide = new SlideObject(i, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_BASICS);
+      preSlide.setNext(slide);
+      slide.setPrevious(preSlide);
+      preSlide = slide;
+    }
     
-    slide = new SlideObject(43, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(44, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(45, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(46, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(47, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(48, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(49, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(50, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(51, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(52, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(53, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(54, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(55, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(56, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(57, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(58, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(59, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(60, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(61, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(62, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-
-    slide = new SlideObject(63, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(64, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(65, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(66, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(67, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(68, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(69, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(70, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(71, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(72, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(73, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(74, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(75, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(76, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(77, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(78, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(79, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-    
-    slide = new SlideObject(80, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_END);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(81, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_END);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
     slideList.setLastSlide(slide);
 
   }
@@ -1010,11 +620,11 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
 
   private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
 
-    System.out.println("problemBeingSolved("+problemBeingSolved+") < SlideObject.PROBLEM_AFTER("+SlideObject.PROBLEM_AFTER+"): " + (problemBeingSolved < SlideObject.PROBLEM_AFTER));
-    System.out.println("slideProblem("+slideProblem+") == problemBeingSolved("+problemBeingSolved+"): " + (slideProblem == problemBeingSolved));
+   // System.out.println("problemBeingSolved("+problemBeingSolved+") < SlideObject.PROBLEM_AFTER("+SlideObject.PROBLEM_AFTER+"): " + (problemBeingSolved < SlideObject.PROBLEM_AFTER));
+   // System.out.println("slideProblem("+slideProblem+") == problemBeingSolved("+problemBeingSolved+"): " + (slideProblem == problemBeingSolved));
  //   System.out.println("slideList.currentSlide.getSlideNumber()("+slideList.currentSlide.getSlideNumber()+") == problemBeingSolved("+problemBeingSolved+"): " + (slideList.currentSlide.getSlideNumber() == problemBeingSolved));
-    System.out.println("slideList.currentSlide.getStopDetection()("+slideList.currentSlide.getStopDetection()+") != SlideObject.STOP_NONE("+SlideObject.STOP_NONE+"): " + (slideList.currentSlide.getStopDetection() != SlideObject.STOP_NONE));
-    System.out.println("lastActionPerformed("+lastActionPerformed+") < slideList.currentSlide.getStopDetection()("+slideList.currentSlide.getStopDetection()+"): " + (lastActionPerformed < slideList.currentSlide.getStopDetection()) + "\n");
+    //System.out.println("slideList.currentSlide.getStopDetection()("+slideList.currentSlide.getStopDetection()+") != SlideObject.STOP_NONE("+SlideObject.STOP_NONE+"): " + (slideList.currentSlide.getStopDetection() != SlideObject.STOP_NONE));
+    //System.out.println("lastActionPerformed("+lastActionPerformed+") < slideList.currentSlide.getStopDetection()("+slideList.currentSlide.getStopDetection()+"): " + (lastActionPerformed < slideList.currentSlide.getStopDetection()) + "\n");
 
     
     
@@ -1204,9 +814,9 @@ class SlideObject {
   public void setPath() 
   {
     if (slideNumber <= 9)
-      this.path = "images/Slides/Slide0" + slideNumber + ".jpg"; // creates the path
+      this.path = "/amt/images/Slides/Slide0" + slideNumber + ".jpg"; // creates the path
     else
-      this.path = "images/Slides/Slide" + slideNumber + ".jpg"; // creates the path 
+      this.path = "/amt/images/Slides/Slide" + slideNumber + ".jpg"; // creates the path 
      slideImage = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource(path)); // creates the image
   }
 

@@ -120,9 +120,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     givenValueButton.setBackground(Selectable.COLOR_BACKGROUND);
     functionButton.setBackground(Selectable.COLOR_BACKGROUND);
     
-    if (correctVertex == null) {
-      correctVertex = parent.server.getActualTask().getNode(currentVertex.getNodeName());
-    }
+//    if (correctVertex == null) {
+//      correctVertex = parent.server.getActualTask().getNode(currentVertex.getNodeName());
+//    }
     
     if (currentVertex.getType() == laits.graph.Vertex.CONSTANT) {
       // the calculation pannel shows the InitialValue pannel

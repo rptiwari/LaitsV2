@@ -29,6 +29,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import laits.ApplicationEnvironment;
+import laits.ModeSelector;
 
 /**
  * Main class
@@ -83,17 +85,33 @@ public class Main extends JFrame implements WindowListener {
    */
   public static void main(String args[]) {
 
-    // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
-    setMetaTutor();
+    // Switches between Student and Author Mode
+        ModeSelector m = new ModeSelector();
+        m.showModeSelector();
+        // ApplicationEnvironment class contains all the appplication wide properties in static form
+        if (ApplicationEnvironment.applicationMode == 1) {
+            // Mode 1 is for Student
+          // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF  
+          setMetaTutor();
+        }
+    
+    
 
     java.awt.EventQueue.invokeLater(new Runnable() {
 
       @Override
       public void run() {
-        Main principal = new Main();
-        principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
-        principal.setVisible(true);
-        principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         if (ApplicationEnvironment.applicationMode == 1) {
+            Main principal = new Main();
+            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+            principal.setVisible(true);
+            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         }else{
+            laits.Main principal = new laits.Main();
+            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+            principal.setVisible(true);
+            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         }
       }
     });
   }

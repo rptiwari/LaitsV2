@@ -8,7 +8,6 @@ import laits.cover.Cover;
 import laits.data.DataException;
 import laits.data.Task;
 import laits.data.TaskFactory;
-import laits.gui.dialog.CongratulationsDialog;
 import laits.gui.dialog.MessageDialog;
 import laits.log.Logger;
 //import laits.parser.EquationEditor;
@@ -151,7 +150,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     this.graph = jf.getGraph();
     this.frame = jf;
     this.run = jf.getMenuItemRun();
-    this.takeQuiz = jf.getMenuItemTakeQuiz();
+//    this.takeQuiz = jf.getMenuItemTakeQuiz();
     // this.tasksPerLevel = jf.tasksPerLevel;
     setLayout(null);
     try {
@@ -177,7 +176,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     taskView.setCover(cover);
     instructionView.setCover(cover);
     cover.setFont(normal);
-    initFirstProblem();
+
+    
+    //initFirstProblem();
+    initAuthorProblem();        
   }
 
   public JFrame getFrame() {
@@ -351,37 +353,71 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
     //load the first problem
     loadLevel(problemList.get(firstLevel)[0]);
+    
+  
+   
   }
 
+  /**
+     * This method Create the basic setup for a Blank problem in Author mode
+     * 
+     */
+    private void initAuthorProblem() {
+        practice = true;
+        tabPane.setSelectedIndex(1);
+        this.deleteAll();
+        task = new Task();
+        
+        if (task != null) {
+        //    taskView.updateTask(task);
+          //  this.updateTask(server.getActualTask());
+            //Gets the label of the vertexes for the selected task.
+            listOfVertexes = new LinkedList<String>();
+            // Show the vertex of the problem in shuffled order
+
+            //Gets the label of the extranodes for the selected task.
+            extraNodes = new LinkedList<String>();
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+
+
+            listOfVertexes = task.getVertexNames();
+            extraNodes = task.getExtraNodes();
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+        }
+        problemIndex = 0;
+        run.setForeground(Color.GRAY);
+    }
+
+  
   /**
    * This method initializes all of the icons for the mouseover vertex menu
    */
   public void initIcons() {
     Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
 
-    URL calcWrongURL = Main.class.getResource("images/CalculationsWrongStatus.png");
+    URL calcWrongURL = Main.class.getResource("/amt/images/CalculationsWrongStatus.png");
     calculationsWrong = (toolkit.createImage(calcWrongURL));
-    URL calcCorrectURL = Main.class.getResource("images/CalculationsCorrectStatus.png");
+    URL calcCorrectURL = Main.class.getResource("/amt/images/CalculationsCorrectStatus.png");
     calculationsCorrect = toolkit.createImage(calcCorrectURL);
-    URL calcGaveUpURL = Main.class.getResource("images/CalculationsGaveUpStatus.png");
+    URL calcGaveUpURL = Main.class.getResource("/amt/images/CalculationsGaveUpStatus.png");
     calculationsGaveUp = (toolkit.createImage(calcGaveUpURL));
-    URL calcNoStatusURL = Main.class.getResource("images/CalculationsNoStatus.png");
+    URL calcNoStatusURL = Main.class.getResource("/amt/images/CalculationsNoStatus.png");
     calculationsNoStatus = (toolkit.createImage(calcNoStatusURL));
-    URL graphsWrongURL = Main.class.getResource("images/GraphsWrongStatus.png");
+    URL graphsWrongURL = Main.class.getResource("/amt/images/GraphsWrongStatus.png");
     graphsWrong = (toolkit.createImage(graphsWrongURL));
-    URL graphsCorrectURL = Main.class.getResource("images/GraphsCorrectStatus.png");
+    URL graphsCorrectURL = Main.class.getResource("/amt/images/GraphsCorrectStatus.png");
     graphsCorrect = toolkit.createImage(graphsCorrectURL);
-    URL graphsGaveUpURL = Main.class.getResource("images/GraphsGaveUpStatus.png");
+    URL graphsGaveUpURL = Main.class.getResource("/amt/images/GraphsGaveUpStatus.png");
     graphsGaveUp = (toolkit.createImage(graphsGaveUpURL));
-    URL graphsNoStatusURL = Main.class.getResource("images/GraphsNoStatus.png");
+    URL graphsNoStatusURL = Main.class.getResource("/amt/images/GraphsNoStatus.png");
     graphsNoStatus = (toolkit.createImage(graphsNoStatusURL));
-    URL inputsWrongURL = Main.class.getResource("images/InputsWrongStatus.png");
+    URL inputsWrongURL = Main.class.getResource("/amt/images/InputsWrongStatus.png");
     inputsWrong = (toolkit.createImage(inputsWrongURL));
-    URL inputsCorrectURL = Main.class.getResource("images/InputsCorrectStatus.png");
+    URL inputsCorrectURL = Main.class.getResource("/amt/images/InputsCorrectStatus.png");
     inputsCorrect = toolkit.createImage(inputsCorrectURL);
-    URL inputsGaveUpURL = Main.class.getResource("images/InputsGaveUpStatus.png");
+    URL inputsGaveUpURL = Main.class.getResource("/amt/images/InputsGaveUpStatus.png");
     inputsGaveUp = (toolkit.createImage(inputsGaveUpURL));
-    URL inputsNoStatusURL = Main.class.getResource("images/InputsNoStatus.png");
+    URL inputsNoStatusURL = Main.class.getResource("/amt/images/InputsNoStatus.png");
     inputsNoStatus = (toolkit.createImage(inputsNoStatusURL));
   }
 
@@ -931,10 +967,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       //run.setEnabled(true);
       run.setForeground(Color.BLACK);
     } else {
-      //run.setEnabled(false);
+      run.setEnabled(false);
       run.setForeground(Color.GRAY);
       //takeQuiz.setEnabled(false);
-      takeQuiz.setForeground(Color.GRAY);
+//      takeQuiz.setForeground(Color.GRAY);
     }
 
     //change color of run and take quiz buttons
@@ -1043,7 +1079,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       }
     }
     problemIndex = 0;
-    run.setForeground(Color.GRAY);
+   run.setForeground(Color.GRAY);
   }
 
   private void closeWindows() {
@@ -1061,7 +1097,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
 
 
-    takeQuiz.setForeground(Color.GRAY);
+//    takeQuiz.setForeground(Color.GRAY);
   }
 
   private void loadNextTask() {
@@ -2443,93 +2479,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   }
 
-  /**
-   * getEquationEditorForVertex
-   *
-   * @param selectedVertex
-   * @return EquationEditor
-   */
-/*  public EquationEditor getEquationEditorForVertex(Vertex v) {
-    EquationEditor equationEditor;
-    String variable = v.getNodeNam();
-    String oldEq = null;
-    if (!v.getFormula().equalsIgnoreCase("")) {
-      oldEq = v.getFormula();
-    }
-    LinkedList<String> inputList = new LinkedList<String>();
-    if ((v.getType()==Vertex.STOCK) || (v.getType()==Vertex.CONSTANT)) {
-      if (v.getType()==Vertex.STOCK) {
-        variable = "INITIAL(" + variable + ")";
-        //THIS CYCLE IS ONLY FOR TESTING
-        for (int i = 0; i < v.outedges.size(); i++) {
-          Edge edge = (Edge) v.outedges.toArray()[i];
-          System.out.println("Link from Stock to :" + edge.end.getNodeNam() + ", " + edge.edgetype);
-        }
-        //HERE ENDS THE TESTING CYCLE
-      } else if (v.getType()==Vertex.CONSTANT) {
-        variable = "CONSTANT(" + variable + ")";
-      }
-      equationEditor = new EquationEditor(this.getParent(), graph, v, variable, inputList, true, oldEq);
-      //setModelChanged(true);
-      //run.setEnabled(true);
-      run.setForeground(Color.BLACK);
-      //takeQuiz.setEnabled(false);
-      takeQuiz.setForeground(Color.GRAY);
-    } else if (v.getType()==Vertex.FLOW) {
-      //If an flow has as input an stock this should not appears in the list
-      for (int i = 0; i < v.inedges.size(); i++) {
-        Edge edge = (Edge) v.inedges.toArray()[i];
-        System.out.println("Incoming edges in the flow: " + v.inedges.size());
-        System.out.println("Edge " + i + ", " + edge.start.getType() + ", " + edge.edgetype);
-        if (edge.start.getType()==Vertex.STOCK) {
-          if (edge.edgetype.equals("regularlink")) {
-            inputList.add(edge.start.getNodeNam());
-          }
-        } else {
-          inputList.add(edge.start.getNodeNam());
-        }
-      }
-      // HELEN - It might be not the best solution. Review
-      //Review all edges to find those from stock to this flow
-      if (v.inedges.toArray().length > 0) {
-        Edge edge = (Edge) v.inedges.toArray()[0];
-        if (edge != null) {
-          for (int j = 0; j < edge.getAllEdges().size(); j++) {
-            Edge e = (Edge) edge.getAllEdges().toArray()[j];
-            if ((e.end == v) && (e.start.getType()==Vertex.STOCK) && e.edgetype.equals("regularlink")) {
-              boolean exist = false;
-              for (int k = 0; k < inputList.size(); k++) {
-                if (e.start.getNodeNam().equals(inputList.get(k))) {
-                  exist = true;
-                  break;
-                }
-              }
-              if (!exist) {
-                inputList.add(e.start.getNodeNam());
-              }
-            }
-          }
-        }
-      }
-      // HELEN MAY 10th
-
-      equationEditor = new EquationEditor(this.getParent(), graph, v, variable, inputList, false, oldEq);
-      run.setForeground(Color.BLACK);
-      takeQuiz.setForeground(Color.GRAY);
-    } else if (v.getType()==Vertex.AUXILIARY) {
-      for (int i = 0; i < v.inedges.size(); i++) {
-        Edge edge = (Edge) v.inedges.toArray()[i];
-        inputList.add(edge.start.getNodeNam());
-      }
-      equationEditor = new EquationEditor(this.getParent(), graph, v, variable, inputList, false, oldEq);
-      run.setForeground(Color.BLACK);
-      takeQuiz.setForeground(Color.GRAY);
-    } else {
-      equationEditor = null;
-    }
-    return equationEditor;
-  }
-*/
+ 
   @Override
   public Dimension getPreferredSize() {
     if (imageSize.equals(area)) {

@@ -33,118 +33,99 @@ public class AboutDialog extends javax.swing.JDialog {
         asuLogoLabel = new javax.swing.JLabel();
         author1Label = new javax.swing.JLabel();
         author2Label = new javax.swing.JLabel();
-        author3Label = new javax.swing.JLabel();
-        author4Label = new javax.swing.JLabel();
-        author5Label = new javax.swing.JLabel();
-        author6Label = new javax.swing.JLabel();
         versionLabel = new javax.swing.JLabel();
         copyRightLabel = new javax.swing.JLabel();
-        separator = new javax.swing.JSeparator();
-        author6Label1 = new javax.swing.JLabel();
-        author6Label2 = new javax.swing.JLabel();
+        amtLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("About Us");
         setResizable(false);
 
         Panel.setBackground(new java.awt.Color(255, 255, 255));
+        Panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PanelMouseClicked(evt);
+            }
+        });
 
         amtLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        amtLabel.setText("Affective Meta Tutor");
+        amtLabel.setText("Learning by Authoring an");
 
         asuLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/amt/gui/asu.jpeg"))); // NOI18N
         asuLogoLabel.setToolTipText("ASU");
 
         author1Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author1Label.setText("Javier Gonzalez-Sanchez");
+        author1Label.setText("Dr. Kurt VanLehn");
 
         author2Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author2Label.setText("Maria Elena Chavez-Echeagaray");
-
-        author3Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author3Label.setText("Patrick Lu");
-
-        author4Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author4Label.setText("Sudha Marothu");
-
-        author5Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author5Label.setText("Megan Kearl ");
-
-        author6Label.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author6Label.setText("Quanwei Zhao");
+        author2Label.setText("Ramayan Tiwari");
 
         versionLabel.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
-        versionLabel.setText("Version");
+        versionLabel.setText("Version:");
 
         copyRightLabel.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        copyRightLabel.setText("Copyright (c) 2010 ");
+        copyRightLabel.setText("Copyright (c) 2011");
 
-        author6Label1.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author6Label1.setText("Curt Tyler");
-
-        author6Label2.setFont(new java.awt.Font("Lucida Grande", 0, 10)); // NOI18N
-        author6Label2.setText("Zaw Naung ");
+        amtLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        amtLabel2.setText("Intelligent Tutoring System (LAITS)");
 
         javax.swing.GroupLayout PanelLayout = new javax.swing.GroupLayout(Panel);
         Panel.setLayout(PanelLayout);
         PanelLayout.setHorizontalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelLayout.createSequentialGroup()
-                .addGap(45, 45, 45)
+                .addGap(41, 41, 41)
                 .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(asuLogoLabel)
-                    .addComponent(amtLabel)
-                    .addComponent(versionLabel)
-                    .addComponent(copyRightLabel)
-                    .addComponent(separator, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(author1Label)
-                    .addComponent(author2Label)
-                    .addComponent(author3Label)
-                    .addComponent(author4Label)
-                    .addComponent(author5Label)
-                    .addComponent(author6Label)
-                    .addComponent(author6Label1)
-                    .addComponent(author6Label2))
-                .addContainerGap(51, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelLayout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PanelLayout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(copyRightLabel))
+                            .addComponent(author1Label)
+                            .addComponent(author2Label))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(PanelLayout.createSequentialGroup()
+                        .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(amtLabel)
+                            .addComponent(amtLabel2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PanelLayout.createSequentialGroup()
+                                .addGap(57, 57, 57)
+                                .addComponent(asuLogoLabel))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PanelLayout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(versionLabel)))
+                        .addGap(0, 18, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         PanelLayout.setVerticalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addContainerGap()
                 .addComponent(asuLogoLabel)
                 .addGap(18, 18, 18)
-                .addComponent(amtLabel)
-                .addGap(18, 18, 18)
+                .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PanelLayout.createSequentialGroup()
+                        .addComponent(amtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(55, 55, 55))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelLayout.createSequentialGroup()
+                        .addComponent(amtLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)))
                 .addComponent(versionLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(7, 7, 7)
                 .addComponent(copyRightLabel)
+                .addGap(34, 34, 34)
+                .addComponent(author1Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(separator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author1Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author2Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author3Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author4Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author5Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author6Label, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author6Label1, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(author6Label2, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addComponent(author2Label)
+                .addContainerGap(235, Short.MAX_VALUE))
         );
-
-        PanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {author1Label, author2Label, author3Label, author4Label, author5Label, author6Label});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,20 +135,19 @@ public class AboutDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+  private void PanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelMouseClicked
+    // TODO add your handling code here:
+    this.dispose();
+  }//GEN-LAST:event_PanelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JLabel amtLabel;
+    private javax.swing.JLabel amtLabel2;
     private javax.swing.JLabel asuLogoLabel;
     private javax.swing.JLabel author1Label;
     private javax.swing.JLabel author2Label;
-    private javax.swing.JLabel author3Label;
-    private javax.swing.JLabel author4Label;
-    private javax.swing.JLabel author5Label;
-    private javax.swing.JLabel author6Label;
-    private javax.swing.JLabel author6Label1;
-    private javax.swing.JLabel author6Label2;
     private javax.swing.JLabel copyRightLabel;
-    private javax.swing.JSeparator separator;
     private javax.swing.JLabel versionLabel;
     // End of variables declaration//GEN-END:variables
 

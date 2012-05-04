@@ -5,7 +5,6 @@ import laits.comm.CommException;
 import laits.comm.Database;
 import laits.data.Task;
 import laits.data.TaskFactory;
-import laits.gui.dialog.ClosingDialog;
 import laits.util.OSValidator;
 import java.awt.Frame;
 import java.io.*;
@@ -224,33 +223,10 @@ public class Logger {
         Runtime.getRuntime().exec("attrib +H " + logFile);
         Runtime.getRuntime().exec("attrib +H " + activityFile);
       } else if (OSValidator.isMac()) {
-        //does not work as the file is not created at this point
-//          boolean actsuccess = activityFile.renameTo(new File("."+FILEACTIVITY));
-//          boolean logsuccess = logFile.renameTo(new File("."+FILEDEBUG));
-//          if (!actsuccess && logsuccess) {
-//            System.err.println("File cannot be hidden in MAC");
-//          }
+      
       }
 
-      /*
-       * for existing files File folder = new File("."); File[] listOfFiles =
-       * folder.listFiles(); for (int i = 0; i < listOfFiles.length; i++) { if
-       * (listOfFiles[i].isFile()) { String file = listOfFiles[i].getName();
-       *
-       * if (OSValidator.isWindows()) { if ((file.contains("activityDB") &&
-       * !file.contains(timeStamp)) || (file.contains("logDB") &&
-       * !file.contains(timeStamp))) { Runtime.getRuntime().exec("attrib +H " +
-       * file); }
-       *
-       * } else if (OSValidator.isMac()) { if ((file.contains("activityDB") &&
-       * !file.contains(timeStamp)) || (file.contains("logDB") &&
-       * !file.contains(timeStamp))) { File newfile = new File(file); if
-       * (!file.startsWith(".")) { boolean success = newfile.renameTo(new
-       * File(".".concat(file))); if (!success) { System.err.println("File
-       * cannot be hidden in MAC"); } } } } } }
-        /*ends
-       */
-
+      
 
       if (logFile.exists()) {
 //          logFile.delete();
@@ -292,53 +268,7 @@ public class Logger {
    * @param msg is the message to display
    * @return
    */
-//  public void concatOut(int type, String key, String msg) {
-//    if (Main.professorVersion != Main.DEMO && Main.professorVersion != Main.DEMO_VERSION2) {
-//      String time = calculateTime();
-//      try {
-//        if (type == ACTIVITY) {
-//          String newLine=time + " + " + ACTIVITYMSG.get(key) + msg;
-//          ActivityWriter.write(newLine);
-//          ActivityWriter.newLine();
-//          this.actSocketServer.publishAct(newLine);
-//          if(!Main.MetaTutorIsOn)
-//            System.out.println("log: "+newLine);
-//        } else if (type == DEBUG) {
-//          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
-//          LogWriter.newLine();
-//        }
-//      } catch (Exception ex) {
-//        err("Logger.out.1");
-//      }
-//    }
-//  }
-  /**
-   * Log a message in the corresponding file. There is one file for DEBUG
-   * messages and other for ACTIVITY messages.
-   *
-   * @param type of message (can be DEBUG or ACTIVITY)
-   * @param msg String that represent the message be logged
-   */
-//  public void out(int type, String msg) {
-//    if (Main.professorVersion != Main.DEMO && Main.professorVersion != Main.DEMO_VERSION2) {
-//      String time = calculateTime();
-//      try {
-//        if (type == ACTIVITY) {
-//          String newLine=time + " + " + ACTIVITYMSG.get(msg);
-//          ActivityWriter.write(newLine);//ACTIVITYMSG.get(msg));
-//          ActivityWriter.newLine();
-//          this.actSocketServer.publishAct(newLine);
-//          if(!Main.MetaTutorIsOn)
-//            System.out.println("log: "+newLine);
-//        } else if (type == DEBUG) {
-//          LogWriter.write(time + " + " + LOGMSG.get(msg));//LOGMSG.get(msg));
-//          LogWriter.newLine();
-//        }
-//      } catch (Exception ex) {
-//        err("Logger.out.1");
-//      }
-//    }
-//  }
+
   public void err(String msg) {
     String time = calculateTime();
     if (LOGMSG.get(msg) != null) {
@@ -370,7 +300,7 @@ public class Logger {
         ActivityWriter.flush();
         
         if (!Main.MetaTutorIsOn) {
-          System.out.println("log: " + newLine);
+          //System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
 //          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
@@ -403,7 +333,7 @@ public class Logger {
         ActivityWriter.flush();
         
         if (!Main.MetaTutorIsOn) {
-          System.out.println("log: " + newLine);
+          //System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
 //          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
@@ -470,30 +400,7 @@ public class Logger {
    * APPLICATION!!!! CLOSE THE FILES LOG AND ACTIVITY WRITERS - AND OPEN THE
    * FILES FOR READING
    */
-  public void close(Frame p, ClosingDialog c) throws CommException {
-    out(ACTIVITY, "Logger.close.1");
-    try {
-      LogWriter.flush();
-      LogWriter.close();
-      ActivityWriter.flush();
-      ActivityWriter.close();
-    } catch (Exception ex) {
-      err("Logger.close.2");
-    }
-    logLines = countLogLines(FILEDEBUG);
-    activityLines = countActivityLines(FILEACTIVITY);
-    track = 0;
-    sendLog(TaskFactory.getInstance().getActualTask(), c);
-    sendActivity(TaskFactory.getInstance().getActualTask(), c);
-    if (OSValidator.isMac()) {
-      boolean actsuccess = activityFile.renameTo(new File("." + FILEACTIVITY));
-      boolean logsuccess = logFile.renameTo(new File("." + FILEDEBUG));
-      if (!actsuccess && logsuccess) {
-        System.err.println("File cannot be hidden in MAC");
-      }
-    }
-
-  }
+ 
 
   /**
    * This method reads the number of lines in the log file and puts each line
@@ -563,92 +470,5 @@ public class Logger {
   /**
    * This method sends the information in the log file to the database
    */
-  public void sendLog(Task task, ClosingDialog c) {
-    int progress = 0;
-    Database server;
-    try {
-      server = Database.getInstance();
-    } catch (CommException de) {
-      return; //exit
-    }
-    try {
-      while (!logList.isEmpty()) {
-        server.insertLog(task, logList.getFirst().trim());
-        track++;
-        progress = (track * 100) / (logLines + activityLines);
-        c.updateCount(progress);
-        logList.removeFirst();
-      }
-      logList = server.getLogList();
-    } catch (Exception e) {
-      err("issue in sendLog, write everything not sent back to logDB.txt");
-    }
-    // if the activity list from the server is empty, we can delete or clear the file
-    // otherwise we save the lines that were not sent to the server to a file
-    try {
-      if (logList.isEmpty()) {
-//          logFile.delete();
-//          if (logFile.exists()) {
-//            System.out.println("Log file delete failed, clear file");
-//            LogWriter = new BufferedWriter(new FileWriter(logFile));
-//            LogWriter.write("");
-//            LogWriter.flush();
-//            LogWriter.close();
-//            logFile.deleteOnExit();
-//          }
-      } else {
-        LogWriter = new BufferedWriter(new FileWriter(logFile));
-        for (int i = 0; i < logList.size(); i++) {
-          LogWriter.write(logList.get(i));
-          LogWriter.newLine();
-        }
-        LogWriter.flush();
-        LogWriter.close();
-      }
-    } catch (Exception e) {
-    }
-
-  }
-
-  /**
-   * This method sends the information in the activity file
-   *
-   * @param c
-   */
-  public void sendActivity(Task task, ClosingDialog c) throws CommException {
-    int progress = 0;
-    Database server = Database.getInstance();
-    while (!activityList.isEmpty()) {
-      server.insertActivityStudent(task, activityList.removeFirst().trim());
-      track++;
-      progress = (track * 100) / (logLines + activityLines);
-      c.updateCount(progress);
-//        activityList.removeFirst();
-    }
-    activityList = server.getActivityList();
-    // if the activity list from the server is empty, we can delete or clear the file
-    // otherwise we save the lines that were not sent to the server to a file
-    try {
-      if (activityList.isEmpty()) {
-//          activityFile.delete();
-//          if (activityFile.exists()) {
-//            ActivityWriter = new BufferedWriter(new FileWriter(activityFile));
-//            ActivityWriter.write("");
-//            ActivityWriter.flush();
-//            ActivityWriter.close();
-//            activityFile.deleteOnExit();
-//          }
-      } else {
-        ActivityWriter = new BufferedWriter(new FileWriter(activityFile));
-        for (int i = 0; i < activityList.size(); i++) {
-          ActivityWriter.write(activityList.get(i));
-          ActivityWriter.newLine();
-        }
-        ActivityWriter.flush();
-        ActivityWriter.close();
-      }
-    } catch (Exception e) {
-    }
-
-  }
+  
 }

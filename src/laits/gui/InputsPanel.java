@@ -258,8 +258,8 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
             }
     }
     int vertexCount = g.getVertexes().size();
-    if (vertexCount == parent.server.getActualTask().listOfVertexes.size())
-      newNode.setEnabled(false);
+//    if (vertexCount == parent.server.getActualTask().listOfVertexes.size())
+//      newNode.setEnabled(false);
   }
 
   public void resetColors() 

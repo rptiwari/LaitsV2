@@ -144,7 +144,7 @@ public class TaskView extends JPanel implements ActionListener {
     }
 
     if (error == true) {
-      URL imageURL = Main.class.getResource("images/asu.jpg");
+      URL imageURL = Main.class.getResource("/amt/images/asu.jpg");
       img = toolkit.createImage(imageURL);
     }
 //System.out.println("Ajustando tamaño imagen");
@@ -349,7 +349,7 @@ public class TaskView extends JPanel implements ActionListener {
           String toolTipText,
           String altText) {
     //Look for the image.
-    String imgLocation = "images/"
+    String imgLocation = "/amt/images/"
             + imageName
             + ".png";
     URL imageURL = Main.class.getResource(imgLocation);

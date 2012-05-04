@@ -31,7 +31,7 @@ public class CorrectAnswerPanel extends javax.swing.JPanel {
     {
         initComponents();
         this.parent = parent;
-        String temp = "images/sampleCorrectGraph.png";
+        String temp = "/amt/images/sampleCorrectGraph.png";
         URL imageURL = Main.class.getResource(temp);
         correctAnswer = Toolkit.getDefaultToolkit().createImage(imageURL);
     }

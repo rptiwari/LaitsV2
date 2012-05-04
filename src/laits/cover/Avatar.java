@@ -51,7 +51,7 @@ public class Avatar extends Selectable{
         position = new Point(x, y);
         Toolkit tools = java.awt.Toolkit.getDefaultToolkit();
         for(int i = 0; i < frames; i++) {
-            String temp = "images/T" + (i + 1) + ".gif";
+            String temp = "/amt/images/T" + (i + 1) + ".gif";
             URL imageURL = Main.class.getResource(temp);
             animation[i] = tools.createImage(imageURL);
         }

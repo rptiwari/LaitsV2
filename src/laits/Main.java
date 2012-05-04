@@ -1,5 +1,6 @@
 package laits;
 
+import java.awt.Color;
 import laits.gui.dialog.HelpDialog;
 import laits.gui.dialog.ExitDialog;
 import laits.gui.dialog.SendTicketDialog;
@@ -14,11 +15,9 @@ import laits.gui.*;
 import laits.log.Logger;
 import laits.gui.InstructionPanel;
 import laits.gui.NodeEditor;
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
@@ -29,6 +28,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import laits.plot.GraphRangeEditor;
  
 /**
  * Main class
@@ -44,7 +44,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Main extends JFrame implements WindowListener {
 
-  public static final String VERSION = "Version 2.0 release June 8th, 2011";
+  public static final String VERSION = "Version 1.2 released on May 15, 2012";
   public static String VERSIONID = "2";
   private TaskFactory taskFactory;
   private Logger logger = Logger.getLogger();
@@ -75,29 +75,7 @@ public class Main extends JFrame implements WindowListener {
   public Graph getGraph() {
     return graph;
   }
-
-  /**
-   * Ask for the version and create an instance of the system
-   *
-   * @param args the command line arguments
-   */
- /* public static void main(String args[]) {
-
-    // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
-    setMetaTutor();
-
-    java.awt.EventQueue.invokeLater(new Runnable() {
-
-      @Override
-      public void run() {
-        Main principal = new Main();
-        principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
-        principal.setVisible(true);
-        principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-      }
-    });
-  }
-*/
+ 
   /**
    * Constructor
    *
@@ -117,16 +95,12 @@ public class Main extends JFrame implements WindowListener {
 
     initComponents();
     ticketButton.setVisible(false);
-    menuItemRun.setForeground(Color.GRAY);
+    
     menuItemNewTask.setEnabled(true);
-
-    menuItemOpenTask.setEnabled(false);
-    menuItemSaveTask.setEnabled(false);
-
     menuItemExit.setEnabled(true);
     menuItemUpdate.setEnabled(false);
     menuItemFeedback.setEnabled(false);
-    menuItemTakeQuiz.setForeground(Color.GRAY);
+    
 
 
     taskView = new TaskView();
@@ -136,28 +110,30 @@ public class Main extends JFrame implements WindowListener {
     this.setFont(graphCanvasScroll.getGraphCanvas().normal);
     graphCanvasScroll.setButtonLabel(this.statusBarLabel);
     graphCanvasScrollPane.add(graphCanvasScroll);
-    loadMenuTask();
+   
+    
     problemPanel.setLayout(new java.awt.GridLayout(1, 1));
-    scroller = new JScrollPane(taskView);
-    scroller.setPreferredSize(new Dimension(200, 200));
-    problemPanel.add(scroller);
+  
+    problemPanel.add(new TaskCreator());
+    
+    
     taskView.requestFocus();
     taskView.setAutoscrolls(true);
     addWindowListener(this);
+    
+    // Make the Model menu invisible
     menuModel.setVisible(false);
+    
     // new Panel
     instructionPanel.setLayout(new java.awt.GridLayout(1, 1));
     instructionPanel.add(instructionView);
     setTabListener();
-    logger.out(Logger.ACTIVITY, "Main.Main.1");
-
-    //open memo if meta tutor is on
-    if (Main.MetaTutorIsOn) {
-      initMemo();
-    }
+    this.setTitle("LAITS Authoring Tool");
+    logger.out(Logger.ACTIVITY, "LAITS loaded successfully");
 
     this.tabPane.setSelectedIndex(0); // sets the instructions tab as the default tab when opened
 
+   
   }
 
   // init memo for meta tutor
@@ -308,134 +284,7 @@ public class Main extends JFrame implements WindowListener {
     tabPane.addChangeListener(changeListener);
   }
 
-  /**
-   * Ask for the version of software to use.
-   */
-  private static void setMetaTutor() {
-    Object[] options = {"MetaTutor OFF", "MetaTutor ON"};
-    Object selectedValue = JOptionPane.showInputDialog(null, "Is the MetaTutor OFF or ON?", "Select an option", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-
-//THIS SHOULD BE CHANGED TO CREATE THE SOLUTION YES, BUT ONLY CALL METATUTOR IN THE METATUTOR CASE    
-    if (selectedValue == "MetaTutor OFF") {
-      MetaTutorIsOn = false;
-    } else if (selectedValue == "MetaTutor ON") {
-      MetaTutorIsOn = true;
-      metatutor.Main.start();
-
-    } else {
-      System.exit(0);
-    }
-  }
-
-  /**
-   * This method update the content of the menu Task. With this cycle we get the
-   * data of the different available tasks from the database object and complete
-   * the drop-down menu "Task" at the menu bar.
-   */
-  private void loadMenuTask() {
-    menuItemNewTask.removeAll();
-    JMenuItem mt;
-    try {
-      if (taskFactory.getTasks() != null) {
-        int level = taskFactory.getTasks().get(0).getLevel();
-
-        // The tabPane should initially show the Situation Tab
-        tabPane.setSelectedIndex(1);
-        for (Task i : taskFactory.getTasks()) {
-
-          // add separators in the menu
-          if (level!=i.getLevel()) {
-            menuItemNewTask.addSeparator();
-            level = i.getLevel();
-          }
-          mt = new JMenuItem(i.getTitle());
-          mt.setFont(graphCanvasScroll.getGraphCanvas().normal);
-          menuItemNewTask.add(mt);
-          mt.setActionCommand(i.getId() + "");
-
-          final Main m = this;
-          mt.addActionListener(new java.awt.event.ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-              //Ask for a pwd in order to be able to change to a different task
-              if (!debuggingModeOn) {
-                JPasswordField password = new JPasswordField();
-                final JComponent[] inputs = new JComponent[]{
-                  new JLabel("Password"),
-                  password
-                };
-                JOptionPane.showMessageDialog(null, inputs, "New Task", JOptionPane.PLAIN_MESSAGE);
-                if (!password.getText().equals("amt22amt")) {
-                  return;
-                }
-              }
-
-              if (taskFactory.getActualTask().getTitle() != null) {
-                if (!debuggingModeOn){
-                String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
-                MessageDialog.showYesNoDialog(m, true, msg, graph);
-
-                if (graph.getDialogueValue() == 0) {
-                  graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
-// CALL TO SOLUTION THE DEBUG
-                  logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
-                  tabPane.setSelectedIndex(1);
-                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
-                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
-
-                  for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
-                    GraphCanvas.openTabs.get(i).dispose();
-                    GraphCanvas.openTabs.clear();
-                  }
-                  Main.dialogIsShowing = false;
-                }
-                }
-                else {
-                  graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
-                  logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
-                  tabPane.setSelectedIndex(1);
-                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
-                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
-
-                  for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
-                    GraphCanvas.openTabs.get(i).dispose();
-                    GraphCanvas.openTabs.clear();
-                  }
-                  Main.dialogIsShowing = false;
-                }
-                
-              } else {
-                graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
-                tabPane.setSelectedIndex(1);
-              }
-              //close equationEditor
-/*              if (graphCanvasScroll.getGraphCanvas().ee != null) {
-                for (int i = 0; i < graphCanvasScroll.getGraphCanvas().ee.size(); i++) {
-                  graphCanvasScroll.getGraphCanvas().ee.get(i).dispose();
-                }
-              }
- */             //close plotDialog
-              if (graph.getPlots() != null) {
-                for (int i = 0; i < graph.getPlots().size(); i++) {
-                  graph.getPlots().get(i).dispose();
-                }
-              }
-              menuItemTakeQuiz.setForeground(Color.GRAY);
-            }
-          });
-        }
-      } else {
-        System.exit(0);
-      }
-    } catch (DataException de) {
-      //PRINT ERRRORT Y LOG
-      System.out.println("Main.loadMenuTask.1");
-      System.exit(0);
-    }
-  }
-
+  
 
   /**
    * This method initializes all of the fonts to a standard type
@@ -446,8 +295,8 @@ public class Main extends JFrame implements WindowListener {
     menuItemNewTask.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemSaveTask.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemOpenTask.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    menuModel.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    menuItemRun.setFont(graphCanvasScroll.getGraphCanvas().normal);
+    menuItemGenerateSolution.setFont(graphCanvasScroll.getGraphCanvas().normal);
+    menuItemEditTimeRange.setFont(graphCanvasScroll.getGraphCanvas().normal);   
     menuHelp.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemAbout.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemHelp.setFont(graphCanvasScroll.getGraphCanvas().normal);
@@ -456,8 +305,7 @@ public class Main extends JFrame implements WindowListener {
     ticketButton.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemExit.setFont(graphCanvasScroll.getGraphCanvas().normal);
     statusBarLabel.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    tabPane.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    menuItemTakeQuiz.setFont(graphCanvasScroll.getGraphCanvas().normal);
+    tabPane.setFont(graphCanvasScroll.getGraphCanvas().normal);    
   }
 
 
@@ -480,10 +328,11 @@ public class Main extends JFrame implements WindowListener {
         graphCanvasScrollPane = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         menuFile = new javax.swing.JMenu();
-        menuItemNewTask = new javax.swing.JMenu();
-        menuItemDebuggingMode = new javax.swing.JCheckBoxMenuItem();
+        menuItemNewTask = new javax.swing.JMenuItem();
         menuItemOpenTask = new javax.swing.JMenuItem();
         menuItemSaveTask = new javax.swing.JMenuItem();
+        menuItemEditTimeRange = new javax.swing.JMenuItem();
+        menuItemGenerateSolution = new javax.swing.JMenuItem();
         menuItemExit = new javax.swing.JMenuItem();
         menuModel = new javax.swing.JMenu();
         menuItemRun = new javax.swing.JMenuItem();
@@ -536,19 +385,11 @@ public class Main extends JFrame implements WindowListener {
         menuFile.setBorder(null);
         menuFile.setText("File");
 
-        menuItemNewTask.setBorder(null);
+        menuItemNewTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuItemNewTask.setText("New Task");
         menuFile.add(menuItemNewTask);
-        menuItemNewTask.getAccessibleContext().setAccessibleName("menuTask");
 
-        menuItemDebuggingMode.setText("Enable Debugging Mode");
-        menuItemDebuggingMode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemDebuggingModeActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemDebuggingMode);
-
+        menuItemOpenTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuItemOpenTask.setText("Open Task...");
         menuItemOpenTask.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -557,6 +398,7 @@ public class Main extends JFrame implements WindowListener {
         });
         menuFile.add(menuItemOpenTask);
 
+        menuItemSaveTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuItemSaveTask.setText("Save Task...");
         menuItemSaveTask.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -564,6 +406,22 @@ public class Main extends JFrame implements WindowListener {
             }
         });
         menuFile.add(menuItemSaveTask);
+
+        menuItemEditTimeRange.setText("Edit Time Range");
+        menuItemEditTimeRange.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEditTimeRangeActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemEditTimeRange);
+
+        menuItemGenerateSolution.setText("Generate Solution");
+        menuItemGenerateSolution.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemGenerateSolutionActionPerformed(evt);
+            }
+        });
+        menuFile.add(menuItemGenerateSolution);
 
         menuItemExit.setText("Exit");
         menuItemExit.setActionCommand("ExitCommand");
@@ -697,7 +555,7 @@ public class Main extends JFrame implements WindowListener {
           int id = t.getId();
           String name = t.getTitle();
           if (!taskMap.containsKey(id) || !name.equals(taskMap.get(id))) {
-            loadMenuTask();
+    
             graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
             //loadScreenTask(Integer.parseInt(evt.getActionCommand()));
             tabPane.setSelectedIndex(0);
@@ -740,26 +598,6 @@ public class Main extends JFrame implements WindowListener {
   }//GEN-LAST:event_menuItemHelpActionPerformed
 
   /**
-   * This method determines whether the model can be run
-   *
-   * @param evt
-   */
-  private void menuItemRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRunActionPerformed
-
-    if (menuItemRun.getForeground() != Color.GRAY) {
-      //FYif (graph.run(database, graphCanvasScroll.getGraphCanvas())) {
-      if (graph.run(taskFactory, graphCanvasScroll.getGraphCanvas())) {
-        menuItemTakeQuiz.setForeground(Color.BLACK);
-      } else {
-        menuItemTakeQuiz.setForeground(Color.GRAY);
-      }
-    } else {
-      MessageDialog.showMessageDialog(this, true, "All nodes should be connected and have an equation before the model can be run", graph);
-      logger.out(Logger.ACTIVITY, "Main.menuItemRunActionPerformed.1");
-    }
-  }//GEN-LAST:event_menuItemRunActionPerformed
-
-  /**
    * Method to display the dialog box of "Exit" from the "File" menu at the menu
    * bar
    *
@@ -788,7 +626,7 @@ public class Main extends JFrame implements WindowListener {
     if (rc == JFileChooser.APPROVE_OPTION) {
       File savedFile = fc.getSelectedFile();
       newFile = new File(savedFile.getAbsolutePath() + extension);
-//      try {
+//      try {        
 //        graph.save(newFile);
 //        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.1", fc.getSelectedFile().getName());
 //      } catch (IOException ex) {
@@ -797,30 +635,6 @@ public class Main extends JFrame implements WindowListener {
 //      }
     }
   }//GEN-LAST:event_menuItemSaveTaskActionPerformed
-
-  /**
-   * This method controls whether the student can take a quiz
-   *
-   * @param evt
-   */
-  private void menuItemTakeQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTakeQuizActionPerformed
-    // STEP 0. If there is not a Task selected and a Model already runned do not allow to take the quiz
-    // STEP 1. We need to indentify which task we are doing in order to open that quiz
-    if (graphCanvasScroll.getGraphCanvas().getModelChanged() == true || menuItemTakeQuiz.getForeground() == Color.GRAY) {
-      MessageDialog.showMessageDialog(this, true, "The model needs to be run before the quiz can be taken", graph);
-    } else {
-      logger.out(Logger.ACTIVITY, "Main.menuItemTakeQuizActionPerformed.1");
-      // FY int id = database.getActualTask().getId();
-      int id = taskFactory.getActualTask().getId();
-
-      // STEP 2. PUT QUIZ IN QUIZ DIALOG
-
-      //FY int[] currentLevelList = tasksPerLevel.get(Integer.parseInt(database.getActualTask().getLevel()));
-      int[] currentLevelList = taskFactory.getTasksPerLevel().get(taskFactory.getActualTask().getLevel());
-      // FY if (database.getActualTask().getId() == currentLevelList[currentLevelList.length - 1]) {
-
-    }
-  }//GEN-LAST:event_menuItemTakeQuizActionPerformed
 
   /**
    * Method to display the dialog box of "Open File..." from the "File" menu at
@@ -887,34 +701,94 @@ public class Main extends JFrame implements WindowListener {
     }
   }//GEN-LAST:event_menuItemOpenTaskActionPerformed
 
-  private void menuItemDebuggingModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDebuggingModeActionPerformed
+  private void menuItemGenerateSolutionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGenerateSolutionActionPerformed
+    // TODO add your handling code here:
+    // Check if Model has been run
+        if (Main.alreadyRan) {
+            JFileChooser fc = new JFileChooser();
+            String extension = ".txt";
+            File newFile = null;
+            FileNameExtensionFilter fnef = new FileNameExtensionFilter("LAITS Solution file", "txt");
+            fc.addChoosableFileFilter(fnef);
+            fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
+            int rc = fc.showSaveDialog(this);
+            fc.setDialogTitle("Save File");
+            if (rc == JFileChooser.APPROVE_OPTION) {
+                File savedFile = fc.getSelectedFile();
+                newFile = new File(savedFile.getAbsolutePath() + extension);
+                try {
+                    graph.saveSolution(newFile);
+                    System.out.println("Solution file saved - Main.java");
+                } catch (IOException ex) {
+                    System.out.println("Error in Saving file- Main.java");
+                }
+            }
+        } else {
+            ErrorDialog err = new ErrorDialog(this, true, "Solution Generation Error", "Please run the model before generating solution.");
+            err.setVisible(true);
+        }
+  }//GEN-LAST:event_menuItemGenerateSolutionActionPerformed
 
-    if (debuggingModeOn) {
-      debuggingModeOn = false;
+  /**
+   * This method controls whether the student can take a quiz
+   *
+   * @param evt
+   */
+  private void menuItemTakeQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTakeQuizActionPerformed
+    // STEP 0. If there is not a Task selected and a Model already runned do not allow to take the quiz
+    // STEP 1. We need to indentify which task we are doing in order to open that quiz
+    if (graphCanvasScroll.getGraphCanvas().getModelChanged() == true || menuItemTakeQuiz.getForeground() == Color.GRAY) {
+      MessageDialog.showMessageDialog(this, true, "The model needs to be run before the quiz can be taken", graph);
     } else {
-      JPasswordField password = new JPasswordField();
-      final JComponent[] inputs = new JComponent[]{
-        new JLabel("Password"), password
-      };
-      JOptionPane.showMessageDialog(null, inputs, "Password Needed", JOptionPane.PLAIN_MESSAGE);
-      if (!password.getText().equals("amt22amt")) {
-        menuItemDebuggingMode.setState(false);
-        debuggingModeOn = false;
-      } else {
-        debuggingModeOn = true;
-      }
-    }
+      logger.out(Logger.ACTIVITY, "Main.menuItemTakeQuizActionPerformed.1");
+      // FY int id = database.getActualTask().getId();
+      int id = taskFactory.getActualTask().getId();
 
-  }//GEN-LAST:event_menuItemDebuggingModeActionPerformed
+      // STEP 2. PUT QUIZ IN QUIZ DIALOG
+
+      //FY int[] currentLevelList = tasksPerLevel.get(Integer.parseInt(database.getActualTask().getLevel()));
+      int[] currentLevelList = taskFactory.getTasksPerLevel().get(taskFactory.getActualTask().getLevel());
+      // FY if (database.getActualTask().getId() == currentLevelList[currentLevelList.length - 1]) {
+
+    }
+  }//GEN-LAST:event_menuItemTakeQuizActionPerformed
+
+  /**
+   * This method determines whether the model can be run
+   *
+   * @param evt
+   */
+  private void menuItemRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemRunActionPerformed
+
+    if (menuItemRun.getForeground() != Color.GRAY) {
+      //FYif (graph.run(database, graphCanvasScroll.getGraphCanvas())) {
+      if (graph.run(taskFactory, graphCanvasScroll.getGraphCanvas())) {
+        menuItemTakeQuiz.setForeground(Color.BLACK);
+      } else {
+        menuItemTakeQuiz.setForeground(Color.GRAY);
+      }
+    } else {
+      MessageDialog.showMessageDialog(this, true, "All nodes should be connected and have an equation before the model can be run", graph);
+      logger.out(Logger.ACTIVITY, "Main.menuItemRunActionPerformed.1");
+    }
+  }//GEN-LAST:event_menuItemRunActionPerformed
+
+  private void menuItemEditTimeRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEditTimeRangeActionPerformed
+    // TODO add your handling code here:
+    GraphRangeEditor rangeEditor = new GraphRangeEditor(this, true);
+    rangeEditor.setVisible(true);
+  }//GEN-LAST:event_menuItemEditTimeRangeActionPerformed
 
   public static boolean windowIsClosing() {
     return windowIsClosing;
   }
-
+public JMenuItem getMenuItemRun() {
+    return menuItemRun;
+  }
   /**
    * Method to close project
    *
-   * @param e
+   * @param 
    */
   public void windowClosing(WindowEvent e) {
     windowIsClosing = true;
@@ -949,11 +823,12 @@ public class Main extends JFrame implements WindowListener {
     private javax.swing.JMenu menuFile;
     private javax.swing.JMenu menuHelp;
     private javax.swing.JMenuItem menuItemAbout;
-    private javax.swing.JCheckBoxMenuItem menuItemDebuggingMode;
+    private javax.swing.JMenuItem menuItemEditTimeRange;
     private javax.swing.JMenuItem menuItemExit;
     private javax.swing.JMenuItem menuItemFeedback;
+    private javax.swing.JMenuItem menuItemGenerateSolution;
     private javax.swing.JMenuItem menuItemHelp;
-    private javax.swing.JMenu menuItemNewTask;
+    private javax.swing.JMenuItem menuItemNewTask;
     private javax.swing.JMenuItem menuItemOpenTask;
     private javax.swing.JMenuItem menuItemRun;
     private javax.swing.JMenuItem menuItemSaveTask;
@@ -974,11 +849,4 @@ public class Main extends JFrame implements WindowListener {
     return tabPane;
   }
 
-  public JMenuItem getMenuItemRun() {
-    return menuItemRun;
-  }
-
-  public JMenuItem getMenuItemTakeQuiz() {
-    return menuItemTakeQuiz;
-  }
 }

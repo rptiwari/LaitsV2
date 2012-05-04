@@ -48,9 +48,10 @@ public class ExitDialog extends JDialog {
   }
 
   public void closing() {
+    p.dispose();
     this.dispose();
-    ClosingDialog cd = new ClosingDialog(p, false);
-    cd.setVisible(true);
+    //ClosingDialog cd = new ClosingDialog(p, false);
+    //cd.setVisible(true);
   }
 
   /**
@@ -96,11 +97,11 @@ public class ExitDialog extends JDialog {
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
             .addGroup(PanelLayout.createSequentialGroup()
-                .addGap(86, 86, 86)
+                .addGap(121, 121, 121)
                 .addComponent(yesButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(noButton)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap())
         );
         PanelLayout.setVerticalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,21 +130,21 @@ public class ExitDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
    private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
-     File file = new File("user.dat");
-     file.delete();
-
-     logs.concatOut(Logger.ACTIVITY, "ExitDialog.yesButtonActionPerformed.1", "" + Points);
-
-     logs.out(Logger.ACTIVITY, "Main.windowClosing.1");
-     if (Main.MetaTutorIsOn)
-        Query.getBlockQuery().listen("ENDING SESSION");
-     try {
-       Thread.sleep(1000);
-     } catch (InterruptedException ex) {
-       java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-     }
-
-     closing();
+//     File file = new File("user.dat");
+//     file.delete();
+//
+//     logs.concatOut(Logger.ACTIVITY, "ExitDialog.yesButtonActionPerformed.1", "" + Points);
+//
+//     logs.out(Logger.ACTIVITY, "Main.windowClosing.1");
+//     if (Main.MetaTutorIsOn)
+//        Query.getBlockQuery().listen("ENDING SESSION");
+//     try {
+//       Thread.sleep(1000);
+//     } catch (InterruptedException ex) {
+//       java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//     }
+//
+    closing();
 
    }//GEN-LAST:event_yesButtonActionPerformed
 

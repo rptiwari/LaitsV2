@@ -28,7 +28,7 @@ public class Face {
      */
     public void initFace()
     {
-        URL faceURL = Main.class.getResource("images/faceImage.jpg");
+        URL faceURL = Main.class.getResource("/amt/images/faceImage.jpg");
         faceImage = Toolkit.getDefaultToolkit().createImage(faceURL);
     }
 

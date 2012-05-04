@@ -5,9 +5,13 @@ import laits.data.TaskFactory;
 import laits.gui.dialog.PlotDialog;
 import laits.log.Logger;
 import java.awt.Graphics;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.LinkedList;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
 /**
  * This class create a graph for the activity.
@@ -686,4 +690,124 @@ public class Graph extends Selectable {
   public void setEdges(LinkedList edges) {
     this.edges = edges;
   }
+  
+  // LAITS Specific Code - Ram
+  public final void saveSolution(File f) throws IOException {
+        System.out.println("Saving Solution File");
+        
+        // Creating .txt solution file for current graph  - Ram
+          Writer output = null;
+          String text = "Task Creation";
+          StringBuffer finalSolution = new StringBuffer();
+          finalSolution.append("======== TASK TYPE =========");
+          finalSolution.append('\n');
+          finalSolution.append("======== NODE TYPES, INPUTS, AND OUTPUTS =========");
+          finalSolution.append('\n');
+          finalSolution.append("======== DESCRIPTIONS =========");
+          finalSolution.append('\n');
+          finalSolution.append("======== TREE ========");
+          finalSolution.append('\n');
+          finalSolution.append("======== EQUATIONS =========");
+          finalSolution.append('\n');
+          finalSolution.append("======== TIME:  0==========");
+          
+          output = new BufferedWriter(new FileWriter(f));
+          output.write(finalSolution.toString());
+          output.close();
+        
+        
+    }
+  
+  public final void save(File f) throws IOException {
+        System.out.println("INISAVE");
+        //FY DataBase server;
+        TaskFactory server;
+        try {
+        server = TaskFactory.getInstance();
+        } catch (CommException de) {
+            return;
+        }
+
+        Document doc = DocumentHelper.createDocument();
+        //TaskID
+        Element xml_graph = doc.addElement("graph");
+        Element xml_vertexes = xml_graph.addElement("vertexes");
+        Element xml_edges = xml_graph.addElement("edges");
+        Element xml_task = xml_graph.addElement("Task");
+        Object[] a = getVertexes().toArray();
+        //vertex
+        for (int i = 0; i < getVertexes().size(); i++) {
+            Element xml_vertex = xml_vertexes.addElement("vertex");
+            Element xml_id = xml_vertex.addElement("id");
+            
+            // Adding Label, nodeName and NodeDescription fields
+            Element xml_label = xml_vertex.addElement("label");
+            Element xml_nodeName = xml_vertex.addElement("nodeName");
+            Element xml_desc = xml_vertex.addElement("correctDescription");
+            
+       //     xml_label.setText(((Vertex) a[i]).label);
+       //     xml_nodeName.setText(((Vertex) a[i]).nodeName);
+            //xml_desc.setText(((Vertex) a[i]).correctDescription);
+                    
+            xml_id.setText(((Vertex) a[i]).hashCode() + "");
+            Element xml_inedges = xml_vertex.addElement("inedges");
+            Object[] b = ((Vertex) a[i]).inedges.toArray();
+            for (int j = 0; j < b.length; j++) {
+                if (((Edge) b[j]) != null) {
+                    Element xml_inedge = xml_inedges.addElement("inedge");
+                    xml_inedge.setText(((Edge) b[j]).hashCode() + "");
+                }
+            }
+            Object[] c = ((Vertex) a[i]).outedges.toArray();
+            Element xml_outedges = xml_vertex.addElement("outedges");
+            for (int k = 0; k < c.length; k++) {
+                if (((Edge) c[k]) != null) {
+                    Element xml_outedge = xml_outedges.addElement("outedge");
+                    xml_outedge.setText(((Edge) c[k]).hashCode() + "");
+                }
+            }
+            Element xml_position = xml_vertex.addElement("position");
+            Element xml_x = xml_position.addElement("x");
+           // xml_x.setText(((Vertex) a[i]).position.x + "");
+            Element xml_y = xml_position.addElement("y");
+          //  xml_y.setText(((Vertex) a[i]).position.y + "");
+            Element xml_type = xml_vertex.addElement("type");
+         //   xml_type.setText(((Vertex) a[i]).type);
+            Element xml_equation = xml_vertex.addElement("equation");
+        //    if (((Vertex) a[i]).equation != null) {
+        //        xml_equation.setText(((Vertex) a[i]).equation.toString());
+        //    }
+        }
+        // edges
+        LinkedList edges1 = getEdges();
+        Object[] e = edges1.toArray();
+        for (int x = 0; x < edges1.size(); x++) {
+            Element xml_edge = xml_edges.addElement("edge");
+            Edge e3 = (Edge) e[x];
+            Vertex start1 = e3.start;
+            Vertex end1 = e3.end;
+            String edgetype1 = e3.edgetype;
+            Element xml_id = xml_edge.addElement("id");
+            xml_id.setText(e3.hashCode() + "");
+            Element xml_start = xml_edge.addElement("start");
+            xml_start.setText(start1.hashCode() + "");
+            Element xml_end = xml_edge.addElement("end");
+            xml_end.setText(end1.hashCode() + "");
+            Element xml_edgetype = xml_edge.addElement("type");
+            xml_edgetype.setText(edgetype1);
+        }
+        Element xml_taskID = xml_task.addElement("TaskID");
+
+       
+        //FY xml_taskID.setText(String.valueOf(server.getActualTask().getId()));
+        xml_taskID.setText(String.valueOf(server.getActualTask().getId()));
+
+        Writer out = new OutputStreamWriter(new FileOutputStream(f), "utf-8");
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        XMLWriter writer = new XMLWriter(out, format);
+        writer.write(doc);
+        out.close();
+        // System.out.println("END");
+    }
+  
 }
