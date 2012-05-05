@@ -164,7 +164,8 @@ public class Cover implements Runnable {
             }
           }
 
-          menuBar.setDoneButtonStatus(allCorrect ? true : false);
+          //menuBar.setDoneButtonStatus(allCorrect ? true : false);
+          menuBar.setDoneButtonStatus(false);
         } else {
           menuBar.setDoneButtonStatus(false);
         }

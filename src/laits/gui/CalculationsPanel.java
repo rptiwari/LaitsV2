@@ -6,7 +6,6 @@
 package laits.gui;
 
 import laits.Main;
-import metatutor.MetaTutorMsg;
 import laits.comm.CommException;
 import laits.data.Task;
 import laits.data.TaskFactory;
@@ -29,7 +28,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.text.DefaultFormatter;
-import metatutor.Query;
+
 
 /**
  *
@@ -56,7 +55,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   private String status = "none";
   private LinkedList<String> changes = new LinkedList<String>();
   private LinkedList<String> previousEquationList = new LinkedList<String>();
-  private Query query = Query.getBlockQuery();
   private final DecimalFormat inputDecimalFormat = new DecimalFormat("###0.###");
 
   /**
@@ -87,6 +85,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     inputJustAdded(false);
     initializing = false;
     
+    // Setting the text on Cancel/Delete Button
+    if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
+    {
+      deleteButton.setText("Delete Node"); // the cancel button should say delete
+    } else {
+      deleteButton.setText("Cancel Node"); // else, it says cancel
+    }
+    
   }
   
   public void initButtonOnTask() {
@@ -112,7 +118,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   
   public void initValues() {
     updateInputs();
-    initButtonOnTask();
+    enableButtons(false);
     radioButtonPanel.setBackground(Selectable.COLOR_BACKGROUND);
     jTextAreaEquation.setBackground(Selectable.COLOR_BACKGROUND);
     givenValueTextField.setBackground(Selectable.COLOR_BACKGROUND);
@@ -220,41 +226,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       this.disableKeyPad();
     }
 
-    //Initializes the state if the calculations panel is correct, wrong, or the user gave up
-    if (currentVertex.GAVEUP == currentVertex.getCalculationsButtonStatus()) {
-      //Set the color and disable the elements
-      radioButtonPanel.setBackground(Selectable.COLOR_GIVEUP);
-      jTextAreaEquation.setBackground(Selectable.COLOR_GIVEUP);
-      givenValueTextField.setBackground(Selectable.COLOR_GIVEUP);
-      accumulatesButton.setBackground(Selectable.COLOR_GIVEUP);
-      givenValueButton.setBackground(Selectable.COLOR_GIVEUP);
-      functionButton.setBackground(Selectable.COLOR_GIVEUP);
-      givenValueButton.setEnabled(false);
-      accumulatesButton.setEnabled(false);
-      functionButton.setEnabled(false);
-      givenValueTextField.setEnabled(false);
-      setKeyboardStatus(false);
-      jListVariables.setEnabled(false);
-      jTextAreaEquation.setEnabled(false);
-      enableButtons(false);
-      disableKeyPad();
-      deleteButton.setEnabled(false);
-
-      // display of the values within the vertex, the values have been given calling the method
-      if (currentVertex.getType() == laits.graph.Vertex.CONSTANT) {
-        givenValueTextField.setText(String.valueOf(currentVertex.getInitialValue()));
-      } else if (currentVertex.getType() == laits.graph.Vertex.STOCK) {
-        givenValueTextField.setText(String.valueOf(currentVertex.getInitialValue()));
-        if (!currentVertex.getFormula().isEmpty()) {
-          jTextAreaEquation.setText(currentVertex.getFormula());
-        }
-      } else { // it is a flow
-        if (!currentVertex.getFormula().isEmpty()) {
-          jTextAreaEquation.setText(currentVertex.getFormula());
-        }
-      }
-      
-    } else if (currentVertex.CORRECT == currentVertex.getCalculationsButtonStatus()) {
+ if (currentVertex.CORRECT == currentVertex.getCalculationsButtonStatus()) {
       // All the pannels are correct
       radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
       jTextAreaEquation.setBackground(Selectable.COLOR_CORRECT);
@@ -282,36 +254,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         if (!currentVertex.getFormula().isEmpty()) {
           jTextAreaEquation.setText(currentVertex.getFormula());
         }
-      }
-    } else if (currentVertex.WRONG == currentVertex.getCalculationsButtonStatus()) {
-      if (currentVertex.getType() == correctVertex.getType()) {
-        radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
-        accumulatesButton.setBackground(Selectable.COLOR_CORRECT);
-        givenValueButton.setBackground(Selectable.COLOR_CORRECT);
-        functionButton.setBackground(Selectable.COLOR_CORRECT);
-        givenValueButton.setEnabled(false);
-        accumulatesButton.setEnabled(false);
-        functionButton.setEnabled(false);
-      } else {
-        radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
-        accumulatesButton.setBackground(Selectable.COLOR_WRONG);
-        givenValueButton.setBackground(Selectable.COLOR_WRONG);
-        functionButton.setBackground(Selectable.COLOR_WRONG);
-      }
-      
-      if (!currentVertex.getIsGivenValueCorrect()) {
-        givenValueTextField.setBackground(Selectable.COLOR_WRONG);
-      } else {
-        givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
-        givenValueTextField.setEnabled(false);
-        setKeyboardStatus(false);
-      }
-      
-      if (!currentVertex.getIsFormulaCorrect()) {
-        jTextAreaEquation.setBackground(Selectable.COLOR_WRONG);
-      } else {
-        jTextAreaEquation.setBackground(Selectable.COLOR_CORRECT);
-        jTextAreaEquation.setEnabled(false);
       }
     }
     
@@ -1093,6 +1035,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         subtractButton = new javax.swing.JButton();
         multiplyButton = new javax.swing.JButton();
         divideButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        deleteButton1 = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
 
         givenValueLabel.setText("<html><b>Fixed value = </b></html>");
 
@@ -1165,7 +1110,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
         quantityLabel.setText("The node's quantity:");
 
-        keyPanel.setLayout(new java.awt.GridLayout());
+        keyPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         keyOne.setText("1");
         keyOne.setEnabled(false);
@@ -1436,7 +1381,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addGroup(calculatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(multiplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(divideButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -1456,23 +1401,49 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addContainerGap())
         );
 
+        closeButton.setText("Close Node");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        deleteButton1.setText("Cancel Node");
+        deleteButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton1ActionPerformed(evt);
+            }
+        });
+
+        okButton.setText("Ok");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(checkButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(giveUpButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(checkButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(giveUpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(closeButton)
+                .addGap(18, 18, 18)
+                .addComponent(deleteButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(59, 59, 59))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1481,10 +1452,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(44, 44, 44)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1890,17 +1865,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           // everything that should have been entered has been, check whether it is correct
           if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) {
             logger.concatOut(Logger.ACTIVITY, "No message", "Click check button try");
-            String returnMsg = "";
-            if (Main.MetaTutorIsOn) {
-              returnMsg = query.listen("Click check button");
-            } else {
-              returnMsg = "allow";
-            }
-            if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
-            {
-              new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-              return;
-            }
+            
             
             logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.1");
             initializing = true;
@@ -2125,17 +2090,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               resetGraphStatus();
               
               logger.concatOut(Logger.ACTIVITY, "No message", "Click giveup button try");
-              String returnMsg = "";
-              if (Main.MetaTutorIsOn) {
-                returnMsg = query.listen("Click giveup button");
-              } else {
-                returnMsg = "allow";
-              }
-              if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
-              {
-                new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-                return;
-              }
+              
               
               logger.out(Logger.ACTIVITY, "CalculationsPanel.giveUpButtonActionPerformed.1");
               //Clear existing answer
@@ -2477,14 +2432,38 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     givenValueTextField.setText(newText);
     enableButtons(true);
   }//GEN-LAST:event_keyDeletekeyboardButtonActionPerformed
+
+  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+
+  }//GEN-LAST:event_closeButtonActionPerformed
+
+  private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
+
+    logger.concatOut(Logger.ACTIVITY, "No message", "Student deleted the node.");
+    this.currentVertex.setNodeName(""); 
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); 
+  }//GEN-LAST:event_deleteButton1ActionPerformed
+
+  private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+    // This button will read the value of name and description and store then in current vertex
+
+
+}//GEN-LAST:event_okButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton accumulatesButton;
     private javax.swing.JButton addButton;
     private javax.swing.JLabel availableInputsLabel;
     private javax.swing.JPanel calculatorPanel;
     private javax.swing.JButton checkButton;
+    private javax.swing.JButton closeButton;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton deleteButton1;
     private javax.swing.JButton divideButton;
     private javax.swing.JRadioButton functionButton;
     private javax.swing.JButton giveUpButton;
@@ -2511,6 +2490,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     private javax.swing.JButton keyZero;
     private javax.swing.JButton multiplyButton;
     private javax.swing.JLabel needInputLabel;
+    private javax.swing.JButton okButton;
     private javax.swing.JLabel quantityLabel;
     private javax.swing.JPanel radioButtonPanel;
     private javax.swing.JButton subtractButton;

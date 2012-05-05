@@ -171,7 +171,8 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     initIcons();
     initRunButton();
     initShortDescriptionButton();
-    initScoreList();
+
+      
     cover = new Cover(this, graph, frame);
     taskView.setCover(cover);
     instructionView.setCover(cover);
@@ -179,7 +180,8 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
     
     //initFirstProblem();
-    initAuthorProblem();        
+    initAuthorProblem();  
+    
   }
 
   public JFrame getFrame() {
@@ -194,14 +196,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return this.graph;
   }
 
-  /**
-   * For every level in the system, add 0.0 as the initial score for that level
-   */
-  private void initScoreList() {
-    for (int i = 0; i < problemList.size(); i++) {
-      scoreList.add(0.0);
-    }
-  }
+ 
 
   /**
    * The two methods below are used for the new system of displaying the
@@ -659,7 +654,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
     //System.out.println("Vertex name: "+vertexName);
     int vertexCount = graph.getVertexes().size();
-    System.out.println(vertexCount);
+    
     if (Math.floor(vertexCount / 6) > 0) {
       this.newVertex(v, 100 + vertexCount % 6 * 125, height - (int) (v.paintNoneHeight * 2 * (Math.floor(vertexCount / 6) + 1)));
       //System.out.println(vertexCount);
@@ -767,6 +762,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param selectedVertex is the vertex
    */
   public void paintMenu(Graphics g, Vertex v) {
+    
     Point pos = v.getPosition();
     int x = pos.x;
     int y = pos.y;
@@ -1201,21 +1197,8 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       for (int i = 0; i < graph.getVertexes().size(); i++) {
         current = (Vertex) graph.getVertexes().get(i);
         System.out.println("CURT: " + current.getNodeName());
-/*
- * ANDREW
- *      if (!current.equation.value.isEmpty() && !current.correctValues.isEmpty()) {
-          for (int j = 0; j < current.equation.value.size(); j++) {
-            if (Double.compare(current.equation.value.get(j), current.correctValues.get(j)) == 0) {
-              allRight = true;
-            } else {
-              allRight = false;
-              break; //jclaxton: now the for loop will exit with the correct boolean 
-            }
-          }
-        } else {
-          allRight = false;
-        }
- */       //Set whether the graphs panel is correct
+
+        //Set whether the graphs panel is correct
         if (allRight) {
           current.setGraphsButtonStatus(current.NOSTATUS);
           logger.concatOut(Logger.ACTIVITY, "No message", "The color of the graph for the node--" + current.getNodeName() + " is: white");
@@ -2372,6 +2355,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @return true as acknowledge
    */
   public boolean newVertex(Vertex v, int x, int y) {
+    
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
     graph.addVertex(v);
@@ -2381,6 +2365,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   }
 
   public boolean newVertex(Vertex v) {
+    
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
     graph.addVertex(v);
@@ -2455,11 +2440,11 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
         if (returnMsg.equals("allow")) {
           logs.concatOut(Logger.ACTIVITY, "GraphCanvas.mouseClicked.5", name);
           NodeEditor openWindow = NodeEditor.getInstance(hitVertex(x, y), graph, this, true, false);
-          try {
-            openWindow.setCorrectVertex(server.getActualTask().getNode(name)); // set the correct vertex in NodeEditor
-          } catch (CommException ex) {
-            java.util.logging.Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
-          }
+//          try {
+//            openWindow.setCorrectVertex(server.getActualTask().getNode(name)); // set the correct vertex in NodeEditor
+//          } catch (CommException ex) {
+//            java.util.logging.Logger.getLogger(GraphCanvas.class.getName()).log(Level.SEVERE, null, ex);
+//          }
           hitVertex(x, y).setIsOpen(true);
           openWindow.setVisible(true);
           openTabs.add(openWindow);

@@ -85,35 +85,31 @@ public class Main extends JFrame implements WindowListener {
       //creates the connection to the database to update the tasks
       taskFactory = TaskFactory.getInstance();
       // gets the filename and general elements needed for each task, in taskFactory.task, and orders them for the experiment
-      taskFactory.getTasks();
+     // taskFactory.getTasks();
     } catch (CommException dbe1) {
       logger.concatOut(Logger.DEBUG, "Main.Main.1", dbe1.getMessage());
-    } catch (DataException dbe2) {
-      logger.concatOut(Logger.DEBUG, "Main.Main.2", dbe2.getMessage());
-    }
+    } 
     graph = new Graph();
 
     initComponents();
+   
     ticketButton.setVisible(false);
-    
     menuItemNewTask.setEnabled(true);
     menuItemExit.setEnabled(true);
     menuItemUpdate.setEnabled(false);
     menuItemFeedback.setEnabled(false);
     
 
-
     taskView = new TaskView();
     instructionView = new InstructionPanel();
     graphCanvasScroll = new GraphCanvasScroll(this);
+    
     initFonts();
     this.setFont(graphCanvasScroll.getGraphCanvas().normal);
     graphCanvasScroll.setButtonLabel(this.statusBarLabel);
     graphCanvasScrollPane.add(graphCanvasScroll);
    
-    
     problemPanel.setLayout(new java.awt.GridLayout(1, 1));
-  
     problemPanel.add(new TaskCreator());
     
     

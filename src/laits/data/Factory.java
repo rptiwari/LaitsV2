@@ -2,7 +2,7 @@ package laits.data;
 
 import laits.comm.CommException;
 import laits.comm.DataArchive;
-import laits.comm.Database;
+
 
 /**
  * Factory
@@ -12,11 +12,9 @@ import laits.comm.Database;
  */
 public abstract class Factory {
 
-  protected Database database;
   protected DataArchive archive;
 
-  public Factory() throws CommException {
-    this.database = Database.getInstance();
+  public Factory() throws CommException {   
     this.archive = DataArchive.getInstance();
   }
 

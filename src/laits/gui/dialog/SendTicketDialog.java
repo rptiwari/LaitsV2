@@ -1,40 +1,28 @@
 package laits.gui.dialog;
 
 import laits.comm.CommException;
-import laits.comm.Database;
 import laits.data.TaskFactory;
 import laits.log.Logger;
 
 /**
 * Dialog box to send a Ticket
- *
- * @author Javier Gonzalez
- * @author Helen Chavez
- * @author Quanwei Zhao
- * @version 20100223
- *
+ * This should send an email to the Admin - admin email should be read from Property file
+ * @author Ramayan Tiwari
+ 
  */
-
 public class SendTicketDialog extends javax.swing.JDialog {
 
-  Database server;
   String ticketType[] = {"Bug", "Suggestion", "Feedback"};
   private Logger logger = Logger.getLogger();
 
   /** Creates new form SendTicketDialog Form */
   public SendTicketDialog(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
-    try {
-    server = Database.getInstance();
-    } catch (CommException de) {
-    // do somethign
-    }
+    
 
     this.setTitle("Send Feedback...");
     initComponents();
-//    for (int i=0;i<ticketType.length; i++){
-//      this.typeComboBox.addItem(ticketType[i]);
-//    }
+
     this.setLocationRelativeTo(parent);
     this.pack();
   }
@@ -127,17 +115,7 @@ public class SendTicketDialog extends javax.swing.JDialog {
 
    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
      // TODO add your handling code here:
-     //String messageType = ticketType[typeComboBox.getSelectedIndex()];
-     String messageType = "Feedback";
-     try {
-     Database.getInstance().insertTicket(TaskFactory.getInstance().getActualTask(), messageType,descriptionTextArea.getText().trim());
-     } catch(CommException de) {
-     //do something
-       de.printStackTrace();
-     }
-     descriptionTextArea.setText("");
-     this.dispose();
-     logger.out(Logger.ACTIVITY, "SendTicketDialog.sendButtonActionPerformed.1" , descriptionTextArea.getText());
+     //Needs to be Implemented....
    }//GEN-LAST:event_sendButtonActionPerformed
 
    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

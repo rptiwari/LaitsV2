@@ -232,7 +232,7 @@ public class MenuBar {
         }
         openWindow.getDescriptionPanel().initButtonOnTask();
         openWindow.getCalculationsPanel().initButtonOnTask();
-        openWindow.getInputsPanel().initButtonOnTask();
+     
       }
     });
   }

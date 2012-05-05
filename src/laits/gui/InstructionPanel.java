@@ -813,7 +813,9 @@ class SlideObject {
 
   public void setPath() 
   {
-    if (slideNumber <= 9)
+    if (slideNumber == 1)
+      this.path = "/amt/images/Slides/SlideLaits.jpg"; // LAITS Slide path
+    else if (slideNumber <= 9)
       this.path = "/amt/images/Slides/Slide0" + slideNumber + ".jpg"; // creates the path
     else
       this.path = "/amt/images/Slides/Slide" + slideNumber + ".jpg"; // creates the path 

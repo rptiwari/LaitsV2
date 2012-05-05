@@ -41,7 +41,7 @@ public class Graph extends Selectable {
   private LinkedList<String> professorOutputFile = new LinkedList<String>();
   private int dialogueValue;
   private boolean errorRun;
-
+  
   /**
    * Method to set an object as the one currently selected
    *
@@ -810,4 +810,26 @@ public class Graph extends Selectable {
         // System.out.println("END");
     }
   
+  // Code for LAITS
+  
+  /**
+   * This method sets the value for n which is the value from yes/no dialogs
+   */
+  public void setN(int newN)
+  {
+      this.n = newN;
+  }
+
+  /**
+   * This method returns the value for n which is the value from yes/no dialogs
+   */
+  public int getN()
+  {
+      return n;
+  }
+  
+  
+  
+  // LAITS Variables Section
+  private int n;
 }

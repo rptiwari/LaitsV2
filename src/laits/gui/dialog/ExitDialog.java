@@ -50,6 +50,7 @@ public class ExitDialog extends JDialog {
   public void closing() {
     p.dispose();
     this.dispose();
+    System.exit(0);
     //ClosingDialog cd = new ClosingDialog(p, false);
     //cd.setVisible(true);
   }
@@ -130,20 +131,7 @@ public class ExitDialog extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
    private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
-//     File file = new File("user.dat");
-//     file.delete();
-//
-//     logs.concatOut(Logger.ACTIVITY, "ExitDialog.yesButtonActionPerformed.1", "" + Points);
-//
-//     logs.out(Logger.ACTIVITY, "Main.windowClosing.1");
-//     if (Main.MetaTutorIsOn)
-//        Query.getBlockQuery().listen("ENDING SESSION");
-//     try {
-//       Thread.sleep(1000);
-//     } catch (InterruptedException ex) {
-//       java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//     }
-//
+
     closing();
 
    }//GEN-LAST:event_yesButtonActionPerformed

@@ -30,16 +30,14 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import metatutor.MetaTutorMsg;
-import metatutor.Query;
 
 /**
  * This method contains a singleton instance of the main window
  *
  * @author Megana
  */
-public class NodeEditor extends javax.swing.JFrame implements WindowListener 
-{
+public class NodeEditor extends javax.swing.JFrame implements WindowListener {
+
   private static NodeEditor NodeEditor;
   private Logger logger = Logger.getLogger();
   private DescriptionPanel dPanel;
@@ -59,102 +57,85 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
   public static final int INPUTS = 2;
   public static final int CALCULATIONS = 3;
   public static final int GRAPHS = 4;
-  private Query query = Query.getBlockQuery();
   public TaskFactory server;
+  String savedNodeName;
+  String savedDescription;
   // no scope here because it should be a package variable, only accessed by the members of the NodeEditor
-  Vertex correctVertex; 
-  private Point initialClick = new Point();;
+  Vertex correctVertex;
+  private Point initialClick = new Point();
+
+  ;
 
 
-  public static NodeEditor getInstance(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) 
-  {
-    if (NodeEditor != null)
+  public static NodeEditor getInstance(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) {
+    if (NodeEditor != null) {
       NodeEditor = null;
+    }
     return new NodeEditor(v, g, gc, show, turnOffLogging);
   }
 
   /**
    * Creates new form NodeEditor
    */
-  public NodeEditor(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) 
-  {
+  public NodeEditor(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) {
     graph = g;
     graphCanvas = gc;
     currentVertex = v;
     turnOfLogMessagesForThisInstance = turnOffLogging;
-    try 
-    {
+    try {
       server = TaskFactory.getInstance();
-    } 
-    catch (CommException ex) 
-    {
+    } catch (CommException ex) {
       java.util.logging.Logger.getLogger(NodeEditor.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
-    this.setUndecorated(true);
+
+    //this.setUndecorated(true); - RAM
     initComponents();
     initTabs(currentVertex, graph, gc);
     setTabListener();
     addWindowListener(this);
-    
-    if (currentVertex.getNodeName().isEmpty() || currentVertex.getNodeName().equals("New Node"))
-      this.setTitle("New Node");
-    else
-      this.setTitle(currentVertex.getNodeName());
 
-    if (vertexHasName()) 
-    {
-      if (allVertexesHaveEquations() && !gc.getModelHasBeenRun()) 
-      {
+    if (currentVertex.getNodeName().isEmpty() || currentVertex.getNodeName().equals("New Node")) {
+      this.setTitle("New Node");
+    } else {
+      this.setTitle(currentVertex.getNodeName());
+    }
+
+    if (vertexHasName()) {
+      if (allVertexesHaveEquations() && !gc.getModelHasBeenRun()) {
         tabPane.setSelectedIndex(CALCULATIONS);
-        if (!turnOfLogMessagesForThisInstance) 
-        {
+        if (!turnOfLogMessagesForThisInstance) {
           logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
           logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.3");
         }
-      } 
-      else 
-        if (allVertexesHaveEquations() && gc.getModelHasBeenRun()) 
-        {
-          tabPane.setSelectedIndex(GRAPHS);
-          if (!turnOfLogMessagesForThisInstance) 
-          {
+      } else if (allVertexesHaveEquations() && gc.getModelHasBeenRun()) {
+        tabPane.setSelectedIndex(GRAPHS);
+        if (!turnOfLogMessagesForThisInstance) {
+          logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
+          logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.4");
+        }
+      } else {
+        if (currentVertex.getNodePlan() != Vertex.NOPLAN) {
+          tabPane.setSelectedIndex(INPUTS);
+          if (!turnOfLogMessagesForThisInstance) {
             logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
-            logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.4");
+            logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.2");
           }
-        } 
-        else 
-        {
-          if (currentVertex.getNodePlan()!= Vertex.NOPLAN)
-          {
-            tabPane.setSelectedIndex(INPUTS);
-            if (!turnOfLogMessagesForThisInstance) 
-            {
-              logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
-              logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.2");
-            }
-          }
-          else
-          {
-            tabPane.setSelectedIndex(PLAN);
-            if (!turnOfLogMessagesForThisInstance) 
-            {
-              logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
-              logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.3");
-            }
+        } else {
+          tabPane.setSelectedIndex(PLAN);
+          if (!turnOfLogMessagesForThisInstance) {
+            logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
+            logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.3");
           }
         }
-    } 
-    else 
-    {
+      }
+    } else {
       tabPane.setSelectedIndex(DESCRIPTION);
-      if (!turnOfLogMessagesForThisInstance) 
-      {
+      if (!turnOfLogMessagesForThisInstance) {
         logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", this.getTitle());
         logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.1");
       }
     }
-    
+
     this.pack();
 
     if (show != false) {
@@ -168,19 +149,20 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     this.setFocusable(true);
 
     canGraphBeDisplayed();
+
     // The below if statment determines which tab should be selected when a node is opened
-    if (currentVertex.getGraphsButtonStatus() == currentVertex.CORRECT 
-            || currentVertex.getGraphsButtonStatus() == currentVertex.WRONG) 
+    if (currentVertex.getGraphsButtonStatus() == currentVertex.CORRECT
+            || currentVertex.getGraphsButtonStatus() == currentVertex.WRONG) {
       this.tabPane.setSelectedIndex(GRAPHS);
-    else if (!currentVertex.getNodeName().isEmpty())
+    } else if (!currentVertex.getNodeName().isEmpty()) {
       this.tabPane.setSelectedIndex(PLAN);
+    }
 
     this.setBounds(this.getToolkit().getScreenSize().width - 662, 100, this.getPreferredSize().width, this.getPreferredSize().height);
-    
+
   }
 
-  public void initTabs(Vertex v, Graph g, GraphCanvas gc) 
-  {
+  public void initTabs(Vertex v, Graph g, GraphCanvas gc) {
     dPanel = new DescriptionPanel(this, v, g, gc);
     descriptionPanel.setLayout(new java.awt.GridLayout(1, 1));
     descriptionPanel.add(dPanel);
@@ -197,24 +179,20 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     inputsPanel.setLayout(new java.awt.GridLayout(1, 1));
     inputsPanel.add(iPanel);
 
-    if (v.getNodeName() != null) 
-    {
+    if (v.getNodeName() != null) {
       gPanel = new GraphsPanel(this, v, g, gc);
       graphsPanel.setLayout(new java.awt.GridLayout(1, 1));
       graphsPanel.add(gPanel);
     }
-    
+
   }
 
-  private boolean allVertexesDefined() 
-  {
+  private boolean allVertexesDefined() {
     boolean allDefined = true;
-    for (int i = 0; i < graph.getVertexes().size(); i++) 
-    {
+    for (int i = 0; i < graph.getVertexes().size(); i++) {
       Vertex v = (Vertex) graph.getVertexes().get(i);
-      if (v.getNodeName().isEmpty() || v.getDescriptionButtonStatus() == v.WRONG 
-              || (!v.getNodeName().isEmpty() && v.getDescriptionButtonStatus() == v.NOSTATUS)) 
-      {
+      if (v.getNodeName().isEmpty() || v.getDescriptionButtonStatus() == v.WRONG
+              || (!v.getNodeName().isEmpty() && v.getDescriptionButtonStatus() == v.NOSTATUS)) {
         allDefined = false;
         continue;
       }
@@ -222,32 +200,32 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     return allDefined;
   }
 
-  private boolean vertexHasName() 
-  {
-    return(!currentVertex.getNodeName().isEmpty());
+  private boolean vertexHasName() {
+    return (!currentVertex.getNodeName().isEmpty());
   }
 
-  private boolean allVertexesHaveEquations() 
-  {
+  private boolean allVertexesHaveEquations() {
     boolean allHaveEquations = true;
-    for (int i = 0; i < graph.getVertexes().size(); i++) 
-    {
+    for (int i = 0; i < graph.getVertexes().size(); i++) {
       Vertex v = (Vertex) graph.getVertexes().get(i);
-      switch (v.getType())
-      {
+      switch (v.getType()) {
         case Vertex.CONSTANT:
-          if (v.getInitialValue()== Vertex.NOTFILLED)
+          if (v.getInitialValue() == Vertex.NOTFILLED) {
             allHaveEquations = false;
+          }
           break;
         case Vertex.FLOW:
-          if (v.getFormula().isEmpty())
+          if (v.getFormula().isEmpty()) {
             allHaveEquations = false;
+          }
           break;
         case Vertex.STOCK:
-          if (v.getInitialValue()== Vertex.NOTFILLED)
+          if (v.getInitialValue() == Vertex.NOTFILLED) {
             allHaveEquations = false;
-          if (v.getFormula().isEmpty())
+          }
+          if (v.getFormula().isEmpty()) {
             allHaveEquations = false;
+          }
           break;
         default:
           allHaveEquations = false;
@@ -257,149 +235,94 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     return allHaveEquations;
   }
 
-  public Vertex getCurrentVertex() 
-  {
+  public Vertex getCurrentVertex() {
     return this.currentVertex;
   }
 
-  
-
-  /* this method is called every time the node editor is going to be displayed. 
+  /*
+   * this method is called every time the node editor is going to be displayed.
    * It checks to see if the graph can be ran and does the logic accordingly.
    */
-  public void canGraphBeDisplayed() 
-  {
-    if (currentVertex.getGraphsButtonStatus() != Vertex.NOSTATUS)
+  public void canGraphBeDisplayed() {
+    if (currentVertex.getGraphsButtonStatus() != Vertex.NOSTATUS) {
       setGraphCanBeDisplayed(true);
-    else
+    } else {
       setGraphCanBeDisplayed(false);
+    }
   }
 
   /*
-   * This method either enables or disables the graph tab according to the value of it's parameter.
-   * This method is called from canGraphBeDisplayed() and, likewise, is checked before the node editor is opened.
+   * This method either enables or disables the graph tab according to the value
+   * of it's parameter. This method is called from canGraphBeDisplayed() and,
+   * likewise, is checked before the node editor is opened.
    */
-  public void setGraphCanBeDisplayed(boolean answer) 
-  {
+  public void setGraphCanBeDisplayed(boolean answer) {
     graphCanBeDisplayed = answer;
     tabPane.setEnabledAt(GRAPHS, answer);
-    if (!graphCanBeDisplayed){
+    if (!graphCanBeDisplayed) {
       tabPane.setForegroundAt(GRAPHS, Color.GRAY);
-    }
-    else
+    } else {
       tabPane.setForegroundAt(GRAPHS, Selectable.COLOR_DEFAULT);
+    }
   }
 
-  private void setTabListener() 
-  {
+  private void setTabListener() {
     final JFrame f = this;
-    ChangeListener changeListener = new ChangeListener() 
-    {
+    ChangeListener changeListener = new ChangeListener() {
 
-      public void stateChanged(ChangeEvent e) 
-      {
-       if ((server.getActualTask().getLevel() < 5) && (!Main.debuggingModeOn) )
-       {
-            if((InstructionPanel.slideProblem == server.getActualTask().getLevel())&&(InstructionPanel.getLastActionPerformed()>=tabPane.getSelectedIndex()))
-              currentIndex=tabPane.getSelectedIndex();
-            else
-            {
-              tabPane.setSelectedIndex(currentIndex);
-              MessageDialog.showMessageDialog(f, true, "Move forward to the next slide first.", graph);
-            }
-        }
-        
+      public void stateChanged(ChangeEvent e) {
         //Only lets the user see the descriptions tab
 
-        if (allVertexesDefined() == false) 
-        {
-          if (tabPane.getSelectedIndex() != DESCRIPTION) 
-          {
+        if (allVertexesDefined() == false) {
+          if (tabPane.getSelectedIndex() != DESCRIPTION) {
             tabPane.setSelectedIndex(DESCRIPTION);
-            MessageDialog.showMessageDialog(f, true, "Before leaving this tab, please use the Check button to make sure your description is correct (green).", graph);
-            if (!turnOfLogMessagesForThisInstance) 
+            MessageDialog.showMessageDialog(f, true, "Please Create the node before going to other Tabs.", graph);
+            if (!turnOfLogMessagesForThisInstance) {
               logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.5");
+            }
             currentIndex = tabPane.getSelectedIndex();
           }
-        } 
-        else 
-        {
-          if (tabPane.getSelectedIndex() != GRAPHS) 
-          {
-            if (tabPane.getSelectedIndex() != currentIndex) 
-            {
+        } else {
+          if (tabPane.getSelectedIndex() != GRAPHS) {
+            if (tabPane.getSelectedIndex() != currentIndex) {
               //Print the appropriate logger
-              if (tabPane.getSelectedIndex() == DESCRIPTION) 
+              if (tabPane.getSelectedIndex() == DESCRIPTION) {
+                currentIndex = tabPane.getSelectedIndex();
+                if (!turnOfLogMessagesForThisInstance) {
+                  logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.5");
+                }
+              } else if (tabPane.getSelectedIndex() == INPUTS) {
+                if (!turnOfLogMessagesForThisInstance) {
+                  logger.concatOut(Logger.ACTIVITY, "No message", "Go to inputs tab try");
+
+
+                  currentIndex = tabPane.getSelectedIndex();
+                  if (!turnOfLogMessagesForThisInstance) {
+                    logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.6");
+                  }
+
+                }
+              } else if (tabPane.getSelectedIndex() == CALCULATIONS) {
+                if (!turnOfLogMessagesForThisInstance) {
+                  logger.concatOut(Logger.ACTIVITY, "No message", "Go to calculations tab try");
+
+                  currentIndex = tabPane.getSelectedIndex();
+                  getCalculationsPanel().updateInputs();
+                  logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.7");
+
+                }
+              } else // it is the PLAN pannel
               {
                 currentIndex = tabPane.getSelectedIndex();
-                if (!turnOfLogMessagesForThisInstance)
-                  logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.5");
-              } 
-              else 
-                if (tabPane.getSelectedIndex() == INPUTS) 
-                {
-                  if (!turnOfLogMessagesForThisInstance) 
-                  {
-                    logger.concatOut(Logger.ACTIVITY, "No message", "Go to inputs tab try");
-                    String returnMsg = "";
-                    if (Main.MetaTutorIsOn) 
-                      returnMsg = query.listen("Go to inputs tab");
-                    else 
-                      if (!Main.MetaTutorIsOn)
-                        returnMsg = "allow";
-                    if (returnMsg.equals("allow")) 
-                    {
-                      currentIndex = tabPane.getSelectedIndex();
-                      if (!turnOfLogMessagesForThisInstance)
-                        logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.6");
-                    } 
-                    else 
-                    {
-                      tabPane.setSelectedIndex(currentIndex);
-                      new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-                    }
-                  }
-                } 
-                else 
-                  if (tabPane.getSelectedIndex() == CALCULATIONS) 
-                  {
-                    if (!turnOfLogMessagesForThisInstance) 
-                    {
-                      logger.concatOut(Logger.ACTIVITY, "No message", "Go to calculations tab try");
-                      String returnMsg = "";
-                      if (Main.MetaTutorIsOn) 
-                        returnMsg = query.listen("Go to calculations tab");
-                      else 
-                        if (!Main.MetaTutorIsOn)
-                          returnMsg = "allow";
-                      if (returnMsg.equals("allow")) 
-                      {
-                        currentIndex = tabPane.getSelectedIndex();
-                        getCalculationsPanel().updateInputs();
-                        logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.7");
-                      }
-                      else 
-                      {
-                        tabPane.setSelectedIndex(currentIndex);
-                        new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-                      }
-                    }
-                  }
-                  else // it is the PLAN pannel
-                  {
-                    currentIndex=tabPane.getSelectedIndex();
-                    //pPanel.initSelected();
-                    pPanel.initializePlan();
-                    logger.concatOut(Logger.ACTIVITY, "No message", "Student working in the plan tab");
-                  }
-                    
+                //pPanel.initSelected();
+                pPanel.initializePlan();
+                logger.concatOut(Logger.ACTIVITY, "No message", "Student working in the plan tab");
+              }
+
             }
 
-          } 
-          else 
-          {
-            if (currentVertex.getGraphsButtonStatus() == currentVertex.NOSTATUS) 
-            {
+          } else {
+            if (currentVertex.getGraphsButtonStatus() == currentVertex.NOSTATUS) {
               tabPane.setSelectedIndex(currentIndex);
               canGraphBeDisplayed();
             }
@@ -408,6 +331,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
       }
     };
     tabPane.addChangeListener(changeListener);
+
   }
 
   public Graph getGraph() {
@@ -429,80 +353,49 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
   public GraphsPanel getGraphsPanel() {
     return gPanel;
   }
-  
-  
-  public void setCorrectVertex (Vertex v) throws CommException 
-  {
+
+  public void setCorrectVertex(Vertex v) throws CommException {
     this.correctVertex = server.getActualTask().getNode(v.getNodeName());
     iPanel.correctVertex = correctVertex;
     cPanel.correctVertex = correctVertex;
   }
-  
-  public Vertex getCorrectVertex (){
+
+  public Vertex getCorrectVertex() {
     return this.correctVertex;
   }
 
   // The part '|| dPanel.getTriedDuplicate()' was added so that the window would not be able to close if the last node the user tried
   // is a duplicate. This releaves issues caused by this bug: http://hci.asu.edu/bugzilla/show_bug.cgi?id=51
-  public void windowClosing(WindowEvent e) 
-  {
-    if (currentVertex.getNodeName().isEmpty() 
-            || (!currentVertex.getNodeName().isEmpty() 
-                && (currentVertex.getDescriptionButtonStatus() == 1 
-                    || currentVertex.getDescriptionButtonStatus() == 2)) 
-            || dPanel.getTriedDuplicate()) 
-    {
-      String returnMsg = "";
-      if (Main.MetaTutorIsOn)
-        returnMsg = query.listen("Close the node");
-      else 
-        if (!Main.MetaTutorIsOn)
-        returnMsg = "allow";
+  public void windowClosing(WindowEvent e) {
+    if (currentVertex.getNodeName().isEmpty()
+            || (!currentVertex.getNodeName().isEmpty()
+            && (currentVertex.getDescriptionButtonStatus() == 1
+            || currentVertex.getDescriptionButtonStatus() == 2))
+            || dPanel.getTriedDuplicate()) {
 
-      if (returnMsg.equals("allow")) 
-      {
-        currentVertex.setIsOpen(false);
-        LinkedList<laits.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
-        for (int i = 0; i < openTabs.size(); i++)
-          if (NodeEditor.currentVertex.getNodeName().equals(currentVertex.getNodeName()))
-            openTabs.remove(i);
-        logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.9");
-        this.setVisible(false);
-        if (currentVertex.getNodeName().isEmpty()) 
-        {
-          graph.delVertex(currentVertex);
-          if (graph.getVertexes().size() != graphCanvas.listOfVertexes.size())
-            graphCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
+      currentVertex.setIsOpen(false);
+      LinkedList<laits.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
+      for (int i = 0; i < openTabs.size(); i++) {
+        if (NodeEditor.currentVertex.getNodeName().equals(currentVertex.getNodeName())) {
+          openTabs.remove(i);
         }
+      }
+      logger.out(Logger.ACTIVITY, "NodeEditor.NodeEditor.9");
+      this.setVisible(false);
+      if (currentVertex.getNodeName().isEmpty()) {
+        graph.delVertex(currentVertex);
+        if (graph.getVertexes().size() != graphCanvas.listOfVertexes.size()) {
+          graphCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
+        }
+      }
 
-        //The "Create node" button in canvass is now disabled when user uses the
-        //"create node" button in inputs tab to get the maximum number of nodes.
-        if (graph.getVertexes().size() == graphCanvas.listOfVertexes.size())
-          graphCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(false);
-        try 
-        {
-          if (TaskFactory.getInstance().getActualTask().getPhaseTask() == Task.CHALLENGE) 
-          { // if the problem is a test problem
-            if (cPanel.checkForCorrectCalculations()) // if the inputs panel has the correct inputs
-              currentVertex.setCalculationsButtonStatus(Selectable.CORRECT); // set the indicator to green
-            else
-              currentVertex.setCalculationsButtonStatus(Selectable.WRONG); // set the indicator to red
-            if (iPanel.checkForCorrectInputs()) // if the inputs panel has the correct inputs
-              currentVertex.setInputsButtonStatus(Selectable.CORRECT); // set the indicator to green
-            else
-              currentVertex.setInputsButtonStatus(Selectable.WRONG); // set the indicator to red
-          }
-        } 
-        catch (CommException ex) 
-        {
-          java.util.logging.Logger.getLogger(NodeEditor.class.getName()).log(Level.SEVERE, null, ex); // it will never catch this exeption, but wont compile without the try/catch statments
-        }
-      } 
-      else 
-        new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-    } 
-    else 
-    {
+      //The "Create node" button in canvass is now disabled when user uses the
+      //"create node" button in inputs tab to get the maximum number of nodes.
+      // if (graph.getVertexes().size() == graphCanvas.listOfVertexes.size())
+      graphCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
+
+
+    } else {
       this.setAlwaysOnTop(true);
       MessageDialog.showMessageDialog(this, true, "Before leaving this tab, please use the Check button to make sure your description is correct (green).", graph);
     }
@@ -544,6 +437,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         graphsPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Node Editor");
         setAlwaysOnTop(true);
         setResizable(false);
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -582,11 +476,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         descriptionPanel.setLayout(descriptionPanelLayout);
         descriptionPanelLayout.setHorizontalGroup(
             descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         descriptionPanelLayout.setVerticalGroup(
             descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 566, Short.MAX_VALUE)
         );
 
         tabPane.addTab("Description", descriptionPanel);
@@ -595,11 +489,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         planPanel.setLayout(planPanelLayout);
         planPanelLayout.setHorizontalGroup(
             planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         planPanelLayout.setVerticalGroup(
             planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 566, Short.MAX_VALUE)
         );
 
         tabPane.addTab("Plan", planPanel);
@@ -608,11 +502,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         inputsPanel.setLayout(inputsPanelLayout);
         inputsPanelLayout.setHorizontalGroup(
             inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         inputsPanelLayout.setVerticalGroup(
             inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 566, Short.MAX_VALUE)
         );
 
         tabPane.addTab("Inputs", inputsPanel);
@@ -621,11 +515,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         calculationPanel.setLayout(calculationPanelLayout);
         calculationPanelLayout.setHorizontalGroup(
             calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         calculationPanelLayout.setVerticalGroup(
             calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 566, Short.MAX_VALUE)
         );
 
         tabPane.addTab("Calculations", calculationPanel);
@@ -634,11 +528,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
         graphsPanel.setLayout(graphsPanelLayout);
         graphsPanelLayout.setHorizontalGroup(
             graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 629, Short.MAX_VALUE)
+            .addGap(0, 638, Short.MAX_VALUE)
         );
         graphsPanelLayout.setVerticalGroup(
             graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 567, Short.MAX_VALUE)
+            .addGap(0, 566, Short.MAX_VALUE)
         );
 
         tabPane.addTab("Graphs", graphsPanel);
@@ -658,11 +552,10 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     }// </editor-fold>//GEN-END:initComponents
 
   private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
-    if (Main.dialogIsShowing){
+    if (Main.dialogIsShowing) {
       this.setEnabled(false);
-    }  
-    else {
-    this.setEnabled(true);
+    } else {
+      this.setEnabled(true);
     }
   }//GEN-LAST:event_formWindowGainedFocus
 
@@ -672,11 +565,9 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
   }//GEN-LAST:event_tabPaneMouseClicked
 
   private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
-
   }//GEN-LAST:event_formMouseDragged
 
   private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-
   }//GEN-LAST:event_formMouseClicked
 
   private void tabPaneMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabPaneMouseDragged
@@ -693,7 +584,6 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener
     int Y = thisY + yMoved;
     setLocation(X, Y);
   }//GEN-LAST:event_tabPaneMouseDragged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel calculationPanel;
     private javax.swing.JPanel descriptionPanel;
