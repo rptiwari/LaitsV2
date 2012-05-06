@@ -2431,13 +2431,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
         openTabs.get(0).setVisible(true);
         MessageDialog.showMessageDialog(null, true, "Please close the current Node Editor.", graph);
       } else if (!hitVertex(x, y).getIsOpen()) {
-        String returnMsg = "";
-        if (Main.MetaTutorIsOn) {
-          returnMsg = query.listen("Open a node:"+name);
-        } else if (!Main.MetaTutorIsOn) {
-          returnMsg = "allow";
-        }
-        if (returnMsg.equals("allow")) {
+        
           logs.concatOut(Logger.ACTIVITY, "GraphCanvas.mouseClicked.5", name);
           NodeEditor openWindow = NodeEditor.getInstance(hitVertex(x, y), graph, this, true, false);
 //          try {
@@ -2448,10 +2442,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
           hitVertex(x, y).setIsOpen(true);
           openWindow.setVisible(true);
           openTabs.add(openWindow);
-        } else {
-          new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
-          logs.concatOut(Logger.ACTIVITY, "No message", "Meta tutor denied the action.");
-        }
+        
       } else {
         for (int i = 0; i < openTabs.size(); i++) {
           if (openTabs.get(i).getCurrentVertex().getNodeName().equals(name)) {

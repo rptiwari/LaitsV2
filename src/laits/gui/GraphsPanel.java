@@ -50,7 +50,7 @@ public class GraphsPanel extends javax.swing.JPanel {
     this.graph = g;
     initComponents();
 
-    correctAnswerPanel = new PlotPanel(this.currentVertex, t.getStartTime(), t.getTitle(), t.getUnitTime());
+    
     if (grafica != null) 
       userAnswerPanel.remove(grafica);
     if ((gc.getModelHasBeenRun() == true) && (v.getType()!=laits.graph.Vertex.NOTYPE) 
@@ -101,13 +101,13 @@ public class GraphsPanel extends javax.swing.JPanel {
     c.gridx = 0;
     c.gridy = 4;
     c.weightx = 0.0;
-    allGraphsPanel.add(correctGraphLabel, c);
+  
     //Add the user graph
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridx = 0;
     c.gridy = 5;
     c.weightx = 0.0;
-    allGraphsPanel.add(correctAnswerPanel, c);
+  
   }
 
   /**
@@ -121,13 +121,15 @@ public class GraphsPanel extends javax.swing.JPanel {
   public void resetLayout() {
     this.removeAll();
     userAnswerPanel.setPreferredSize(new java.awt.Dimension(300, 200));
-    correctAnswerPanel.setPreferredSize(new java.awt.Dimension(300, 200));
+   
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
-    layout.setHorizontalGroup(
+   /* layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(buttonPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(userGraphLabel).addContainerGap(522, Short.MAX_VALUE)).addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addGroup(layout.createSequentialGroup().addComponent(correctGraphLabel).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE).addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))).addContainerGap()));
     layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING).addGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(correctGraphLabel).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(userGraphLabel).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(userAnswerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)).addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)).addGroup(layout.createSequentialGroup().addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE).addGap(150, 150, 150))).addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)));
+            * */
+            
   }
 
   /** This method is called from within the constructor to
@@ -141,8 +143,6 @@ public class GraphsPanel extends javax.swing.JPanel {
 
         nodeDescriptionLabel = new javax.swing.JLabel();
         allGraphsPanel = new javax.swing.JPanel();
-        correctGraphLabel = new javax.swing.JLabel();
-        correctAnswerPanel = new PlotPanel(this.currentVertex, t.getStartTime(), t.getTitle(), t.getUnitTime());
         userGraphLabel = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(15, 0), new java.awt.Dimension(15, 0), new java.awt.Dimension(15, 32767));
         userAnswerPanel = new javax.swing.JPanel();
@@ -152,22 +152,7 @@ public class GraphsPanel extends javax.swing.JPanel {
 
         nodeDescriptionLabel.setText("<html></html>");
 
-        correctGraphLabel.setText("Expected Graph:");
-
-        correctAnswerPanel.setMaximumSize(new java.awt.Dimension(286, 99));
-
-        javax.swing.GroupLayout correctAnswerPanelLayout = new javax.swing.GroupLayout(correctAnswerPanel);
-        correctAnswerPanel.setLayout(correctAnswerPanelLayout);
-        correctAnswerPanelLayout.setHorizontalGroup(
-            correctAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 417, Short.MAX_VALUE)
-        );
-        correctAnswerPanelLayout.setVerticalGroup(
-            correctAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 165, Short.MAX_VALUE)
-        );
-
-        userGraphLabel.setText("User's Graph:");
+        userGraphLabel.setText("Author's Graph:");
 
         userAnswerPanel.setMaximumSize(new java.awt.Dimension(286, 99));
         userAnswerPanel.setPreferredSize(new java.awt.Dimension(286, 99));
@@ -194,13 +179,11 @@ public class GraphsPanel extends javax.swing.JPanel {
             .addGroup(allGraphsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(userGraphLabel)
-                    .addComponent(correctGraphLabel)
                     .addComponent(correctGraphLabel1)
                     .addComponent(correctGraphLabel2))
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
             .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allGraphsPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -218,11 +201,7 @@ public class GraphsPanel extends javax.swing.JPanel {
                 .addComponent(correctGraphLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(correctGraphLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(correctGraphLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(210, 210, 210))
             .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allGraphsPanelLayout.createSequentialGroup()
                     .addGap(303, 303, 303)
@@ -264,8 +243,6 @@ public class GraphsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel allGraphsPanel;
-    private javax.swing.JPanel correctAnswerPanel;
-    private javax.swing.JLabel correctGraphLabel;
     private javax.swing.JLabel correctGraphLabel1;
     private javax.swing.JLabel correctGraphLabel2;
     private javax.swing.JLabel descriptionLabel;

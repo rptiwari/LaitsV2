@@ -62,14 +62,12 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="correctAnswerPanel" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Component id="userAnswerPanel" alignment="0" min="-2" pref="409" max="-2" attributes="1"/>
                       <Component id="userGraphLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="correctGraphLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="correctGraphLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="correctGraphLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="61" max="32767" attributes="0"/>
+                  <EmptySpace pref="69" max="32767" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
@@ -91,11 +89,7 @@
                   <Component id="correctGraphLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="correctGraphLabel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="correctGraphLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="correctAnswerPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="210" max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
@@ -108,37 +102,9 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="correctGraphLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Expected Graph:"/>
-          </Properties>
-        </Component>
-        <Container class="javax.swing.JPanel" name="correctAnswerPanel">
-          <Properties>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[286, 99]"/>
-            </Property>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PlotPanel(this.currentVertex, t.getStartTime(), t.getTitle(), t.getUnitTime())"/>
-          </AuxValues>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="417" max="32767" attributes="0"/>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="165" max="32767" attributes="0"/>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-        </Container>
         <Component class="javax.swing.JLabel" name="userGraphLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="User&apos;s Graph:"/>
+            <Property name="text" type="java.lang.String" value="Author&apos;s Graph:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.Box$Filler" name="filler1">

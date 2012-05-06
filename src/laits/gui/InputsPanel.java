@@ -2,6 +2,7 @@
  * InputsPanel.java
  *
  * Created on Nov 21, 2010, 10:23:54 AM
+ * Updated by Ram on May 5,2012
  */
 package laits.gui;
 
@@ -26,6 +27,7 @@ import javax.swing.*;
  *
  * @author Megana
  * @author zpwn
+ * @author Ram
  */
 public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
@@ -51,7 +53,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
    * Creates new form InputsPanel
    */
   public InputsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    
+
     initComponents();
     this.parent = parent;
     this.g = g;
@@ -59,20 +61,13 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     this.currentVertex = v;
     currentInputPanel.setVisible(false);
     undoStack.setSize(1);
-    currentInputPanel.setLayout(new GridLayout(g.getVertexes().size(), 1));    
+    currentInputPanel.setLayout(new GridLayout(g.getVertexes().size(), 1));
     initValues();
-    initInitialState();
+    
     updateDescription();
     initInputCheckBoxes();
-    
+    initInitialState();
     initializing = false;
-
-    if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
-    {
-      deleteButton.setText("Delete Node"); // the cancel button should say delete
-    } else {
-      deleteButton.setText("Cancel Node"); // else, it says cancel
-    }
 
   }
 
@@ -82,6 +77,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     currentInputPanel.setLayout(new GridLayout(g.getVertexes().size(), 1));
     // fills out the checkbox with all vertexes created yet, with the exception of the current one
     for (int i = 0; i < g.getVertexes().size(); i++) {
+      
       Vertex vertex = (Vertex) (g.getVertexes().get(i));
       if (!vertex.getNodeName().equalsIgnoreCase("") && !vertex.getNodeName().equalsIgnoreCase(currentVertex.getNodeName())) {
         JCheckBox checkbox = new JCheckBox();
@@ -92,51 +88,48 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       }
     }
 
-    int vertexCount = g.getVertexes().size();
-    if (vertexCount == parent.server.getActualTask().listOfVertexes.size()) {
-      this.newNode.setEnabled(false);
-    }
+   
     currentInputPanel.repaint(0);
     this.repaint(0);
     parent.repaint(0);
   }
 
   /**
-   * This method is responsible for initializing the available nodes in the form of check boxes,
-   * which can be used to select as input
+   * This method is responsible for initializing the available nodes in the form
+   * of check boxes, which can be used to select as input
    */
-  public void initInputCheckBoxes(){
+  public void initInputCheckBoxes() {
     // Check if we have 2 or more vertices
-    if(g.getVertexes().size() < 2){
-      
+    if (g.getVertexes().size() < 2) {
+
       inputsButton.setEnabled(false);
       displayCurrentInputsPanel(true);
-     
+
       currentInputPanel.repaint();
-          JTextArea txt = new JTextArea("Create some more nodes, and they will appear here.  You have created only one node, and it cannot be its own input, so there is nothing to display here.");
-          txt.setLineWrap(true);
-          txt.setEditable(false);
-          txt.setBackground(Selectable.COLOR_GREY);
-          txt.setWrapStyleWord(true);
-          txt.setFont(new Font("Arial", Font.PLAIN, 14));
-          txt.setMargin(new java.awt.Insets(50, 5, 0, 0));
-          currentInputPanel.add(txt);
-         
-    }
-    else{
-      
-        for (int i = 0; i < g.getVertexes().size(); i++) {
-          Vertex vertex = (Vertex) (g.getVertexes().get(i));
-          if (!vertex.getNodeName().equalsIgnoreCase("") && !vertex.getNodeName().equalsIgnoreCase(currentVertex.getNodeName())) {
-            JCheckBox checkbox = new JCheckBox();
-            checkbox.setText(vertex.getNodeName());
-            checkbox.addItemListener(this);
-            currentInputPanel.add(checkbox);
-            boxList.add(checkbox);
-          }
+      JTextArea txt = new JTextArea("Create some more nodes, and they will appear here.  You have created only one node, and it cannot be its own input, so there is nothing to display here.");
+      txt.setLineWrap(true);
+      txt.setEditable(false);
+      txt.setBackground(Selectable.COLOR_GREY);
+      txt.setWrapStyleWord(true);
+      txt.setFont(new Font("Arial", Font.PLAIN, 14));
+      txt.setMargin(new java.awt.Insets(50, 5, 0, 0));
+      currentInputPanel.add(txt);
+
+    } else {
+
+      for (int i = 0; i < g.getVertexes().size(); i++) {
+        Vertex vertex = (Vertex) (g.getVertexes().get(i));
+        if (!vertex.getNodeName().equalsIgnoreCase("") && !vertex.getNodeName().equalsIgnoreCase(currentVertex.getNodeName())) {
+          JCheckBox checkbox = new JCheckBox();
+          checkbox.setText(vertex.getNodeName());
+          checkbox.addItemListener(this);
+          currentInputPanel.add(checkbox);
+          boxList.add(checkbox);
         }
       }
+    }
   }
+
   /**
    * This method initializes the panel if the user has already chosen a
    * description, checked, given up, or chose a wrong answer
@@ -270,18 +263,20 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     }
   }
 
+  /**
+   * This method is called when any input check box is selected from the
+   * available input nodes
+   */
   public void itemStateChanged(ItemEvent e) {
     boolean skip = false;
 
     if (initializing == false) {
       //change the input and graph status so that the (i), and (g) (possibly the (c)) circles
       //on the vertex turns white      
+
       currentVertex.setInputsButtonStatus(currentVertex.NOSTATUS);
-      if (currentVertex.getCalculationsButtonStatus() == currentVertex.WRONG) {
-        if (!currentVertex.getIsCalculationTypeCorrect()) {
-          currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-        }
-      }
+
+
       // Check through each check box, if any are selected, add it to currentVertex.inputNodesSelected (a Linked List)
       currentVertex.inputNodesSelected.clear();
       for (int i = 0; i < boxList.size(); i++) {
@@ -292,23 +287,14 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       //reset background colors
       resetColors();
 
-      if (this.giveUpPressed) {
-        if ((currentVertex.getCalculationsButtonStatus() == currentVertex.GAVEUP || currentVertex.getCalculationsButtonStatus() == currentVertex.CORRECT)) {
-          skip = true;
-        }
-      }
-
       if (!skip) {
         resetGraphStatus();
         parent.getCalculationsPanel().resetColors(TYPE_CHANGE);
-        parent.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
-        parent.getCalculationsPanel().enableButtons(true);
+        parent.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);       
         parent.getCalculationsPanel().initButtonOnTask();
       }
 
-      /*
-       * zpwn: push to undoStack
-       */
+
       if (!valueButton.isSelected()) {
         for (int i = 0; i < boxList.size(); i++) {
           if (e.getSource() == boxList.get(i) && boxList.get(i).isSelected()) {
@@ -321,97 +307,82 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       }
 
       if (!skip || (skip && (currentVertex.getType() == laits.graph.Vertex.FLOW))) {
+
         //Find the box which had the state change
         for (int i = 0; i < boxList.size(); i++) {
-          if (e.getSource() == boxList.get(i)) {
-            //Find the vertex associated with the check box
-            Vertex v = null;
-            for (int n = 0; n < g.getVertexes().size(); n++) {
-              if ((((Vertex) g.getVertexes().get(n)).getNodeName()).equalsIgnoreCase(boxList.get(i).getText())) {
-                v = (Vertex) (g.getVertexes().get(n));
-                continue;
-              }
-            }
-            //Verify that the edge does not already exist
-            boolean edgeAlreadyExists = false;
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              for (int j = 0; j < currentVertex.inedges.size(); j++) {
-                if (currentVertex.inedges.get(j).start == v && !currentVertex.inedges.get(j).edgetype.equalsIgnoreCase("flowlink")) {
-                  edgeAlreadyExists = true;
-                  System.out.println("EDGE ALREADY EXISTS!");
-                  continue;
-                }
-              }
-              //If the edge doesn't already exist, add a new regular inedge
-              if (!edgeAlreadyExists) {
-                Edge ed = g.addEdge(v, currentVertex, "regularlink");
-                currentVertex.addInEdge(ed);
-                v.addOutEdge(ed);
-                gc.repaint(0);
-                valueButton.setSelected(false);
-                inputsButton.setSelected(true);
-                logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.1", v.getNodeName() + "-" + currentVertex.getNodeName());
-                if (this.correctnessOfInputs()) //the current inputs are correct
-                {
-                  logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "correct");
-                } else //the current inputs are wrong
-                {
-                  logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "wrong");
-                }
-              }
-            } else {
-              //If the checkbox is for an inedge
-              boolean edgeRemoved = false;
-              for (int j = 0; j < currentVertex.inedges.size(); j++) {
-                Edge edge = currentVertex.inedges.get(j);
-                if (edge.start == v && edge.end == currentVertex) {
-                  /*
-                   * added these to replace the above call
-                   */
-                  g.getEdges().remove(edge);
-                  currentVertex.inedges.remove(edge);
-                  /*
-                   * end
-                   */
-                  gc.repaint();
-                  edgeRemoved = true;
-                  //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
-                  logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
-                  if (this.correctnessOfInputs()) //the current inputs are correct
-                  {
-                    logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "correct");
-                  } else //the current inputs are wrong
-                  {
-                    logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "wrong");
-                  }
-                  continue;
-                }
-              }
-              //If the checkbox is for an outedge
-              if (edgeRemoved == false) {
-                for (int j = 0; j < currentVertex.outedges.size(); j++) {
-                  Edge edge = currentVertex.outedges.get(j);
-                  if (edge.start == currentVertex && edge.end == v && edge.edgetype.equalsIgnoreCase("flowlink")) {
-                    g.delEdge(edge);
-                    gc.repaint();
-                    //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
-                    logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
-                    System.out.println("removeing the outedge");
-                    if (this.correctnessOfInputs()) //the current inputs are correct
-                    {
-                      logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "correct");
-                    } else //the current inputs are wrong
-                    {
-                      logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "wrong");
-                    }
+
+            if (e.getSource() == boxList.get(i)) {
+              
+              //Find the vertex associated with the check box
+                Vertex v = null;
+                for (int n = 0; n < g.getVertexes().size(); n++) {
+                  if ((((Vertex) g.getVertexes().get(n)).getNodeName()).equalsIgnoreCase(boxList.get(i).getText())) {
+                    v = (Vertex) (g.getVertexes().get(n));
                     continue;
                   }
                 }
-              }
+                //Verify that the edge does not already exist
+                boolean edgeAlreadyExists = false;
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                  for (int j = 0; j < currentVertex.inedges.size(); j++) {
+                    if (currentVertex.inedges.get(j).start == v && !currentVertex.inedges.get(j).edgetype.equalsIgnoreCase("flowlink")) {
+                      edgeAlreadyExists = true;
+                      System.out.println("EDGE ALREADY EXISTS!");
+                      continue;
+                    }
+                  }
+
+                  //If the edge doesn't already exist, add a new regular inedge
+                  if (!edgeAlreadyExists) {
+                    Edge ed = g.addEdge(v, currentVertex, "regularlink");
+                    currentVertex.addInEdge(ed);
+                    v.addOutEdge(ed);
+                    gc.repaint(0);
+                    valueButton.setSelected(false);
+                    inputsButton.setSelected(true);
+                    logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.1", v.getNodeName() + "-" + currentVertex.getNodeName());
+
+                  }
+                } else {
+                  //If the checkbox is for an inedge
+                  boolean edgeRemoved = false;
+                  for (int j = 0; j < currentVertex.inedges.size(); j++) {
+                    Edge edge = currentVertex.inedges.get(j);
+                    if (edge.start == v && edge.end == currentVertex) {
+
+                      //added these to replace the above call
+
+                      g.getEdges().remove(edge);
+                      currentVertex.inedges.remove(edge);
+
+                      gc.repaint();
+                      edgeRemoved = true;
+                      //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
+                      logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
+
+                      continue;
+                    }
+                  }
+                  //If the checkbox is for an outedge
+                  if (edgeRemoved == false) {
+                    for (int j = 0; j < currentVertex.outedges.size(); j++) {
+                      Edge edge = currentVertex.outedges.get(j);
+                      if (edge.start == currentVertex && edge.end == v && edge.edgetype.equalsIgnoreCase("flowlink")) {
+                        g.delEdge(edge);
+                        gc.repaint();
+                        //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
+                        logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
+                        System.out.println("removeing the outedge");
+
+                        continue;
+                      }
+                    }
+                  }
+                }
             }
-          }
-        }
+        } // End of For Loop
       }
+
       if (!skip) {
         for (int i = 0; i < currentVertex.inedges.size(); i++) {
           currentVertex.inedges.get(i).showInListModel = true;
@@ -603,7 +574,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
             }
         });
 
-        deleteButton.setText("Cancel Node");
+        deleteButton.setText("Delete Node");
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -661,11 +632,12 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       inputsButton.setSelected(false);
       valueButtonPreviouslySelected = true;
       System.out.println("inputsButtonPreviouslySelected:" + inputsButtonPreviouslySelected);
-      
-      if(g.getVertexes().size() < 2){     
-      displayCurrentInputsPanel(true);        
-    }else
-      displayCurrentInputsPanel(false);
+
+      if (g.getVertexes().size() < 2) {
+        displayCurrentInputsPanel(true);
+      } else {
+        displayCurrentInputsPanel(false);
+      }
 
       if (this.currentVertex.getType() == laits.graph.Vertex.CONSTANT) //the selecion is right
       {
@@ -719,7 +691,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
     }//GEN-LAST:event_valueButtonActionPerformed
 
-    // Method for handling the click event of Input radio button
+  // Method for handling the click event of Input radio button
     private void inputsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputsButtonActionPerformed
 
       boolean skip = false;
@@ -766,8 +738,6 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
         }
 
 
-        parent.getCalculationsPanel().enableButtons(true);
-
 
         //set the message to show that the node doesn't have any inputs
         boolean hasInputs = false;
@@ -808,60 +778,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       parent.getCalculationsPanel().initButtonOnTask();
     }//GEN-LAST:event_inputsButtonActionPerformed
 
-  private boolean correctnessOfInputs() {
-    boolean correctInput = true;
-
-    if (correctVertex == null) {
-      correctVertex = parent.correctVertex;
-    }
-
-    LinkedList<Edge> inputEdges = currentVertex.inedges;
-    if ((correctVertex.getType() == laits.graph.Vertex.FLOW) || (correctVertex.getType() == laits.graph.Vertex.AUXILIARY)) {
-      String[] inputs = correctVertex.getCorrectInputs().split(",");
-      if (inputs.length == inputEdges.size()) {
-        for (int i = 0; i < inputs.length; i++) {
-          if (!correctVertex.getCorrectInputs().contains(inputEdges.get(i).start.getNodeName().replaceAll("_", " "))) {
-            correctInput = false;
-          }
-        }
-      } else {
-        correctInput = false;
-      }
-    } else if (correctVertex.getType() == laits.graph.Vertex.STOCK) {
-      String[] correctoutput = correctVertex.getCorrectOutputs().split(",");
-      String[] correctinput = correctVertex.getCorrectInputs().split(",");
-      int numOutputs = 0;
-      int numInputs = 0;
-      //find the number of output flowlinks for this stock node
-      for (int i = 0; i < correctoutput.length; i++) {
-        if (correctoutput[i].contains("flowlink - ")) {
-          numOutputs++;
-        }
-      }
-      //find the number of input flowlinks for this stock node
-      for (int i = 0; i < correctinput.length; i++) {
-        if (correctinput[i].contains("flowlink - ")) {
-          numInputs++;
-        }
-      }
-      //make sure there are the correct number of inEdges to the stock node
-      if (inputEdges.size() == (numOutputs + numInputs)) {
-        //check whether each inEdge agrees with the problem solution
-        for (int i = 0; i < inputEdges.size(); i++) {
-          //make sure inEdge is present as a flowlink in the solution file
-          if (!(correctVertex.getCorrectOutputs().contains("flowlink - " + inputEdges.get(i).start.getNodeName().replaceAll("_", " ")))
-                  && !(correctVertex.getCorrectInputs().contains("flowlink - " + inputEdges.get(i).start.getNodeName().replaceAll("_", " ")))) {
-            correctInput = false;
-          }
-        }
-      } else {
-        correctInput = false;
-      }
-    }
-
-    return correctInput;
-  }
-
+  
   /**
    * This function checks for any syntax errors in the inputsTab, and returns
    * true if there are
@@ -1022,8 +939,6 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
   private void newNodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newNodeActionPerformed
 
-
-
     Vertex v = new Vertex();
     v.setNodeName("");
     gc.paintVertex(v);
@@ -1069,6 +984,14 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
   private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
     // This button will read the value of name and description and store then in current vertex
+    
+    //System.out.println("Node Type: "+currentVertex.typeNodeToString());
+    currentVertex.setInputsButtonStatus(Vertex.CORRECT);
+    gc.setInputsPanelChanged(false, currentVertex);
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor
+    
+    
   }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

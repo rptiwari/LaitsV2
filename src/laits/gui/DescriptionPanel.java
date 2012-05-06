@@ -125,9 +125,6 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
       checkButton.setEnabled(treeSelected);
     }
 
-//    closeButton.setEnabled(false);
-//    closeButton.setVisible(false);
-//    closeButton.setOpaque(true);
 
     if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
     {

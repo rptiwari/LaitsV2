@@ -1,8 +1,3 @@
-/*
- * CalculationsPanel.java
- *
- * Created on Nov 21, 2010, 10:24:08 AM
- */
 package laits.gui;
 
 import laits.Main;
@@ -29,7 +24,6 @@ import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.text.DefaultFormatter;
 
-
 /**
  *
  * @author Megana
@@ -37,7 +31,7 @@ import javax.swing.text.DefaultFormatter;
  * @author zpwn
  */
 public class CalculationsPanel extends javax.swing.JPanel implements PropertyChangeListener {
-  
+
   Vertex currentVertex, correctVertex;
   NodeEditor parent;
   private Logger logger = Logger.getLogger();
@@ -61,75 +55,60 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * Creates new form CalculationsPanel
    */
   public CalculationsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    initializing = true;
+    System.out.println("Calc Constructor called");
+    initializing = true;    
     initComponents();
+    
     parent.addWindowListener(new java.awt.event.WindowAdapter() {
-
       public void windowClosing(java.awt.event.WindowEvent evt) {
         formWindowClosing(evt);
       }
     });
-    
+
     this.currentVertex = v;
     this.parent = parent;
     this.graph = g;
     this.gc = gc;
-    
+
     group = new ButtonGroup();
     group.add(givenValueButton);
     group.add(accumulatesButton);
     group.add(functionButton);
-    
+
     initValues();
-    
+
     inputJustAdded(false);
     initializing = false;
     
-    // Setting the text on Cancel/Delete Button
-    if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
-    {
-      deleteButton.setText("Delete Node"); // the cancel button should say delete
-    } else {
-      deleteButton.setText("Cancel Node"); // else, it says cancel
-    }
-    
   }
-  
+
   public void initButtonOnTask() {
-    // Depending on what type the current task is, checkButton oand giveUpButton should either be
-    // disabled or enabled
-    giveUpButton.setEnabled(false); // should be disabled on launch
+    // Check and Giveup are always disabled    
+    giveUpButton.setEnabled(false);
     checkButton.setEnabled(false);
-    
-    if (this.parent.server.getActualTask().getPhaseTask() == Task.CHALLENGE) {
-      enableButtons(false);
-    }
+        
   }
-  
+
   public DefaultListModel getjListModel() {
     return jListModel;
   }
-  
-  public void enableButtons(boolean flag) {
-    
-    checkButton.setEnabled(flag);
-    giveUpButton.setEnabled(flag);
-  }
-  
+
+ 
+
   public void initValues() {
     updateInputs();
-    enableButtons(false);
+    
     radioButtonPanel.setBackground(Selectable.COLOR_BACKGROUND);
     jTextAreaEquation.setBackground(Selectable.COLOR_BACKGROUND);
     givenValueTextField.setBackground(Selectable.COLOR_BACKGROUND);
     accumulatesButton.setBackground(Selectable.COLOR_BACKGROUND);
     givenValueButton.setBackground(Selectable.COLOR_BACKGROUND);
     functionButton.setBackground(Selectable.COLOR_BACKGROUND);
-    
+
 //    if (correctVertex == null) {
 //      correctVertex = parent.server.getActualTask().getNode(currentVertex.getNodeName());
 //    }
-    
+
     if (currentVertex.getType() == laits.graph.Vertex.CONSTANT) {
       // the calculation pannel shows the InitialValue pannel
       givenValueButton.setSelected(true);
@@ -226,51 +205,50 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       this.disableKeyPad();
     }
 
- if (currentVertex.CORRECT == currentVertex.getCalculationsButtonStatus()) {
-      // All the pannels are correct
-      radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
-      jTextAreaEquation.setBackground(Selectable.COLOR_CORRECT);
-      givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
-      accumulatesButton.setBackground(Selectable.COLOR_CORRECT);
-      givenValueButton.setBackground(Selectable.COLOR_CORRECT);
-      functionButton.setBackground(Selectable.COLOR_CORRECT);
-      // all buttons need to be disabled, nothing can be changed anymore
-      givenValueButton.setEnabled(false);
-      accumulatesButton.setEnabled(false);
-      functionButton.setEnabled(false);
-      givenValueTextField.setEnabled(false);
-      setKeyboardStatus(false);
-      jListVariables.setEnabled(false);
-      jTextAreaEquation.setEnabled(false);
-      enableButtons(false);
-      disableKeyPad();
-      deleteButton.setEnabled(false);
-      if ((currentVertex.getType() == laits.graph.Vertex.STOCK) || (currentVertex.getType() == laits.graph.Vertex.CONSTANT)) {
-        givenValueTextField.setText(String.valueOf(currentVertex.getInitialValue()));
-        if ((currentVertex.getType() == laits.graph.Vertex.STOCK) && (!currentVertex.getFormula().isEmpty())) {
-          jTextAreaEquation.setText(currentVertex.getFormula());
-        }
-      } else { // it is a flow
-        if (!currentVertex.getFormula().isEmpty()) {
-          jTextAreaEquation.setText(currentVertex.getFormula());
-        }
-      }
-    }
-    
+//    if (currentVertex.CORRECT == currentVertex.getCalculationsButtonStatus()) {
+//      // All the pannels are correct
+//      radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
+//      jTextAreaEquation.setBackground(Selectable.COLOR_CORRECT);
+//      givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
+//      accumulatesButton.setBackground(Selectable.COLOR_CORRECT);
+//      givenValueButton.setBackground(Selectable.COLOR_CORRECT);
+//      functionButton.setBackground(Selectable.COLOR_CORRECT);
+//      // all buttons need to be disabled, nothing can be changed anymore
+//      givenValueButton.setEnabled(false);
+//      accumulatesButton.setEnabled(false);
+//      functionButton.setEnabled(false);
+//      givenValueTextField.setEnabled(false);
+//      setKeyboardStatus(false);
+//      jListVariables.setEnabled(false);
+//      jTextAreaEquation.setEnabled(false);
+//      enableButtons(false);
+//      disableKeyPad();
+//      deleteButton.setEnabled(false);
+//      if ((currentVertex.getType() == laits.graph.Vertex.STOCK) || (currentVertex.getType() == laits.graph.Vertex.CONSTANT)) {
+//        givenValueTextField.setText(String.valueOf(currentVertex.getInitialValue()));
+//        if ((currentVertex.getType() == laits.graph.Vertex.STOCK) && (!currentVertex.getFormula().isEmpty())) {
+//          jTextAreaEquation.setText(currentVertex.getFormula());
+//        }
+//      } else { // it is a flow
+//        if (!currentVertex.getFormula().isEmpty()) {
+//          jTextAreaEquation.setText(currentVertex.getFormula());
+//        }
+//      }
+//    }
+
     if (accumulatesButton.isSelected()) {
       valuesLabel.setText("Next Value = Current Value +");
     } else if (functionButton.isSelected()) {
       valuesLabel.setText("Next Value = ");
     }
-    
+
     givenValueTextField.addPropertyChangeListener(this);
-    
-    if (jTextAreaEquation.getText().isEmpty()){
+
+    if (jTextAreaEquation.getText().isEmpty()) {
       deleteButton.setEnabled(false);
       enableKeyPad();
       jListVariables.setEnabled(true);
-    }
-    else {
+    } else {
       deleteButton.setEnabled(true);
     }
   }
@@ -283,10 +261,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * @return
    */
   public void deleteLastFormula() {
-    
+
     String values[] = currentVertex.getFormula().split(" ");
     currentVertex.setFormula("");
-    int valueToRemove = values.length - 1;    
+    int valueToRemove = values.length - 1;
     String toBeRemoved = values[valueToRemove].replaceAll(" ", "");
     if (toBeRemoved.length() == 1) { // if it was an operator
       inputJustAdded(true);
@@ -299,18 +277,18 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       updateInputs();
       inputJustAdded(false);
     }
-    
+
     String newFormula = "";
     for (int i = 0; i < valueToRemove; i++) {
       if (!values[i].isEmpty() || !values[i].equals(" ")) {
         newFormula += values[i];
       }
     }
-    
+
     currentVertex.addInitialFormula(newFormula);
-    
+
     commitEdit();
-    
+
   }
 
   /**
@@ -322,7 +300,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     if (currentVertex.getType() == Vertex.FLOW || currentVertex.getType() == Vertex.STOCK) {
       jTextAreaEquation.setText(currentVertex.getFormula().replace('*', 'X')); // replace with non-programming langauge multiply symbol
     }
-    
+
     if (currentVertex.getType() == Vertex.STOCK || currentVertex.getType() == Vertex.CONSTANT) {
       if (!accumulatesButton.isSelected()) {
         givenValueTextField.setText(String.valueOf(currentVertex.getInitialValue()));
@@ -331,7 +309,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     updateInputs();
     givenValueTextField.repaint();
   }
-  
+
   public void resetColors(boolean typeChange) {
     jTextAreaEquation.setBackground(Selectable.COLOR_WHITE);
     jTextAreaEquation.setEnabled(true);
@@ -341,7 +319,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     // the current equation will need to be reset
     currentVertex.setIsFormulaCorrect(false);
     System.out.println("test given value correct" + ((currentVertex.getIsGivenValueCorrect()) ? "true" : "false"));
-    
+
     if (!currentVertex.getIsGivenValueCorrect() || typeChange) {
       givenValueTextField.setBackground(Selectable.COLOR_WHITE);
       givenValueTextField.setEnabled(true);
@@ -350,7 +328,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     } else {
       givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
     }
-    
+
     if (!currentVertex.getIsCalculationTypeCorrect() || typeChange) {
       //  radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
       currentVertex.setIsInputsTypeCorrect(false);
@@ -375,18 +353,18 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     } else {
       radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
     }
-    
+
     currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
   }
-  
+
   public void resetColors() {
     jTextAreaEquation.setBackground(Selectable.COLOR_WHITE);
     jTextAreaEquation.setEnabled(true);
     jListVariables.setBackground(Selectable.COLOR_WHITE);
-    
+
     currentVertex.setIsFormulaCorrect(false);
     System.out.println("test given value correct" + ((currentVertex.getIsGivenValueCorrect()) ? "true" : "false"));
-    
+
     if (currentVertex.getCalculationsButtonStatus() != currentVertex.NOSTATUS) {
       if (!currentVertex.getIsGivenValueCorrect()) {
         givenValueTextField.setBackground(Selectable.COLOR_WHITE);
@@ -394,25 +372,25 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       } else {
         givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
       }
-      
+
       if (!currentVertex.getIsCalculationTypeCorrect()) {
         radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
         currentVertex.setIsInputsTypeCorrect(false);
       } else {
         radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
       }
-      
+
       currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
     }
   }
-  
+
   private void resetGraphStatus() {
     Vertex v = new Vertex();
     int firstNodeWithNoStatus = -1;
     int firstIndexOfNoStatus = -1;
     boolean restart = true;
     int[] nodeStatus = new int[graph.getVertexes().size()];
-    
+
     logger.concatOut(Logger.ACTIVITY, "No message", "Reset colors.");
     while (restart) {
       currentVertex.setGraphsButtonStatus(v.NOSTATUS);
@@ -440,7 +418,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           }
         }
       }
-      
+
       for (int i = 0; i < graph.getVertexes().size(); i++) {
         nodeStatus[i] = ((Vertex) graph.getVertexes().get(i)).getGraphsButtonStatus();
         if (nodeStatus[i] == currentVertex.NOSTATUS) {
@@ -449,12 +427,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           }
         }
       }
-      
+
       restart = (firstIndexOfNoStatus != firstNodeWithNoStatus) ? true : false;
-      
+
       firstIndexOfNoStatus = -1;
       firstNodeWithNoStatus = -1;
-      
+
       parent.canGraphBeDisplayed();
     }
   }
@@ -487,30 +465,30 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       }
     }
   }
-  
+
   public void clearEquationArea(boolean typeChange) {
     jTextAreaEquation.setText("");
     if ((currentVertex.getInitialValue() != Vertex.NOTFILLED) || typeChange) {
       givenValueTextField.setText("");
     }
   }
-  
+
   public void clearEquationArea() {
     jTextAreaEquation.setText("");
     if (currentVertex.getInitialValue() != Vertex.NOTFILLED) {
       givenValueTextField.setText("");
     }
   }
-  
+
   public void showThatJListModelHasNoInputs() {
     jListModel.clear();
     jListModel.add(0, "This node does not have any inputs defined yet,");
     jListModel.add(1, "please go back to the Inputs Tab and choose ");
     jListModel.add(2, "at least one input, if there are not inputs ");
-    jListModel.add(3, "available, please exit this node and create ");    
-    jListModel.add(4, "the needed nodes using the \"New node\" button.");    
-  }  
-  
+    jListModel.add(3, "available, please exit this node and create ");
+    jListModel.add(4, "the needed nodes using the \"New node\" button.");
+  }
+
   public void updateInputs() {
     LinkedList<String> inputList = new LinkedList<String>();
     if (currentVertex.getCalculationsButtonStatus() != currentVertex.GAVEUP
@@ -532,16 +510,16 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         for (int j = 0; j < inputList.size(); j++) {
           jListModel.add(j, inputList.get(j));
         }
-        
+
       }
-      
+
       jListVariables.repaint();
     }
   }
 
   // sets the status of the keyboard that is present when the givenValueTextField is enabled
   private void setKeyboardStatus(boolean status) {
-    
+
     keyOne.setEnabled(status);
     keyTwo.setEnabled(status);
     keyThree.setEnabled(status);
@@ -554,7 +532,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     keyZero.setEnabled(status);
     keyDecimal.setEnabled(status);
     keyDelete.setEnabled(status);
-    
+
     keyOne.setVisible(status);
     keyTwo.setVisible(status);
     keyThree.setVisible(status);
@@ -567,7 +545,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     keyZero.setVisible(status);
     keyDecimal.setVisible(status);
     keyDelete.setVisible(status);
-    
+
   }
 
   //This is used when the node is a stock
@@ -583,124 +561,116 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     multiplyButton.setEnabled(true);
     subtractButton.setEnabled(true);
     divideButton.setEnabled(true);
-    addButton.setEnabled(true);    
+    addButton.setEnabled(true);
   }
-  
+
   private void formWindowClosing(java.awt.event.WindowEvent evt) {
     status = "closing";
 //    updateEquations();
     gc.repaint();
   }
-  
+
   private boolean checkCorrectnessForFlow() {
-    
-    boolean correct = false;
-    
-    String enteredFormula = currentVertex.getFormula(); // get the user formula
-    String correctFormula = correctVertex.getFormula(); // get the correct formula
 
-    if (enteredFormula.equals(correctFormula)) {
-      currentVertex.setIsFormulaCorrect(true); // if it is correct right away, then return
-      return (correct = true);
-    } else {
-      String[] values = enteredFormula.split(" "); // split the formula
-      char operator = values[1].charAt(0); // always in the middle of the equation for a flow
-      String rearrangedFormula = "";
-      
-      switch (operator) {
-        case '+':
-          rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-          if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-            currentVertex.setIsFormulaCorrect(true);
-            return (correct = true);
-          } else {
-            currentVertex.setIsFormulaCorrect(false);
-            return (correct = false);
-            
-          }
-        case '*':
-          rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-          if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-            currentVertex.setIsFormulaCorrect(true);
-            return (correct = true);
-          } else {
-            currentVertex.setIsFormulaCorrect(false);
-            return (correct = false);
-          }
-      }
-      
-      currentVertex.setIsFormulaCorrect(false);
-      return (correct = false);
+    boolean correct = false;
+    currentVertex.setIsFormulaCorrect(true); // if it is correct right away, then return
+    return (correct = true);
+    /*
+     *
+     * String enteredFormula = currentVertex.getFormula(); // get the user
+     * formula String correctFormula = correctVertex.getFormula(); // get the
+     * correct formula
+     *
+     * if (enteredFormula.equals(correctFormula)) {
+     * currentVertex.setIsFormulaCorrect(true); // if it is correct right away,
+     * then return return (correct = true); } else { String[] values =
+     * enteredFormula.split(" "); // split the formula char operator =
+     * values[1].charAt(0); // always in the middle of the equation for a flow
+     * String rearrangedFormula = "";
+     *
+     * switch (operator) { case '+': rearrangedFormula = values[2] + " " +
+     * values[1] + " " + values[0]; // rearrange the formula if
+     * (rearrangedFormula.equals(correctFormula)) { // check the new formula
+     * currentVertex.setIsFormulaCorrect(true); return (correct = true); } else
+     * { currentVertex.setIsFormulaCorrect(false); return (correct = false);
+     *
+     * }
+     * case '*': rearrangedFormula = values[2] + " " + values[1] + " " +
+     * values[0]; // rearrange the formula if
+     * (rearrangedFormula.equals(correctFormula)) { // check the new formula
+     * currentVertex.setIsFormulaCorrect(true); return (correct = true); } else
+     * { currentVertex.setIsFormulaCorrect(false); return (correct = false); } }
+     *
+     * currentVertex.setIsFormulaCorrect(false); return (correct = false);
     }
+     */
   }
-  
+
   private boolean checkCorrectnessForStock() {
-    
+
     boolean correct = false;
-    
     if (accumulatesButton.isSelected()) {
-      try {
-        
-        if (correctVertex == null) {
-          correctVertex = parent.correctVertex;
-        }
-
-        // for the formulas
-        String enteredFormula = currentVertex.getFormula().replaceAll(" ", "");
-        String correctFormula = correctVertex.getFormula().replaceAll(" ", "");;
-
-        // For now, it needs to be current until I can remove all forms of it from the task files and change the code accordingly. 
-        if (correctFormula.startsWith("+")) {
-          correctFormula = correctFormula.substring(1); // preserve the plus sign
-        }
-        
-        if (enteredFormula.equals(correctFormula)) {
-          currentVertex.setIsFormulaCorrect(true); // if it is correct right away
-        } else {
-          String[] values = enteredFormula.split(" "); // split the formula
-          
-          if (values.length != 3) {
-            return false;
-          } else {
-            char operator = values[1].charAt(0); // always in the middle of the equation for a flow
-            String rearrangedFormula = "";
-            
-            switch (operator) {
-              case '+':
-                rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-                if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-                  currentVertex.setIsFormulaCorrect(true);
-                } else {
-                  currentVertex.setIsFormulaCorrect(false);
-                  
-                }
-              case '*':
-                rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-                if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-                  currentVertex.setIsFormulaCorrect(true);
-                } else {
-                  currentVertex.setIsFormulaCorrect(false);
-                }
-            }
-          }
-        }
-        
-        // for the numerical values
-        Double enteredValue = Double.parseDouble(givenValueTextField.getText());
-        currentVertex.setIsGivenValueCorrect(correctVertex.getInitialValue() == enteredValue);
-        
-      } catch (NumberFormatException e) {
-        currentVertex.setIsGivenValueCorrect(false);
-        return (correct = false);
-      }
+      String enteredFormula = currentVertex.getFormula().replaceAll(" ", "");
+      currentVertex.setIsFormulaCorrect(true);
+      // for the numerical values
+      Double enteredValue = Double.parseDouble(givenValueTextField.getText());
+      currentVertex.setIsGivenValueCorrect(true);
     }
-    
     if (currentVertex.getIsGivenValueCorrect()
             && currentVertex.getIsFormulaCorrect()) {
       return (correct = true);
     } else {
       return (correct = false);
     }
+    /*
+     * if (accumulatesButton.isSelected()) { try {
+     *
+     * if (correctVertex == null) { correctVertex = parent.correctVertex; }
+     *
+     * // for the formulas String enteredFormula =
+     * currentVertex.getFormula().replaceAll(" ", ""); String correctFormula =
+     * correctVertex.getFormula().replaceAll(" ", "");;
+     *
+     * // For now, it needs to be current until I can remove all forms of it
+     * from the task files and change the code accordingly. if
+     * (correctFormula.startsWith("+")) { correctFormula =
+     * correctFormula.substring(1); // preserve the plus sign }
+     *
+     * if (enteredFormula.equals(correctFormula)) {
+     * currentVertex.setIsFormulaCorrect(true); // if it is correct right away }
+     * else { String[] values = enteredFormula.split(" "); // split the formula
+     *
+     * if (values.length != 3) { return false; } else { char operator =
+     * values[1].charAt(0); // always in the middle of the equation for a flow
+     * String rearrangedFormula = "";
+     *
+     * switch (operator) { case '+': rearrangedFormula = values[2] + " " +
+     * values[1] + " " + values[0]; // rearrange the formula if
+     * (rearrangedFormula.equals(correctFormula)) { // check the new formula
+     * currentVertex.setIsFormulaCorrect(true); } else {
+     * currentVertex.setIsFormulaCorrect(false);
+     *
+     * }
+     * case '*': rearrangedFormula = values[2] + " " + values[1] + " " +
+     * values[0]; // rearrange the formula if
+     * (rearrangedFormula.equals(correctFormula)) { // check the new formula
+     * currentVertex.setIsFormulaCorrect(true); } else {
+     * currentVertex.setIsFormulaCorrect(false); } } } }
+     *
+     * // for the numerical values Double enteredValue =
+     * Double.parseDouble(givenValueTextField.getText());
+     * currentVertex.setIsGivenValueCorrect(correctVertex.getInitialValue() ==
+     * enteredValue);
+     *
+     * } catch (NumberFormatException e) {
+     * currentVertex.setIsGivenValueCorrect(false); return (correct = false); }
+     * }
+     *
+     * if (currentVertex.getIsGivenValueCorrect() &&
+     * currentVertex.getIsFormulaCorrect()) { return (correct = true); } else {
+     * return (correct = false);
+    }
+     */
   }
 
   public JFormattedTextField getGivenValueTextField() {
@@ -710,249 +680,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   public void setGivenValueTextField(JFormattedTextField givenValueTextField) {
     this.givenValueTextField = givenValueTextField;
   }
-  
-  
 
-//  private boolean checkEquation() 
-//  {
-//    //ANDREW: this should be way simpler with our use of the "formula" field, 
-//    //just a comparison of Strings, by separating each component by operator and input...
-//    //using the splitEquation method just below this one.
-//    boolean isCorrect = false;
-//    currentVertex.setIsFormulaCorrect(false);
-//    currentVertex.setIsGivenValueCorrect(false);
-//
-//    //Verify the vertex is the correct type
-//    try 
-//    {
-//      if (!currentVertex.getFormula().equalsIgnoreCase("")) 
-//      {
-//        if (currentVertex.getType() == correctVertex.getType() || currentVertex.getIsDebug()) 
-//        {
-//          //Verify the vertex has the correct equation
-//          if (currentVertex.getType() == Vertex.CONSTANT && !currentVertex.getFormula().equalsIgnoreCase("")) 
-//          {
-//            String userEquation = currentVertex.getFormula();
-//            userEquation = userEquation.replaceAll(",",""); // this is used to remove all the commas from the equation
-//            double userAnswer = Double.parseDouble(userEquation);
-//            double correctAnswer = 0.0;
-//            if (correctVertex.getInitialValue() != Vertex.NOTFILLED)
-//              correctAnswer = correctVertex.getInitialValue();
-//
-//            if (userAnswer == correctAnswer) 
-//            {
-//              isCorrect = true;
-//              currentVertex.setIsGivenValueCorrect(true);
-//            }
-//          } 
-//          else 
-//            if (currentVertex.getType() == Vertex.FLOW || currentVertex.getType() == Vertex.AUXILIARY) 
-//            {
-//              LinkedList<String> userAnswer = splitEquation(currentVertex.getFormula());
-//              LinkedList<String> correctAnswer = splitEquation(correctVertex.getFormula());
-//
-//              /***********************************************
-//               * NOTE: Add functionality for parenthesis later
-//               ***********************************************/
-//              String userAnswerString = "";
-//              String correctAnswerString = "";
-//              if (userAnswer.size() == correctAnswer.size()) 
-//              {
-//                while (!userAnswer.isEmpty()) 
-//                {
-//                  //If both contain the element being looked at, add this element to each string and remove it from the linked list
-//                  if (userAnswer.contains("/") || userAnswer.contains("-")) 
-//                  {
-//                    if (correctAnswer.contains(userAnswer.get(0))) 
-//                    {
-//                      String added = userAnswer.get(0);
-//                      String correct = correctAnswer.get(0);
-//                      userAnswerString += added;
-//                      correctAnswerString += correct;
-//                      userAnswer.remove(added);
-//                      correctAnswer.remove(correct);
-//                      currentVertex.setIsFormulaCorrect(true);
-//                    } 
-//                    else 
-//                    {
-//                      //Both equations do not contain all of the same elements, so the user's is not correct
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      return false;
-//                    }
-//                  } 
-//                  else 
-//                  {
-//                    if (correctAnswer.contains(userAnswer.get(0))) 
-//                    {
-//                      String added = userAnswer.get(0);
-//                      userAnswerString += added;
-//                      correctAnswerString += added;
-//                      userAnswer.remove(added);
-//                      correctAnswer.remove(added);
-//                      currentVertex.setIsFormulaCorrect(true);
-//                    } 
-//                    else 
-//                    {
-//                      //Both equations do not contain all of the same elements, so the user's is not correct
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      return false;
-//                    }
-//                  }
-//                }
-//              
-//                //Verify that both strings are the same
-//                if (userAnswerString.equals(correctAnswerString)) 
-//                {
-//                  currentVertex.setIsFormulaCorrect(true);
-//                  isCorrect = true;
-//                } 
-//                else 
-//                  currentVertex.setIsFormulaCorrect(false);
-//              }
-//            
-//            } 
-//            else 
-//              if (currentVertex.getType() == Vertex.STOCK) 
-//              {
-//                //Check that the equation is correct
-//                if (!currentVertex.getFormula().equalsIgnoreCase("")) 
-//                {
-//                  String userEquation = currentVertex.getFormula();
-//                  double userAnswer = -1;
-//                  try 
-//                  {
-//                    userAnswer = Double.parseDouble(userEquation);
-//                  } catch (NumberFormatException nfe) 
-//                  {
-//                    //ADD CORRECT LOGGER HERE
-//                  }
-//                  double correctAnswer = 0.0;
-//                  if (correctVertex.getFormula().equalsIgnoreCase("")) 
-//                  {
-//                    correctAnswer = correctVertex.getInitialValue();
-//                  }
-//                  //to check the given value is correct
-//                  if (userAnswer == correctAnswer) 
-//                    currentVertex.setIsFormulaCorrect(true);
-//                  else
-//                    currentVertex.setIsFormulaCorrect(false);
-//                }
-//
-//                //Check whether the stock's flows are correct
-//                String[] stockEquation = jTextAreaEquation.getText().trim().split(" ");
-//                //Find the correct flows
-//                LinkedList<String> correctFlows = new LinkedList<String>();
-//                String[] inputs = currentVertex.getCorrectInputs().split(",");
-//                String[] outputs = currentVertex.getCorrectOutputs().split(",");
-//                for (int i = 0; i < inputs.length; i++) 
-//                {
-//                  if (inputs[i].trim().startsWith("flowlink")) 
-//                  {
-//                    String toAdd = inputs[i].trim().replace("flowlink - ", "");
-//                    correctFlows.add(toAdd);
-//                  }
-//                }
-//                for (int i = 0; i < outputs.length; i++) 
-//                {
-//                  if (outputs[i].trim().startsWith("flowlink")) 
-//                  {
-//                    String toAdd = outputs[i].trim().replace("flowlink - ", "");
-//                    correctFlows.add("- " + toAdd);
-//                  }
-//                }
-//
-//                boolean allAdded = true; //used after to verify that all the correct values were added
-//                boolean inflow = true;
-//                LinkedList<String> userFlows = new LinkedList<String>();
-//                //Verify that the user's flows are supposed to be there
-//                for (int i = 0; i < stockEquation.length; i++) 
-//                {
-//                  if (inflow == true) 
-//                  {
-//                    if (stockEquation[i].equals("+")) 
-//                      continue;
-//                    else 
-//                        if (stockEquation[i].equals("-")) 
-//                        {
-//                          inflow = false;
-//                          continue;
-//                        } 
-//                        else 
-//                        {
-//                          //the value in userflow is a node
-//                          if (correctFlows.contains(stockEquation[i].replace("_", " "))) 
-//                          {
-//                            userFlows.add(stockEquation[i].replace("_", " "));
-//                            continue;
-//                          } 
-//                          else 
-//                          {
-//                            allAdded = false;
-//                            break;
-//                          }
-//                        }
-//                  } 
-//                  else 
-//                    if (inflow == false) 
-//                    {
-//                      if (stockEquation[i].equals("-")) 
-//                        continue;
-//                      else 
-//                        if (stockEquation[i].equals("+")) 
-//                        {
-//                          inflow = true;
-//                          continue;
-//                        } 
-//                        else 
-//                        {
-//                          //the value in userflow is a node
-//                          if (correctFlows.contains("- " + stockEquation[i].replace("_", " "))) 
-//                          {
-//                            userFlows.add("- " + stockEquation[i].replace("_", " "));
-//                            continue;
-//                          } 
-//                          else 
-//                          {
-//                            allAdded = false;
-//                            break;
-//                          }
-//                        }
-//                    }
-//                  }
-//
-//                  //Ensure that all flows in the correct equation
-//                  for (int i = 0; i < correctFlows.size(); i++) 
-//                  {
-//                    if (!userFlows.contains(correctFlows.get(i))) 
-//                    {
-//                      allAdded = false;
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      isCorrect = false;
-//                    }
-//                  }
-//                  if (allAdded == false) 
-//                    isCorrect = false;
-//                  else
-//                    currentVertex.setIsFormulaCorrect(true);
-//                }
-//        }
-//        /*makes sure all correct and then set isCorrect true*/
-//        if (currentVertex.getIsGivenValueCorrect() && currentVertex.getIsFormulaCorrect()) 
-//            isCorrect = true;
-//      } 
-//      else
-//        currentVertex.setIsCalculationTypeCorrect(false); 
-//
-//      if (currentVertex.getType() != correctVertex.getType()) {
-//        currentVertex.setIsCalculationTypeCorrect(false); 
-//      }
-//
-//    } catch (Exception e) {
-//      // Catch any exception that might come up
-//    }
-//
-//    return isCorrect;
-//  }
   public LinkedList<String> splitEquation(String equation) {
     LinkedList<String> parsed = new LinkedList<String>();
     String variable = "";
@@ -975,10 +703,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
     return parsed;
   }
-  
+
   private void inputJustAdded(boolean justAdded) {
     if (justAdded) {
-      jListVariables.setEnabled(false);      
+      jListVariables.setEnabled(false);
       enableKeyPad();
     } else {
       jListVariables.setEnabled(true);
@@ -1259,6 +987,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         );
 
         checkButton.setText("Check");
+        checkButton.setEnabled(false);
         checkButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 checkButtonActionPerformed(evt);
@@ -1266,6 +995,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         });
 
         giveUpButton.setText("Give Up");
+        giveUpButton.setEnabled(false);
         giveUpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 giveUpButtonActionPerformed(evt);
@@ -1408,7 +1138,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
             }
         });
 
-        deleteButton1.setText("Cancel Node");
+        deleteButton1.setText("Delete Node");
         deleteButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButton1ActionPerformed(evt);
@@ -1453,13 +1183,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(43, 43, 43)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1477,10 +1208,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         currentVertex.addToFormula("*");
         commitEdit();
         inputJustAdded(false);
-        
+
       }
 }//GEN-LAST:event_multiplyButtonActionPerformed
-  
+
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
       if (!initializing) {
         changed = true;
@@ -1511,23 +1242,23 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         if (jTextAreaEquation.getText().isEmpty()) {
           deleteButton.setEnabled(false);
           enableKeyPad();
-      jListVariables.setEnabled(true);
+          jListVariables.setEnabled(true);
         }
         gc.repaint();
         changed = true;
         gc.setCalculationsPanelChanged(true, currentVertex);
       }
 }//GEN-LAST:event_deleteButtonActionPerformed
-  
+
     private void accumulatesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accumulatesButtonActionPerformed
       // TODO add your handling code here:
       if (!initializing) {
-        
+
         if (currentVertex.getType() != Vertex.CONSTANT) {
           //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
           currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
           resetGraphStatus();
-          
+
           jTextAreaEquation.setBackground(Color.WHITE);
           jTextAreaEquation.setEnabled(true);
           jListVariables.setBackground(Color.WHITE);
@@ -1585,9 +1316,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
     }//GEN-LAST:event_accumulatesButtonActionPerformed
-  
+
     private void functionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_functionButtonActionPerformed
-      
+
       if (!initializing) {
 
 //        if (currentVertex.getType() != Vertex.FLOW) 
@@ -1595,7 +1326,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
         currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
         resetGraphStatus();
-        
+
         jTextAreaEquation.setBackground(Color.WHITE);
         jTextAreaEquation.setEnabled(true);
         jListVariables.setBackground(Color.WHITE);
@@ -1606,7 +1337,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         givenValueTextField.setBackground(Color.WHITE);
         radioButtonPanel.setBackground(Color.WHITE);
         currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-        
+
         currentVertex.setFormula("");
         previousEquationList = new LinkedList<String>();
         if (!currentVertex.getIsGivenValueCorrect()) {
@@ -1617,25 +1348,25 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         //Reformat the page
         enableKeyPad();
         givenValueLabel.setVisible(false);
-        
-        
+
+
         if (!currentVertex.getIsGivenValueCorrect()) {
           givenValueTextField.setText("");
         }
-        
+
         givenValueTextField.setVisible(false);
         setKeyboardStatus(false);
         valuesLabel.setText("Next Value = ");
         calculatorPanel.setVisible(true);
-        
+
         if (accumulatesButton.isSelected()) {
           accumulatesButton.setSelected(false);
         }
-        
+
         currentVertex.setType(Vertex.FLOW);
         changed = true;
         gc.setCalculationsPanelChanged(true, currentVertex);
-        
+
         if (currentVertex.inedges.size() == 0) {
           //needInputLabel.setText("Need Inputs!");
         } else {
@@ -1646,9 +1377,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           updateInputs();
           gc.repaint(0);
         }
-        
+
         logger.out(Logger.ACTIVITY, "CalculationsPanel.functionButtonActionPerformed.1");
-        
+
         if (jTextAreaEquation.getText().isEmpty()) {
           deleteButton.setEnabled(false);
           enableKeyPad();
@@ -1665,11 +1396,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * @param evt
    */
     private void jListVariablesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListVariablesMouseClicked
-      
-      if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) // if the question is not part of the challenge
-      {
-        checkButton.setEnabled(true); // set the check button to true
-      }
+
+     
       if (jListVariables.isEnabled()) {
         if (jListVariables.getSelectedIndex() != -1) {
           String s = jListVariables.getSelectedValue().toString();
@@ -1682,7 +1410,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           // ANDREW: should be much simpler than that, just add the string of the input to the formula, and take it off the list
           // the calls to showInListModel stay but the rest doesnt
           if (currentVertex.getType() == Vertex.FLOW) {
-            
+
             changes.add("Changed equation from previous");
             for (int i = 0; i < currentVertex.inedges.size(); i++) {
               if (currentVertex.inedges.get(i).start.getNodeName().equalsIgnoreCase(s.replace("_", " "))) {
@@ -1727,13 +1455,13 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                         currentVertex.inedges.add(0, temp_Edge);
                         currentVertex.inedges.add(j, firstEdge);
                       }
-                    }                    
+                    }
                     jTextAreaEquation.setForeground(Color.BLACK);
                     continue;
                   }
                 }
                 updateInputs();
-              }              
+              }
             } else {
               //The edge is already an inedge
               for (int i = 0; i < currentVertex.inedges.size(); i++) {
@@ -1748,28 +1476,28 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                       currentVertex.inedges.add(0, temp_Edge);
                       currentVertex.inedges.add(i, firstEdge);
                     }
-                  }                  
+                  }
                   jTextAreaEquation.setForeground(Color.BLACK);
                 }
-              }              
-              updateInputs();              
+              }
+              updateInputs();
             }
-            
-            changed = true;            
+
+            changed = true;
             gc.setCalculationsPanelChanged(true, currentVertex);
           }
-          
-          currentVertex.addToFormula(s);          
+
+          currentVertex.addToFormula(s);
           for (int i = 0; i < currentVertex.inedges.size(); i++) {
             if (currentVertex.inedges.get(i).start.getNodeName().replaceAll(" ", "").replaceAll("_", "").equalsIgnoreCase(s.replaceAll("_", ""))) {
               currentVertex.inedges.get(i).showInListModel = false;
             }
           }
-          
+
           commitEdit();
           this.inputJustAdded(true);
         }
-        
+
         giveUpButton.setEnabled(true);
         if (jTextAreaEquation.getText().isEmpty()) {
           deleteButton.setEnabled(false);
@@ -1782,7 +1510,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
 
 }//GEN-LAST:event_jListVariablesMouseClicked
-  
+
     private void givenValueButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_givenValueButtonActionPerformed
       //Delete the equation
       if (!initializing) {
@@ -1792,11 +1520,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           resetGraphStatus();
           //reset background colors
           resetColors();
-          
+
           givenValueButtonPreviouslySelected = true;
           accumulatesButtonPreviouslySelected = false;
           functionButtonPreviouslySelected = false;
-          
+
           currentVertex.setFormula("");
           jTextAreaEquation.setText("");
           //Ensure there are no inedges to constants
@@ -1821,7 +1549,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   public boolean checkForCorrectCalculations() {
     if (currentVertex.getType() == Vertex.CONSTANT) {
       Double enteredValue = Double.parseDouble(givenValueTextField.getText());
-      
+
       if (correctVertex.getInitialValue() == enteredValue) {
         currentVertex.setIsGivenValueCorrect(true);
         return true;
@@ -1831,19 +1559,19 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     } else if (currentVertex.getType() == Vertex.STOCK) {
       return checkCorrectnessForStock();
     }
-    
+
     return false;
   }
-  
+
     private void checkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkButtonActionPerformed
       gc.setCalculationsPanelChanged(false, currentVertex);
       // replaces the commas in the textField
-      givenValueTextField.setText(givenValueTextField.getText().replaceAll(",", ""));      
-      
+      givenValueTextField.setText(givenValueTextField.getText().replaceAll(",", ""));
+
       if (correctVertex == null) {
         correctVertex = parent.correctVertex;
       }
-      
+
       if (!initializing) {
         if ((currentVertex.getType() != Vertex.CONSTANT) && (jListModel.size() > 0)) {
           MessageDialog.showMessageDialog(null, true, "You must use all of the inputs to this node in your equation before you can check for correctness.", graph);
@@ -1865,11 +1593,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           // everything that should have been entered has been, check whether it is correct
           if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) {
             logger.concatOut(Logger.ACTIVITY, "No message", "Click check button try");
-            
-            
+
+
             logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.1");
             initializing = true;
-            
+
             if (givenValueButton.isSelected()) {
               givenValueButtonPreviouslySelected = true;
               accumulatesButtonPreviouslySelected = false;
@@ -1887,7 +1615,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               accumulatesButtonPreviouslySelected = false;
               functionButtonPreviouslySelected = false;
             }
-            
+
             if (!accumulatesButton.isSelected()
                     && !functionButton.isSelected()
                     && !givenValueButton.isSelected()) {
@@ -1900,10 +1628,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               functionButton.setBackground(Selectable.COLOR_WRONG);
             } else {
               boolean correct = false;
-              
+
               if (currentVertex.getType() == Vertex.CONSTANT) {
                 Double enteredValue = Double.parseDouble(givenValueTextField.getText());
-                
+
                 if (correctVertex.getInitialValue() == enteredValue) {
                   correct = true;
                   currentVertex.setIsGivenValueCorrect(true);
@@ -1913,7 +1641,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               } else if (currentVertex.getType() == Vertex.STOCK) {
                 correct = checkCorrectnessForStock();
               }
-              
+
               if (correct) {
                 //The answer is correct
                 logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.2");
@@ -1923,12 +1651,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 accumulatesButton.setBackground(Selectable.COLOR_CORRECT);
                 givenValueButton.setBackground(Selectable.COLOR_CORRECT);
                 functionButton.setBackground(Selectable.COLOR_CORRECT);
-                
+
                 if (currentVertex.getType() == Vertex.CONSTANT
                         || currentVertex.getType() == Vertex.STOCK) {
                   currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
                 }
-                
+
                 givenValueButton.setEnabled(false);
                 accumulatesButton.setEnabled(false);
                 functionButton.setEnabled(false);
@@ -1938,7 +1666,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 jTextAreaEquation.setEnabled(false);
                 disableKeyPad();
                 deleteButton.setEnabled(false);
-                enableButtons(false);
+             
                 currentVertex.setCalculationsButtonStatus(currentVertex.CORRECT);
                 currentVertex.setIsFormulaCorrect(true);
                 if (!Main.debuggingModeOn) {
@@ -1949,7 +1677,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 //The answer is wrong
                 logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.3");
                 giveUpButton.setEnabled(true); // should be enabled after the user selects the wrong choice
-                if (correctVertex.getType() == currentVertex.getType()) {                  
+                if (correctVertex.getType() == currentVertex.getType()) {
                   radioButtonPanel.setBackground(Selectable.COLOR_CORRECT);
                   accumulatesButton.setBackground(Selectable.COLOR_CORRECT);
                   givenValueButton.setBackground(Selectable.COLOR_CORRECT);
@@ -1977,7 +1705,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 }
                 currentVertex.setCalculationsButtonStatus(currentVertex.WRONG);
               }
-              
+
               if (!givenValueTextField.getText().isEmpty()) {
                 currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
               } else {
@@ -1991,7 +1719,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
 }//GEN-LAST:event_checkButtonActionPerformed
-  
+
     private void giveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giveUpButtonActionPerformed
       gc.setCalculationsPanelChanged(false, currentVertex);
       if (initializing == false /*
@@ -2009,9 +1737,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               currentVertex.inputNodesSelected.add(parent.getInputsPanel().boxList.get(i));
             }
           }
-          
+
           if (currentVertex.getType() == Vertex.FLOW || currentVertex.getType() == Vertex.AUXILIARY) {
-            
+
             boolean[] correctInputsSelected = new boolean[currentVertex.inputNodesSelected.size()];
             if ((currentVertex.getCorrectInputs().split(",").length) != currentVertex.inputNodesSelected.size()) {
               incorrectInputFound = true;
@@ -2024,7 +1752,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                   }
                 }
               }
-              
+
               for (int i = 0; i < correctInputsSelected.length; i++) {
                 if (!correctInputsSelected[i]) {
                   incorrectInputFound = true;
@@ -2048,7 +1776,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 count++;
               }
             }
-            
+
             if (count != currentVertex.inputNodesSelected.size()) {
               incorrectInputFound = true;
             } else {
@@ -2060,7 +1788,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                   }
                 }
               }
-              
+
               for (int i = 0; i < currentVertex.inputNodesSelected.size(); i++) {
                 correctInputsSelected[i] = false;
                 for (int j = 0; j < correctVertex.getCorrectInputs().split(",").length; j++) {
@@ -2069,7 +1797,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                   }
                 }
               }
-              
+
               for (int i = 0; i < currentVertex.inputNodesSelected.size(); i++) {
                 if (!(correctOutputsSelected[i] || correctInputsSelected[i])) {
                   incorrectInputFound = true;
@@ -2077,21 +1805,21 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               }
             }
           }
-          
+
           if ((parent.getInputsPanel().getInputsButtonSelected()
                   && (currentVertex.getType() == Vertex.CONSTANT)) || (!parent.getInputsPanel().getInputsButtonSelected()
                   && (currentVertex.getType() == Vertex.STOCK || (currentVertex.getType() == Vertex.FLOW))) || !parent.getInputsPanel().getInputsButtonSelected()
                   && !this.givenValueButton.isSelected()) {
             incorrectNodeTypeDefined = true;
           }
-          
+
           if (!(incorrectInputFound || incorrectNodeTypeDefined)) {
             if (parent.getInputsPanel().areAllCorrectInputsAvailable() != false) {
               resetGraphStatus();
-              
+
               logger.concatOut(Logger.ACTIVITY, "No message", "Click giveup button try");
-              
-              
+
+
               logger.out(Logger.ACTIVITY, "CalculationsPanel.giveUpButtonActionPerformed.1");
               //Clear existing answer
               initializing = true;
@@ -2100,11 +1828,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               givenValueButtonPreviouslySelected = false;
               accumulatesButtonPreviouslySelected = false;
               functionButtonPreviouslySelected = false;
-              
+
               for (int i = 0; i < currentVertex.inedges.size(); i++) {
                 currentVertex.inedges.get(i).showInListModel = false;
               }
-              
+
               currentVertex.setFormula(correctVertex.getFormula());
               currentVertex.setInitialValue(correctVertex.getInitialValue());
               if (currentVertex.getType() == Vertex.CONSTANT) {
@@ -2123,14 +1851,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 givenValueLabel.setText("Fixed value = ");
                 givenValueLabel.setVisible(true);
                 calculatorPanel.setVisible(false);
-                
+
                 int size = currentVertex.inedges.size();
                 for (int i = size - 1; i >= 0; i--) {
                   if (currentVertex.inedges.get(i) != null) {
                     graph.delEdge(currentVertex.inedges.get(i));
                   }
                 }
-                
+
                 currentVertex.setFormula("");
                 //Reformat the page
                 needInputLabel.setText("");
@@ -2169,7 +1897,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 givenValueTextField.setVisible(true);
                 givenValueTextField.requestFocus();
                 accumulatesButton.setEnabled(false);
-                
+
                 functionButton.setEnabled(false);
                 calculatorPanel.setVisible(true);
                 disableKeyPad();
@@ -2287,25 +2015,25 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 }
                 jTextAreaEquation.setText(currentVertex.getFormula());
               }
-              
+
               currentVertex.setCalculationsButtonStatus(currentVertex.GAVEUP);
 
               if (!Main.debuggingModeOn) {
-                  InstructionPanel.setProblemBeingSolved(parent.server.getActualTask().getLevel());
-                  InstructionPanel.setLastActionPerformed(SlideObject.STOP_CALC);
+                InstructionPanel.setProblemBeingSolved(parent.server.getActualTask().getLevel());
+                InstructionPanel.setLastActionPerformed(SlideObject.STOP_CALC);
               }
 
               //Set the color and disable the elements
               initValues();
-              enableButtons(false);
+            
               initializing = false;
-              
+
               if (!givenValueTextField.getText().isEmpty()) {
                 currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
               } else {
                 currentVertex.setInitialValue(Vertex.NOTFILLED);
               }
-              
+
               jListVariables.setEnabled(false);
               jTextAreaEquation.setEnabled(false);
               this.parent.setAlwaysOnTop(true);
@@ -2321,11 +2049,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
 }//GEN-LAST:event_giveUpButtonActionPerformed
-  
+
     private void givenValueTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_givenValueTextFieldKeyReleased
       currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
       gc.setCalculationsPanelChanged(true, currentVertex);
-      
+
       resetGraphStatus();
       givenValueTextField.setBackground(Selectable.COLOR_WHITE);
       try {
@@ -2342,10 +2070,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 //      } else {
 //        currentVertex.setInitialValue(Vertex.NOTFILLED);
 //      }
-      
+
       gc.repaint(0);
     }//GEN-LAST:event_givenValueTextFieldKeyReleased
-  
+
     private void givenValueTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_givenValueTextFieldKeyTyped
       // TODO add your handling code here:
       gc.setCalculationsPanelChanged(true, currentVertex);
@@ -2356,17 +2084,15 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           givenValueTextField.setText("");
         }
       }
-      
-      if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) { // if the question is not a test question
-        checkButton.setEnabled(true); // set the check button to true
-      }
-      
+
+     
+
     }//GEN-LAST:event_givenValueTextFieldKeyTyped
-  
+
   private void givenValueTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_givenValueTextFieldActionPerformed
     // TODO add your handling code here:
   }//GEN-LAST:event_givenValueTextFieldActionPerformed
-  
+
   private void subtractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subtractButtonActionPerformed
     if (!initializing) {
       changed = true;
@@ -2377,13 +2103,13 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       resetGraphStatus();
       //reset background colors
       resetColors();
-      
+
       currentVertex.addToFormula("-");
       commitEdit();
       inputJustAdded(false);
     }
   }//GEN-LAST:event_subtractButtonActionPerformed
-  
+
   private void divideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_divideButtonActionPerformed
     if (!initializing) {
       changed = true;
@@ -2394,19 +2120,19 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       resetGraphStatus();
       //reset background colors
       resetColors();
-      
+
       currentVertex.addToFormula("/");
       commitEdit();
       inputJustAdded(false);
     }
   }//GEN-LAST:event_divideButtonActionPerformed
-  
+
   private void keyboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyboardButtonActionPerformed
-    
+
     JButton button = (JButton) evt.getSource();
     String s = button.getText();
     char c = s.charAt(0);
-    
+
     if (c == '.') {
       boolean canAdd = true;
       for (int i = 0; i < givenValueTextField.getText().length(); i++) {
@@ -2420,17 +2146,17 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     } else {
       givenValueTextField.setText(givenValueTextField.getText() + c);
     }
-    
-    enableButtons(true);
+
+   
     KeyEvent key = new KeyEvent(button, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, c);
     givenValueTextFieldKeyReleased(key);
   }//GEN-LAST:event_keyboardButtonActionPerformed
-  
+
   private void keyDeletekeyboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyDeletekeyboardButtonActionPerformed
     String currentText = givenValueTextField.getText();
     String newText = currentText.substring(0, currentText.length() - 1);
     givenValueTextField.setText(newText);
-    enableButtons(true);
+    
   }//GEN-LAST:event_keyDeletekeyboardButtonActionPerformed
 
   private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
@@ -2443,17 +2169,120 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   private void deleteButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1ActionPerformed
 
     logger.concatOut(Logger.ACTIVITY, "No message", "Student deleted the node.");
-    this.currentVertex.setNodeName(""); 
+    this.currentVertex.setNodeName("");
     java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); 
+    this.parent.windowClosing(e);
   }//GEN-LAST:event_deleteButton1ActionPerformed
 
   private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
     // This button will read the value of name and description and store then in current vertex
 
+    gc.setCalculationsPanelChanged(false, currentVertex);
+    // replaces the commas in the textField
+    givenValueTextField.setText(givenValueTextField.getText().replaceAll(",", ""));
+
+    if (!initializing) {
+      if ((currentVertex.getType() != Vertex.CONSTANT) && (jListModel.size() > 0)) {
+        MessageDialog.showMessageDialog(null, true, "You must use all of the inputs to this node in your equation before you can check for correctness.", graph);
+      } else // Check to make sure certain elements are populated before even performing the solution check
+      if (!(// no type button is selected
+              (!givenValueButton.isSelected()
+              && !accumulatesButton.isSelected()
+              && !functionButton.isSelected())
+              || // fixed value without the value entered
+              (givenValueButton.isSelected()
+              && givenValueTextField.getText().isEmpty())
+              || // accumulator, no initial value or formula entered
+              (accumulatesButton.isSelected()
+              && givenValueTextField.getText().isEmpty()
+              && jTextAreaEquation.getText().isEmpty())
+              || // function and no formula enered
+              (functionButton.isSelected()
+              && jTextAreaEquation.getText().isEmpty()))) {
+        // everything that should have been entered has been, check whether it is correct
+        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) {
+          logger.concatOut(Logger.ACTIVITY, "No message", "Click check button try");
+
+
+          logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.1");
+          initializing = true;
+
+          if (givenValueButton.isSelected()) {
+            givenValueButtonPreviouslySelected = true;
+            accumulatesButtonPreviouslySelected = false;
+            functionButtonPreviouslySelected = false;
+          } else if (accumulatesButton.isSelected()) {
+            givenValueButtonPreviouslySelected = false;
+            accumulatesButtonPreviouslySelected = true;
+            functionButtonPreviouslySelected = false;
+          } else if (functionButton.isSelected()) {
+            givenValueButtonPreviouslySelected = false;
+            accumulatesButtonPreviouslySelected = false;
+            functionButtonPreviouslySelected = true;
+          } else {
+            givenValueButtonPreviouslySelected = false;
+            accumulatesButtonPreviouslySelected = false;
+            functionButtonPreviouslySelected = false;
+          }
+
+          if (!accumulatesButton.isSelected()
+                  && !functionButton.isSelected()
+                  && !givenValueButton.isSelected()) {
+            // how can this be, it should have been tested before               
+            //The answer is wrong
+            logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.3");
+            radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
+            givenValueButton.setBackground(Selectable.COLOR_WRONG);
+            accumulatesButton.setBackground(Selectable.COLOR_WRONG);
+            functionButton.setBackground(Selectable.COLOR_WRONG);
+          } else {
+            boolean correct = false;
+
+            if (currentVertex.getType() == Vertex.CONSTANT) {
+              Double enteredValue = Double.parseDouble(givenValueTextField.getText());
+
+
+              correct = true;
+              currentVertex.setIsGivenValueCorrect(true);
+
+            } else if (currentVertex.getType() == Vertex.FLOW) {
+              correct = checkCorrectnessForFlow();
+            } else if (currentVertex.getType() == Vertex.STOCK) {
+              correct = checkCorrectnessForStock();
+            }
+
+            if (correct) {
+              System.out.println("Ans is correct");
+              //The answer is correct
+              logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.2");
+             
+              if (currentVertex.getType() == Vertex.CONSTANT
+                      || currentVertex.getType() == Vertex.STOCK) {
+                currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
+              }
+
+              
+              currentVertex.setCalculationsButtonStatus(currentVertex.CORRECT);
+              currentVertex.setIsFormulaCorrect(true);
+              
+            } 
+            if (!givenValueTextField.getText().isEmpty()) {
+              currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
+            } else {
+              currentVertex.setInitialValue(Vertex.NOTFILLED);
+            }
+          }
+          initializing = false;
+          java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+          this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+
+        } else {
+          MessageDialog.showMessageDialog(null, true, "This node is the same as another node you've already defined, please choose a different description.", graph);
+        }
+      }
+    }
 
 }//GEN-LAST:event_okButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton accumulatesButton;
     private javax.swing.JButton addButton;

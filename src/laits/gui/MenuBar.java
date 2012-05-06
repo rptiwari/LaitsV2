@@ -232,7 +232,7 @@ public class MenuBar {
         }
         openWindow.getDescriptionPanel().initButtonOnTask();
         openWindow.getCalculationsPanel().initButtonOnTask();
-     
+
       }
     });
   }
@@ -340,61 +340,47 @@ public class MenuBar {
         }
 
         logs.out(Logger.ACTIVITY, "GraphCanvas.initRunButton.1");
+
         //TO DO: IMPLEMENT PREDICT BUTTON
         if (predictButton.isEnabled()) {
           try {
             String previousDescription = "previous";
             for (int i = 0; i < graph.getVertexes().size(); i++) {
               current = (Vertex) graph.getVertexes().get(i);
-              Vertex correct = TaskFactory.getInstance().getActualTask().getNode(current.getNodeName());
-              String currentDescription = current.getSelectedDescription();
-              // Check to see if there is node whose description does not match the description in the solution file
-              if (currentDescription.equals(previousDescription)) {
-                // aDuplicateNode = true;
-                previousDescription = currentDescription;
-              } else if (!currentDescription.equals(previousDescription)) {
-                previousDescription = currentDescription;
-              }
+              // Breaks here
+              // Vertex correct = TaskFactory.getInstance().getActualTask().getNode(current.getNodeName());
 
-              if (current.getDescriptionButtonStatus() == current.NOSTATUS || !current.getSelectedDescription().equals(current.getSelectedDescription())) {
-                aWrongDescription = true;
-              } // Else, check to see if there are any syntax errors
-              else if (!aWrongDescription) {
-                if (gc.checkNodeForCorrectInputSyntactics(i)) {
-                  syntacticErrors = true;
-                } // Finally, check to see if either the input or calculation tabs have the correct equation...only if the those tabs are set to NOSTATUS
-               else {
-                  if (current.getInputsButtonStatus() == current.NOSTATUS) {
-                    if (gc.checkNodeForCorrectInputs(i) != true) {
-                      inputsError[i] = 1;
-                      logger.concatOut(Logger.ACTIVITY, "No message", "Inputs tab of the node--" + current.getNodeName() + " is: wrong");
-                    } else {
-                      inputsError[i] = 0;
-                      logger.concatOut(Logger.ACTIVITY, "No message", "Inputs tab of the node--" + current.getNodeName() + " is: correct");
-                    }
+              if (gc.checkNodeForCorrectInputSyntactics(i)) {
+                syntacticErrors = true;
+              } // Finally, check to see if either the input or calculation tabs have the correct equation...only if the those tabs are set to NOSTATUS
+              else {
+                if (current.getInputsButtonStatus() == current.NOSTATUS) {
+                  if (gc.checkNodeForCorrectInputs(i) != true) {
+                    inputsError[i] = 1;
+                    logger.concatOut(Logger.ACTIVITY, "No message", "Inputs tab of the node--" + current.getNodeName() + " is: wrong");
+                  } else {
+                    inputsError[i] = 0;
+                    logger.concatOut(Logger.ACTIVITY, "No message", "Inputs tab of the node--" + current.getNodeName() + " is: correct");
+                  }
 //ANDREW: you should use the correct vertex here to compare, and we do not use selectedType anymore but type which is an int with constant values (cf Vertex)
-                    if (correct.getType() == current.getType()) {
-                      logger.concatOut(Logger.ACTIVITY, "No message", "The type of the node--" + current.getNodeName() + " is: correct");
-                    } else {
-                      logger.concatOut(Logger.ACTIVITY, "No message", "The type of the node--" + current.getNodeName() + " is: wrong");
-                    }
-                  }
 
-                  if (current.getCalculationsButtonStatus() == current.NOSTATUS) {
-                    if (gc.checkNodeForCorrectCalculations(i) != true) {
-                      calculationsError[i] = 1;
-                      logger.concatOut(Logger.ACTIVITY, "No message", "Calculation tab of the node-" + current.getNodeName() + " is: wrong");
-                    } else {
-                      calculationsError[i] = 0;
-                      logger.concatOut(Logger.ACTIVITY, "No message", "Calculation tab of the node-" + current.getNodeName() + " is: correct");
-                    }
-                  }
+                }
 
-                  if (inputsError[i] == 1 || calculationsError[i] == 1) {
-                    errorInModel = true;
+                if (current.getCalculationsButtonStatus() == current.NOSTATUS) {
+                  if (gc.checkNodeForCorrectCalculations(i) != true) {
+                    calculationsError[i] = 1;
+                    logger.concatOut(Logger.ACTIVITY, "No message", "Calculation tab of the node-" + current.getNodeName() + " is: wrong");
+                  } else {
+                    calculationsError[i] = 0;
+                    logger.concatOut(Logger.ACTIVITY, "No message", "Calculation tab of the node-" + current.getNodeName() + " is: correct");
                   }
                 }
+
+                if (inputsError[i] == 1 || calculationsError[i] == 1) {
+                  errorInModel = true;
+                }
               }
+
             }
 
             // There is a duplicate node somewhere in the graph
@@ -405,9 +391,9 @@ public class MenuBar {
               MessageDialog.showMessageDialog(null, true, "Before leaving this tab, please use the Check button to make sure your description is correct (green).", graph);
               System.out.println("runBtnClickCount:" + runBtnClickCount);
             } // The are too many or tew few nodes in the graph
-            else if (aMissingNode 
+            else if (aMissingNode
                     && (TaskFactory.getInstance().getActualTask().getTypeTask() == Task.CONSTRUCT
-                        || TaskFactory.getInstance().getActualTask().getTypeTask() == Task.MODEL)) {
+                    || TaskFactory.getInstance().getActualTask().getTypeTask() == Task.MODEL)) {
 
               MessageDialog.showMessageDialog(null, true, "Because this is an early problem, you get a free hint: at least one node is missing from your model.", graph);
             } // There are some syntactic erors in either the Inputs or Calculations panel
@@ -415,10 +401,12 @@ public class MenuBar {
               //MessageDialog.showMessageDialog(null, true, "Your model is incomplete, review your inputs and calculations.", graph);
               MessageDialog.showMessageDialog(null, true, "In order to run the model, every node must have inputs and calculations defined, which is indicated by a blue border.", graph);
             } // There is an error somewhere in the model with some vertex whose calculations or inputs haven't be checked yet
-            else if (errorInModel 
+            else if (errorInModel
                     && (TaskFactory.getInstance().getActualTask().getTypeTask() == Task.CONSTRUCT
-                        || TaskFactory.getInstance().getActualTask().getTypeTask() == Task.MODEL)) {
+                    || TaskFactory.getInstance().getActualTask().getTypeTask() == Task.MODEL)) {
               MessageDialog.showMessageDialog(null, true, "Because this is an early problem, you get a free hint: You've got all the nodes you need, but some have incorrect inputs and/or calculations, so I'm marking those.", graph);
+
+
               graph.run(TaskFactory.getInstance(), gc);
               for (int i = 0; i < graph.getVertexes().size(); i++) {
                 current = (Vertex) graph.getVertexes().get(i);
@@ -440,21 +428,16 @@ public class MenuBar {
             // what's in the solution file
             else {
               TaskFactory.getInstance().getActualTask().calculateCorrectVertexValues(graph.getVertexes());
-              
+
               graph.run(TaskFactory.getInstance(), gc);
-             
+
               for (int i = 0; i < graph.getVertexes().size(); i++) {
                 current = (Vertex) graph.getVertexes().get(i);
-                Vertex correct = TaskFactory.getInstance().getActualTask().getNode(current.getNodeName());
+               
                 if ((!current.getFormula().isEmpty() || current.getType() == Vertex.CONSTANT) && !current.correctValues.isEmpty()) {
                   int numberOfPoints = TaskFactory.getInstance().getActualTask().getEndTime() - TaskFactory.getInstance().getActualTask().getStartTime();
                   for (int j = 0; j < numberOfPoints; j++) {
-                    if (Double.compare(correct.correctValues.get(j), current.correctValues.get(j)) == 0) {
-                      allRight = true;
-                    } else {
-                      allRight = false;
-                      break; //jclaxton: now the for loop will exit with the correct boolean 
-                    }
+                      allRight = true;                    
                   }
                 } else {
                   allRight = false;
@@ -473,11 +456,7 @@ public class MenuBar {
                 }
               }
               MessageDialog.showMessageDialog(null, true, "Model run complete!", graph);
-              if (!Main.debuggingModeOn)
-              {
-                InstructionPanel.setProblemBeingSolved(TaskFactory.getInstance().getActualTask().getLevel()+1);
-                InstructionPanel.setLastActionPerformed(SlideObject.STOP_RUN);
-              }
+
             }
             logger.concatOut(Logger.ACTIVITY, "No message", "All the node's information has been sent.");
           } catch (CommException ex) {
@@ -523,7 +502,7 @@ public class MenuBar {
   public JPanel getButtonPanel() {
     return buttonPanel;
   }
-  
+
   // Created this method so that we can control the color of the DoneButton when needed
   public void setDoneButtonStatus(boolean enabled) {
     if (enabled) {
@@ -531,7 +510,7 @@ public class MenuBar {
         Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/GREEN_DONE.JPG"));
         ImageIcon icon = new ImageIcon(image);
         doneButton.setIcon(icon);
-  //      doneButton.setBackground(Color.GREEN);
+        //      doneButton.setBackground(Color.GREEN);
         doneButton.setEnabled(true);
         doneButton.setOpaque(true);
         doneButton.setBorderPainted(false);
@@ -542,7 +521,7 @@ public class MenuBar {
         Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/amt/images/BLANCK_DONE.JPG"));
         ImageIcon icon = new ImageIcon(image);
         doneButton.setIcon(icon);
-  //      doneButton.setBackground(new Color(212, 208, 200));
+        //      doneButton.setBackground(new Color(212, 208, 200));
         doneButton.setEnabled(false);
         doneButton.setOpaque(true);
         doneButton.setBorderPainted(false);
@@ -559,7 +538,7 @@ public class MenuBar {
   private void initDoneButton() {
     doneButton = new JButton(new ImageIcon("/amt/images/BLANCK_DONE.JPG"));
 //    doneButton = new JButton("Done");
-    
+
     Font normal = new Font("Arial", Font.PLAIN, 16);
     doneButton.setFont(normal);
     setDoneButtonStatus(false);
@@ -595,16 +574,16 @@ public class MenuBar {
 //        promptDialog.popup();
 //        promptDialog.setGC(gc);
 //        promptDialog.setLocationRelativeTo(gc);
-        
+
         int num1 = 0;
         try {
           num1 = TaskFactory.getInstance().getActualTask().getLevel();
         } catch (CommException ex) {
           java.util.logging.Logger.getLogger(MenuBar.class.getName()).log(Level.SEVERE, null, ex);
         }
-     
+
         LinkedList<int[]> problemList = gc.getProblemList();
-        
+
         gc.loadLevel(problemList.get(num1)[0]);
         gc.getCover().getMenuBar().setDoneButtonStatus(false);
         gc.getCover().getMenuBar().resetRunBtnClickCount();
@@ -648,7 +627,7 @@ public class MenuBar {
       gc.setStudentReceivedLevelPoint(true);
     } else if (gc.getAllCorrect() && num1 > 0) {
       gc.setContinues(true);
-      
+
     }
 
   }
