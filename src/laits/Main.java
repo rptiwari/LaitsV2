@@ -50,8 +50,9 @@ public class Main extends JFrame implements WindowListener {
   private Logger logger = Logger.getLogger();
   private Graph graph = null;
   private GraphCanvasScroll graphCanvasScroll;
-  public TaskView taskView;
+  //public TaskView taskView;
   public InstructionPanel instructionView;
+  public SituationPanel situationView;
   public static boolean MetaTutorIsOn = false;
   public static boolean ReadModelFromFile = true;
   public static boolean alreadyRan = false;
@@ -100,8 +101,9 @@ public class Main extends JFrame implements WindowListener {
     menuItemFeedback.setEnabled(false);
     
 
-    taskView = new TaskView();
+   // taskView = new TaskView();
     instructionView = new InstructionPanel();
+    situationView = new SituationPanel();
     graphCanvasScroll = new GraphCanvasScroll(this);
     
     initFonts();
@@ -110,11 +112,11 @@ public class Main extends JFrame implements WindowListener {
     graphCanvasScrollPane.add(graphCanvasScroll);
    
     problemPanel.setLayout(new java.awt.GridLayout(1, 1));
-    problemPanel.add(new TaskCreator());
+    //problemPanel.add(new TaskCreator());
+    problemPanel.add(situationView);
     
-    
-    taskView.requestFocus();
-    taskView.setAutoscrolls(true);
+    //taskView.requestFocus();
+    //taskView.setAutoscrolls(true);
     addWindowListener(this);
     
     // Make the Model menu invisible
@@ -667,14 +669,14 @@ public class Main extends JFrame implements WindowListener {
         // FY taskView.updateTask(database.getActualTask());
 
         taskFactory.setActualTask(taskFactory.searchTask(graph.getTaskID()));
-        taskView.updateTask(taskFactory.getActualTask());
-        try {
-          //taskView.updateTask(database.getTasks(graph.taskID));
-          //instructionView.updateInstruction(database.getTasks(graph.taskID));
-          taskView.updateTask(taskFactory.getTasks(graph.getTaskID()));
-          // instructionView.updateInstruction(taskFactory.getTasks(graph.taskID));
-        } catch (DataException de) {
-        }
+      //  taskView.updateTask(taskFactory.getActualTask());
+//        try {
+//          //taskView.updateTask(database.getTasks(graph.taskID));
+//          //instructionView.updateInstruction(database.getTasks(graph.taskID));
+//         // taskView.updateTask(taskFactory.getTasks(graph.getTaskID()));
+//          // instructionView.updateInstruction(taskFactory.getTasks(graph.taskID));
+//        } catch (DataException de) {
+//        }
 
         //FYgraphCanvasScroll.getGraphCanvas().updateTask(database.getActualTask());
         //FYif (database.getActualTask().getTitle() == null) {

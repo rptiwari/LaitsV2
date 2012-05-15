@@ -13,6 +13,7 @@ import laits.comm.ImageFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 import javax.swing.*;
 
 /**
@@ -112,11 +113,11 @@ public class TaskCreator extends javax.swing.JPanel
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(buttonFileOpen, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelFileUrl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labelFileUrl, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                         .addGap(114, 114, 114))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(24, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,14 +163,13 @@ public class TaskCreator extends javax.swing.JPanel
                         .addComponent(labelPreview, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(226, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(buttonEditMode, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(buttonPreviewMode, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(301, 301, 301))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(194, 194, 194)
+                        .addComponent(buttonEditMode, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(buttonPreviewMode, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,11 +178,11 @@ public class TaskCreator extends javax.swing.JPanel
                 .addComponent(labelPreview)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonEditMode)
                     .addComponent(buttonPreviewMode))
-                .addContainerGap(468, Short.MAX_VALUE))
+                .addContainerGap(337, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -196,13 +196,23 @@ public class TaskCreator extends javax.swing.JPanel
     }//GEN-LAST:event_buttonEditModeActionPerformed
 
     private void buttonPreviewModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPreviewModeActionPerformed
-        // Handling Preview Mode
-        jPanel1.setVisible(false);
+      // Validating Input Text box
+    if (jTextArea1.getText().isEmpty()) {
+      JOptionPane.showMessageDialog(this,"Please Enter the Problem Description.","LAITS Error...",JOptionPane.ERROR_MESSAGE);    
+      return;
+    }
+    if (labelFileUrl.getText().compareTo("No File Selected.")==0) {
+      JOptionPane.showMessageDialog(this,"Please select the Problem Image. Default Image will be used if no image is selected.","LAITS Warning...",JOptionPane.WARNING_MESSAGE);      
+    }
+      
+      // Handling Preview Mode
+        jPanel1.setVisible(false);                
+        
         labelPreview.setVisible(true);
        
         String problemDetails = constructPreviewText(jTextArea1.getText());
-        labelPreview.setText(problemDetails);
-        //System.out.println(problemDetails);
+        System.out.println(problemDetails);
+        labelPreview.setText(problemDetails);                
         buttonPreviewMode.setEnabled(false);
         buttonEditMode.setEnabled(true);
         
@@ -210,14 +220,24 @@ public class TaskCreator extends javax.swing.JPanel
 
     // Helper Methods 
     private String constructPreviewText(String rawText){
-        // Replacing '\n' with <br/>
+        File file = new File("src/amt/images/asu.jpg");               
+        String imageUrl = "file:"+File.separator+File.separator+file.getAbsolutePath();
+        
         if(rawText==null || rawText.isEmpty()){
             rawText = "No problem description provided";
         }
+        
+        if (labelFileUrl.getText().compareTo("No File Selected.")!=0) {
+          // Set default URL to ASU Image URL
+          imageUrl = "file:"+File.separator+File.separator+labelFileUrl.getText();
+        }
+        
+        // Replacing '\n' with <br/>
         rawText = rawText.replace("\n", "<br/>");
+        
         String htmlText="<html>"+
-                                "<table width='800'><tr><td width=25%>"+"<img src=file:\\'"+labelFileUrl.getText()+"' height='240' width='220' alt='Problem Image Not Selected.'/>"+"</td>"
-                                +"<td style='margin-left:20px;' valign='top' width='75%'>"+rawText+"</td>"
+                                "<table width='800'><tr><td width=25%>"+"<img src='"+imageUrl+"' height='240' width='240' alt='Problem Image Not Selected.'/>"+"</td>"
+                                +"<td style='margin-left:30px;' valign='top' width='75%'>"+rawText+"</td>"
                                 +"</tr></table>";;
         return htmlText;
     }

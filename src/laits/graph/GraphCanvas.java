@@ -1,7 +1,6 @@
 package laits.graph;
 
 import laits.Main;
-import laits.TaskView;
 import laits.comm.CommException;
 import laits.cover.Avatar;
 import laits.cover.Cover;
@@ -18,10 +17,9 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.logging.Level;
 import javax.swing.*;
+import laits.gui.SituationPanel;
 import metatutor.Query;
-import metatutor.MetaTutorMsg;
 
 /**
  * Class Facade of the application. This class calls the Graph class.
@@ -111,7 +109,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   private TaskFactory server;
   private LinkedList<int[]> problemList;
   private LinkedList<Double> scoreList = new LinkedList<Double>();
-  private TaskView taskView;
+  private SituationPanel taskView;
   private InstructionPanel instructionView;
   private JTabbedPane tabPane;
   private int currentLevelPoints;
@@ -160,7 +158,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       // do something
       System.out.println("GraphCanvas.GraphCanvas.1");
     }
-    this.taskView = jf.taskView;
+    this.taskView = jf.situationView;
     this.instructionView = jf.instructionView;
     this.tabPane = jf.getTabPane();
     try {
@@ -1031,7 +1029,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       currentLevel = server.getActualTask().getLevel();
 //      currentLevel += 1;
 
-      taskView.updateTask(task);
+      //taskView.updateTask(task);
       // instructionView.updateInstruction(task);
       this.updateTask(server.getActualTask());
 
@@ -1142,7 +1140,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
 
     if (task != null) {
-      taskView.updateTask(task);
+     // taskView.updateTask(task);
       this.updateTask(server.getActualTask());
       //Gets the label of the vertexes for the selected task.
       listOfVertexes = server.getActualTask().getVertexNames();

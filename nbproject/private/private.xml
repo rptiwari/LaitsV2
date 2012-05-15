@@ -3,23 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
         <file>
             <url>src/laits/Main.java</url>
-            <line>131</line>
+            <line>133</line>
         </file>
         <file>
             <url>src/amt/Main.java</url>
             <line>383</line>
         </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/Main.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/gui/NodeEditor.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/gui/DescriptionPanel.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/gui/InputsPanel.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/gui/CalculationsPanel.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/graph/Vertex.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/graph/Selectable.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/graph/GraphCanvas.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/laits/graph/Edge.java</file>
-        <file>file:/home/admin/Documents/ASU/LaitsV2/src/amt/Main.java</file>
-    </open-files>
 </project-private>
