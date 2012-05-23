@@ -37,7 +37,7 @@
       </Outputs>
       <InitialValue>256</InitialValue>
       <Equation>-annual_tree_deaths</Equation>
-      <CorrectDescription>The number of alive trees in the orchard each year</CorrectDescription>
+      <CorrectDescription>The number of trees alive in the orchard each year</CorrectDescription>
       <Plan>said to decrease</Plan>
     </Node>
 </Nodes>  

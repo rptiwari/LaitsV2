@@ -5,10 +5,7 @@
 
 package metatutor;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -81,8 +78,9 @@ public class Solution {
     
     public String readSolutionFromFile(String fileName){
         try {
+            System.out.println("FileName: "+fileName);
             SAXReader saxReader = new SAXReader();
-            Document document = saxReader.read("Task\\" + fileName);
+            Document document = saxReader.read("Task"+File.separator + fileName);
 
             Node node=null;
             String type="false";

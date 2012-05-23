@@ -29,7 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import laits.plot.GraphRangeEditor;
- 
+
 /**
  * Main class
  *
@@ -76,7 +76,7 @@ public class Main extends JFrame implements WindowListener {
   public Graph getGraph() {
     return graph;
   }
- 
+
   /**
    * Constructor
    *
@@ -86,42 +86,42 @@ public class Main extends JFrame implements WindowListener {
       //creates the connection to the database to update the tasks
       taskFactory = TaskFactory.getInstance();
       // gets the filename and general elements needed for each task, in taskFactory.task, and orders them for the experiment
-     // taskFactory.getTasks();
+      // taskFactory.getTasks();
     } catch (CommException dbe1) {
       logger.concatOut(Logger.DEBUG, "Main.Main.1", dbe1.getMessage());
-    } 
+    }
     graph = new Graph();
 
     initComponents();
-   
+
     ticketButton.setVisible(false);
     menuItemNewTask.setEnabled(true);
     menuItemExit.setEnabled(true);
     menuItemUpdate.setEnabled(false);
     menuItemFeedback.setEnabled(false);
-    
 
-   // taskView = new TaskView();
+
+    // taskView = new TaskView();
     instructionView = new InstructionPanel();
     situationView = new SituationPanel();
     graphCanvasScroll = new GraphCanvasScroll(this);
-    
+
     initFonts();
     this.setFont(graphCanvasScroll.getGraphCanvas().normal);
     graphCanvasScroll.setButtonLabel(this.statusBarLabel);
     graphCanvasScrollPane.add(graphCanvasScroll);
-   
+
     problemPanel.setLayout(new java.awt.GridLayout(1, 1));
     //problemPanel.add(new TaskCreator());
     problemPanel.add(situationView);
-    
+
     //taskView.requestFocus();
     //taskView.setAutoscrolls(true);
     addWindowListener(this);
-    
+
     // Make the Model menu invisible
     menuModel.setVisible(false);
-    
+
     // new Panel
     instructionPanel.setLayout(new java.awt.GridLayout(1, 1));
     instructionPanel.add(instructionView);
@@ -131,7 +131,7 @@ public class Main extends JFrame implements WindowListener {
 
     this.tabPane.setSelectedIndex(0); // sets the instructions tab as the default tab when opened
 
-   
+
   }
 
   // init memo for meta tutor
@@ -282,8 +282,6 @@ public class Main extends JFrame implements WindowListener {
     tabPane.addChangeListener(changeListener);
   }
 
-  
-
   /**
    * This method initializes all of the fonts to a standard type
    */
@@ -294,7 +292,7 @@ public class Main extends JFrame implements WindowListener {
     menuItemSaveTask.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemOpenTask.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemGenerateSolution.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    menuItemEditTimeRange.setFont(graphCanvasScroll.getGraphCanvas().normal);   
+    menuItemEditTimeRange.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuHelp.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemAbout.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemHelp.setFont(graphCanvasScroll.getGraphCanvas().normal);
@@ -303,7 +301,7 @@ public class Main extends JFrame implements WindowListener {
     ticketButton.setFont(graphCanvasScroll.getGraphCanvas().normal);
     menuItemExit.setFont(graphCanvasScroll.getGraphCanvas().normal);
     statusBarLabel.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    tabPane.setFont(graphCanvasScroll.getGraphCanvas().normal);    
+    tabPane.setFont(graphCanvasScroll.getGraphCanvas().normal);
   }
 
 
@@ -553,7 +551,7 @@ public class Main extends JFrame implements WindowListener {
           int id = t.getId();
           String name = t.getTitle();
           if (!taskMap.containsKey(id) || !name.equals(taskMap.get(id))) {
-    
+
             graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
             //loadScreenTask(Integer.parseInt(evt.getActionCommand()));
             tabPane.setSelectedIndex(0);
@@ -613,24 +611,22 @@ public class Main extends JFrame implements WindowListener {
    * @param evt
    */
   private void menuItemSaveTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSaveTaskActionPerformed
+
     JFileChooser fc = new JFileChooser();
     String extension = ".laits";
     File newFile = null;
-    FileNameExtensionFilter fnef = new FileNameExtensionFilter("AMT file", "laits");
+    FileNameExtensionFilter fnef = new FileNameExtensionFilter("LAITS file", "laits");
     fc.addChoosableFileFilter(fnef);
     fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
     int rc = fc.showSaveDialog(this);
     fc.setDialogTitle("Save File");
+
     if (rc == JFileChooser.APPROVE_OPTION) {
       File savedFile = fc.getSelectedFile();
       newFile = new File(savedFile.getAbsolutePath() + extension);
-      try {        
-        graph.save(newFile);
-        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.1", fc.getSelectedFile().getName());
-      } catch (IOException ex) {
-        //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.2", ex.toString());
-      }
+
+      SolutionManager.getSolutionManager().saveIntermediateSolution(savedFile.getAbsolutePath() + extension, graph, null, situationView);      
+      
     }
   }//GEN-LAST:event_menuItemSaveTaskActionPerformed
 
@@ -641,24 +637,28 @@ public class Main extends JFrame implements WindowListener {
    * @param evt
    */
   private void menuItemOpenTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenTaskActionPerformed
-    
+
     JFileChooser fc = new JFileChooser();
     File newFile = null;
     fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
     int rc = fc.showOpenDialog(this);
     fc.setDialogTitle("Open File");
     if (rc == JFileChooser.APPROVE_OPTION) {
+      
       File openFile = fc.getSelectedFile();
       
+      SolutionManager.getSolutionManager().loadSavedSolutioin(openFile.getAbsolutePath(), graph, null, situationView);
+      
+      /*
       try {
         // Implement Loading of SituationPanel
-        
-        
+
+
         //Implement Loading of Model Panel
-        
-        
+
+
         graphCanvasScroll.getGraphCanvas().deleteAll();
-    //    graph.load(openFile);
+        //    graph.load(openFile);
         graphCanvasScroll.getGraphCanvas().setModelChanged(true);
         LinkedList l = graph.getVertexes();
         LinkedList<String> list = new LinkedList<String>();
@@ -677,7 +677,7 @@ public class Main extends JFrame implements WindowListener {
         // FY taskView.updateTask(database.getActualTask());
 
         taskFactory.setActualTask(taskFactory.searchTask(graph.getTaskID()));
-      //  taskView.updateTask(taskFactory.getActualTask());
+        //  taskView.updateTask(taskFactory.getActualTask());
 //        try {
 //          //taskView.updateTask(database.getTasks(graph.taskID));
 //          //instructionView.updateInstruction(database.getTasks(graph.taskID));
@@ -703,36 +703,36 @@ public class Main extends JFrame implements WindowListener {
       } catch (Exception ex) {
         MessageDialog.showMessageDialog(this, true, "The file you are intent to open does not have the correct format", graph);
         //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-      }
+      }*/
     }
   }//GEN-LAST:event_menuItemOpenTaskActionPerformed
 
   private void menuItemGenerateSolutionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGenerateSolutionActionPerformed
     // TODO add your handling code here:
     // Check if Model has been run
-        if (Main.alreadyRan) {
-            JFileChooser fc = new JFileChooser();
-            String extension = ".txt";
-            File newFile = null;
-            FileNameExtensionFilter fnef = new FileNameExtensionFilter("LAITS Solution file", "txt");
-            fc.addChoosableFileFilter(fnef);
-            fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
-            int rc = fc.showSaveDialog(this);
-            fc.setDialogTitle("Save File");
-            if (rc == JFileChooser.APPROVE_OPTION) {
-                File savedFile = fc.getSelectedFile();
-                newFile = new File(savedFile.getAbsolutePath() + extension);
-                try {
-                    graph.saveSolution(newFile);
-                    System.out.println("Solution file saved - Main.java");
-                } catch (IOException ex) {
-                    System.out.println("Error in Saving file- Main.java");
-                }
-            }
-        } else {
-            ErrorDialog err = new ErrorDialog(this, true, "Solution Generation Error", "Please run the model before generating solution.");
-            err.setVisible(true);
+    if (Main.alreadyRan) {
+      JFileChooser fc = new JFileChooser();
+      String extension = ".txt";
+      File newFile = null;
+      FileNameExtensionFilter fnef = new FileNameExtensionFilter("LAITS Solution file", "txt");
+      fc.addChoosableFileFilter(fnef);
+      fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
+      int rc = fc.showSaveDialog(this);
+      fc.setDialogTitle("Save File");
+      if (rc == JFileChooser.APPROVE_OPTION) {
+        File savedFile = fc.getSelectedFile();
+        newFile = new File(savedFile.getAbsolutePath() + extension);
+        try {
+          graph.saveSolution(newFile);
+          System.out.println("Solution file saved - Main.java");
+        } catch (IOException ex) {
+          System.out.println("Error in Saving file- Main.java");
         }
+      }
+    } else {
+      ErrorDialog err = new ErrorDialog(this, true, "Solution Generation Error", "Please run the model before generating solution.");
+      err.setVisible(true);
+    }
   }//GEN-LAST:event_menuItemGenerateSolutionActionPerformed
 
   /**
@@ -788,13 +788,15 @@ public class Main extends JFrame implements WindowListener {
   public static boolean windowIsClosing() {
     return windowIsClosing;
   }
-public JMenuItem getMenuItemRun() {
+
+  public JMenuItem getMenuItemRun() {
     return menuItemRun;
   }
+
   /**
    * Method to close project
    *
-   * @param 
+   * @param
    */
   public void windowClosing(WindowEvent e) {
     windowIsClosing = true;
@@ -854,5 +856,4 @@ public JMenuItem getMenuItemRun() {
   public JTabbedPane getTabPane() {
     return tabPane;
   }
-
 }

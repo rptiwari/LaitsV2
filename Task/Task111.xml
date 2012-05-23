@@ -25,7 +25,7 @@
 	    </Outputs>
       <Equation>books_bought_each_week</Equation>
       <InitialValue>2</InitialValue>
-      <CorrectDescription>The number of books Rod has</CorrectDescription>
+      <CorrectDescription>The number of books Rod buys each week</CorrectDescription>
       <Plan>fixed value</Plan>
     </Node>
     <Node type="stock" name="books" extra="no">
@@ -35,7 +35,7 @@
       <Outputs></Outputs>
       <InitialValue>100</InitialValue>
       <Equation>+books_bought_each_week</Equation>
-      <CorrectDescription>The number of books Rod buys each week</CorrectDescription>
+      <CorrectDescription>The number of books Rod has</CorrectDescription>
       <Plan>said to increase</Plan>
     </Node>
   </Nodes>
@@ -50,7 +50,7 @@
           <NodeName>books</NodeName>
         </Node>
         <Node level="leaf">
-          <Description>buys each week</Description>
+          <Description>Rod buys each week</Description>
           <NodeName>books bought each week</NodeName>
         </Node>
 	  </Node>

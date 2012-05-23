@@ -10,84 +10,81 @@ import javax.swing.*;
 import laits.comm.ImageFilter;
 
 /**
- * This class is responsible for creating an Interface for adding Problem Description and Problem Image
+ * This class is responsible for creating an Interface for adding Problem
+ * Description and Problem Image
+ *
  * @author Ramayan Tiwari
  */
-public class SituationPanel extends javax.swing.JPanel implements java.beans.Customizer, ActionListener 
-{
+public class SituationPanel extends javax.swing.JPanel implements java.beans.Customizer, ActionListener {
 
-  private Dimension imageSize = new Dimension(0, 0);  
+  private Dimension imageSize = new Dimension(0, 0);
   private static Logger logger = Logger.getLogger();
   private Image image = null;
-  private Dimension sizeOfImage = new Dimension(0, 0);  
+  private Dimension sizeOfImage = new Dimension(0, 0);
   private Cover cover = null;
   public Desktop desktop = null;
   JFileChooser fc;
-  
-  
-  
+
   /**
-   * Constructor
-   * Initializes the File Choose and hides preview label
+   * Constructor Initializes the File Choose and hides preview label
    */
   public SituationPanel() {
-    super();  
-    initComponents();  
+    super();
+    initComponents();
     //this.setPreferredSize(new Dimension((int) (this.getToolkit().getScreenSize().getWidth() / 2) + 200 , 140));    
-    
-    fc = new JFileChooser();    
+
+    fc = new JFileChooser();
     fc.setAcceptAllFileFilterUsed(false);
     fc.setFileFilter(new ImageFilter());
-    
+
     previewPanel.setVisible(false);
     //labelPreview.setVisible(false);
     buttonEditMode.setEnabled(false);
   }
 
- /**
-   * Constructor
-   * Initializes the Situation Panel give the problem Description and Image URL
+  /**
+   * Constructor Initializes the Situation Panel give the problem Description
+   * and Image URL
    */
   public SituationPanel(String problemDescription, String imageURL) {
-    super();  
-    initComponents();  
-    
-    fc = new JFileChooser();    
+    super();
+    initComponents();
+
+    fc = new JFileChooser();
     fc.setAcceptAllFileFilterUsed(false);
     fc.setFileFilter(new ImageFilter());
-    
-    previewPanel.setVisible(false);    
+
+    previewPanel.setVisible(false);
     buttonEditMode.setEnabled(false);
   }
+
   /**
    * Paint this panel
    *
    * @param g
    */
   @Override
-  protected void paintComponent(Graphics g) 
-  {    
+  protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     imageSize = this.getParent().getSize();
     g.setColor(Selectable.COLOR_WHITE);  // white background
     g.fillRect(0, 0, imageSize.width, imageSize.height);
     g.setColor(Selectable.COLOR_GREY);   // gray grid
-    for (int j = 0; j < imageSize.width; j += 10)
+    for (int j = 0; j < imageSize.width; j += 10) {
       g.drawLine(j, 0, j, imageSize.height);
-    for (int i = 0; i < imageSize.height; i += 10)
+    }
+    for (int i = 0; i < imageSize.height; i += 10) {
       g.drawLine(0, i, imageSize.width, i);
-    if (image == null) 
-    {
+    }
+    if (image == null) {
       sizeOfImage = getSize();
       image = createImage(sizeOfImage.width, sizeOfImage.height);
     }
     cover.paint(g);
     repaint();
-    
+
   }
 
-  
-  
   /**
    * This method is called from within the constructor to initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is always
@@ -238,7 +235,7 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     // Handling Edit Mode      
     buttonPreviewMode.setEnabled(true);
     buttonEditMode.setEnabled(false);
-    
+
     //labelPreview.setVisible(false);
     previewPanel.setVisible(false);
     descPanel.setVisible(true);
@@ -255,7 +252,7 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
       JOptionPane.showMessageDialog(this, "Please select the Problem Image. Default Image will be used if no image is selected.", "LAITS Warning...", JOptionPane.WARNING_MESSAGE);
     }
 
-    
+
     String problemDetails = constructPreviewText(descriptionTextArea.getText());
 
     labelPreview.setText(problemDetails);
@@ -264,54 +261,85 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
 
     //labelPreview.setVisible(true);
     previewPanel.setVisible(true);
-    
+
     descPanel.setVisible(false);
     repaint();
   }//GEN-LAST:event_buttonPreviewModeActionPerformed
 
   private void buttonFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFileOpenActionPerformed
     // TODO add your handling code here:
-    if (evt.getSource() == buttonFileOpen) {                
-              int returnVal = fc.showOpenDialog(SituationPanel.this);
+    if (evt.getSource() == buttonFileOpen) {
+      int returnVal = fc.showOpenDialog(SituationPanel.this);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                
-                File file = fc.getSelectedFile();
-                labelFileUrl.setText(file.getPath());                
-            }else{
-                labelFileUrl.setText("No File Selected.");
-            }
-         }else if(evt.getSource() == buttonEditMode){
-             
-         }else if(evt.getSource() == buttonPreviewMode){
-             
-         }
-  }//GEN-LAST:event_buttonFileOpenActionPerformed
- // Helper Methods 
-    private String constructPreviewText(String rawText){
-        File file = new File("src/amt/images/asu.jpg");               
-        String imageUrl = "file:"+File.separator+File.separator+file.getAbsolutePath();
-        
-        if(rawText==null || rawText.isEmpty()){
-            rawText = "No problem description provided";
-        }
-        
-        if (labelFileUrl.getText().compareTo("No File Selected.")!=0) {
-          // Set default URL to ASU Image URL
-          imageUrl = "file:"+File.separator+File.separator+labelFileUrl.getText();
-        }
-        
-        // Replacing '\n' with <br/>
-        rawText = rawText.replace("\n", "<br/>");
-        
-        String htmlText="<html>"+
-                                "<table width='800'><tr><td width=25%>"+"<img src='"+imageUrl+"' height='240' width='240' alt='Problem Image Not Selected.'/>"+"</td>"
-                                +"<td style='margin-left:30px;' valign='top' width='75%'>"+rawText+"</td>"
-                                +"</tr></table>";;
-        return htmlText;
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+        File file = fc.getSelectedFile();
+        labelFileUrl.setText(file.getPath());
+      } else {
+        labelFileUrl.setText("No File Selected.");
+      }
+    } else if (evt.getSource() == buttonEditMode) {
+    } else if (evt.getSource() == buttonPreviewMode) {
     }
+  }//GEN-LAST:event_buttonFileOpenActionPerformed
+  // Helper Methods 
+
+  private String constructPreviewText(String rawText) {
+    File file = new File("src/amt/images/asu.jpg");
+    String imageUrl = "file:" + File.separator + File.separator + file.getAbsolutePath();
+
+    if (rawText == null || rawText.isEmpty()) {
+      rawText = "No problem description provided";
+    }
+
+    if (labelFileUrl.getText().compareTo("No File Selected.") != 0) {
+      // Set default URL to ASU Image URL
+      imageUrl = "file:" + File.separator + File.separator + labelFileUrl.getText();
+    }
+
+    // Replacing '\n' with <br/>
+    rawText = rawText.replace("\n", "<br/>");
+
+    String htmlText = "<html>"
+            + "<table width='800'><tr><td width=25%>" + "<img src='" + imageUrl + "' height='240' width='240' alt='Problem Image Not Selected.'/>" + "</td>"
+            + "<td style='margin-left:30px;' valign='top' width='75%'>" + rawText + "</td>"
+            + "</tr></table>";;
+    return htmlText;
+  }
+
+  public void actionPerformed(ActionEvent ae) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  public String getProblemDescription() {
+    if (descriptionTextArea.getText() != null) {
+      return descriptionTextArea.getText();
+    } else {
+      return "";
+    }
+  }
+
+  public String getImageURL() {
+    if (labelFileUrl.getText().compareTo("No File Selected.") != 0) {
+      return labelFileUrl.getText();
+    } else {
+      return "";
+    }
+  }
+
+  public void setProblemDescription(String inputDescription) {
+    descriptionTextArea.setText(inputDescription);
+  }
+
+  public void setImageURL(String inputURL) {
+    labelFileUrl.setText(inputURL);
+  }
+
+  public void setPreviewMode(){
+    buttonPreviewModeActionPerformed(null);
+  }
   
-   /**
+  /**
    * This method sets the Cover
    *
    * @param cover
@@ -333,36 +361,17 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     private javax.swing.JPanel previewPanel;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Auto generated
-     * @param o
-     */
-    public void setObject(Object o) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
   /**
    * Auto generated
-   * @param ae
+   *
+   * @param o
    */
-  public void actionPerformed(ActionEvent ae) {
+  public void setObject(Object o) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  
-  public String getProblemDescription(){
-    if(descriptionTextArea.getText()!=null)
-      return  descriptionTextArea.getText();
-    else
-      return "";
-  }
-  
-  public String getImageURL(){
-    if(labelFileUrl.getText().compareTo("No File Selected.")!=0){
-      return labelFileUrl.getText();
-    }else{
-      return "";
-    } 
-  }   
+  /**
+   * Auto generated
+   *
+   * @param ae
+   */
 }
-
-

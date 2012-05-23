@@ -103,15 +103,11 @@
         </Node>
 	  </Node>
       <Node level="intermediate">
-        <Description>that died</Description>            
-        <Node level="leaf">
-          <Description>each year</Description>
-          <NodeName></NodeName>
-        </Node>
-        <Node level="leaf">
-          <Description>annual tree deaths</Description>
-          <NodeName></NodeName>
-        </Node>
+        <Description>that died</Description>            
+        <Node level="leaf">
+          <Description>each year</Description>
+          <NodeName>annual tree death</NodeName>
+        </Node>
         <Node level="leaf">
           <Description>during the first year</Description>
           <NodeName>tree deaths first year</NodeName>

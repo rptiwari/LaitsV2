@@ -58,7 +58,7 @@ initial value = 47500
 	    </Outputs>
       <Equation>interest_rate</Equation>
       <InitialValue>.02</InitialValue>
-      <CorrectDescription>The proportion of the amount of money added to the account by the bank to the amount of money already in the bank</CorrectDescription>
+      <CorrectDescription>The proportion of the amount of money added to the account by the bank to the amount of money already in the bank account and it changes from year to year</CorrectDescription>
       <Plan>fixed value</Plan>
     </Node>
 
