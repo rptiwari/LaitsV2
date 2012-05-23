@@ -64,9 +64,9 @@ public class MetaTutorQues extends javax.swing.JDialog {
         Main.dialogIsShowing=true;
         LinkedList<amt.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
         for(int i=0;i<openTabs.size();i++)
-          openTabs.get(i).setEnabled(false);
-        this.setVisible(true);
+          openTabs.get(i).setEnabled(false);  
         this.setAlwaysOnTop(true);
+        this.setVisible(true);
     }
 
     /** This method is called from within the constructor to
@@ -145,54 +145,23 @@ public class MetaTutorQues extends javax.swing.JDialog {
       }
 
       boolean newDia=false;
-      try {
+
       LinkedList<amt.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
       for(int i=0;i<openTabs.size();i++)
         openTabs.get(i).setEnabled(true);
       
       // submit action:
       
-      logger.concatOut(Logger.ACTIVITY, "No message", "Submit answer try--" + this.optionComb.getSelectedIndex());
-      Thread.sleep(50);
-      String returnMsg = blockQuery.listen("Submit answer");
+      logger.concatOut(Logger.ACTIVITY, "No message", "Submit answer--"+this.optionComb.getSelectedIndex());
       Main.getMemo().append("\nYou answered: "+this.optionComb.getSelectedItem()+".\n");
-      if (returnMsg.startsWith("deny:")) {
-        new MetaTutorMsg(returnMsg.split(":")[1],true).setVisible(true);
-        logger.concatOut(Logger.ACTIVITY, "No message", "Student answered meta tutor's question wrongly.");
-        newDia=true;
-      }
-      else if (returnMsg.startsWith("allow:")){
-        new MetaTutorMsg(returnMsg.split(":")[1],true).setVisible(true);
-        logger.concatOut(Logger.ACTIVITY, "No message", "Student answered meta tutor's question correctly.");
-        newDia=true;
-      }
-      else if (returnMsg.startsWith("newdialog::")){
-        String ques=returnMsg.split("::")[1];
-        String []options=returnMsg.split("::")[2].split(",");
-        if(ques.trim().toLowerCase().startsWith("the selection you just made is incorrect"))
-          logger.concatOut(Logger.ACTIVITY, "No message", "Student answered meta tutor's question wrongly.");
-        else
-          logger.concatOut(Logger.ACTIVITY, "No message", "Student answered meta tutor's question correctly.");
-        
-        new MetaTutorQues(ques,options).setVisible(true);
-        newDia=true;
-      }
-      else if (returnMsg.startsWith("principleSel::")){
-        String message=returnMsg.split("::")[1];
 
-       //new Plan(message).display();
-       // newDia=true;
-      }
-    } catch (InterruptedException ex) {
-      java.util.logging.Logger.getLogger(MetaTutorQues.class.getName()).log(Level.SEVERE, null, ex);
-    }
 
     
     this.setVisible(false);
     this.setName("closed");
     if(!newDia){
       Main.dialogIsShowing=false;
-      LinkedList<amt.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
+      openTabs = GraphCanvas.getOpenTabs();
       if(openTabs.size()>0)
         openTabs.get(0).setVisible(true);
       }

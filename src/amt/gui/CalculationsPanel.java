@@ -52,15 +52,20 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   private boolean functionButtonPreviouslySelected = false;
   private ButtonGroup group;
   boolean jListVariablesNotEmpty = false;
-  //this is the only way to prevent the equation from deleting
+  //this prevents the equation from deleting
   private String status = "none";
   private LinkedList<String> changes = new LinkedList<String>();
   private LinkedList<String> previousEquationList = new LinkedList<String>();
   private Query query = Query.getBlockQuery();
-  private final DecimalFormat inputDecimalFormat = new DecimalFormat("###0.###");
+  private final DecimalFormat inputDecimalFormat = new DecimalFormat("####.###");
+  private boolean checkOrGiveUpButtonClicked = false;
 
   /**
    * Creates new form CalculationsPanel
+   * @param parent 
+   * @param v
+   * @param g 
+   * @param gc  
    */
   public CalculationsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
     initializing = true;
@@ -89,27 +94,77 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     
   }
   
+  /**
+   * Enables the buttons that are correct for the type of task
+   */
   public void initButtonOnTask() {
     // Depending on what type the current task is, checkButton oand giveUpButton should either be
     // disabled or enabled
-    giveUpButton.setEnabled(false); // should be disabled on launch
-    checkButton.setEnabled(false);
+    if (givenValueTextField.getText().isEmpty() && jTextAreaEquation.getText().isEmpty()) {
+      checkButton.setEnabled(false);
+      giveUpButton.setEnabled(false);
+    } else {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+    
+    if (!currentVertex.getNodeName().equals("")) {
+          closeButton.setEnabled(true);
+        }
+        else {
+          closeButton.setEnabled(false);
+        }
     
     if (this.parent.server.getActualTask().getPhaseTask() == Task.CHALLENGE) {
       enableButtons(false);
     }
+    
+    if (this.parent.server.getActualTask().getPhaseTask() != Task.INTRO) {
+      viewSlidesButton.setEnabled(false);
+      viewSlidesButton.setVisible(false);
+    }
   }
   
+  /**
+   * Getter method to get the jListModel variable
+   * @return jListModel
+   */
   public DefaultListModel getjListModel() {
     return jListModel;
   }
+
+  public JButton getKeyDelete() {
+    return keyDelete;
+  }
+
+  public void setKeyDelete(JButton keyDelete) {
+    this.keyDelete = keyDelete;
+  }
   
+  
+  
+  /**
+   * 
+   * @param flag
+   */
   public void enableButtons(boolean flag) {
     
     checkButton.setEnabled(flag);
     giveUpButton.setEnabled(flag);
   }
+
+  public JButton getCloseButton() {
+    return closeButton;
+  }
+
+  public void setCloseButton(JButton closeButton) {
+    this.closeButton = closeButton;
+  }
   
+  
+  /**
+   * This method initilizes the values needed
+   */
   public void initValues() {
     updateInputs();
     initButtonOnTask();
@@ -337,8 +392,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * Update displayed equation in the text area by removing the last value
    * entered
    *
-   * @param notError
-   * @return
    */
   public void deleteLastFormula() {
     
@@ -390,6 +443,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     givenValueTextField.repaint();
   }
   
+  /**
+   * This method resets the colors based on the type of change that happened
+   * @param typeChange
+   */
   public void resetColors(boolean typeChange) {
     jTextAreaEquation.setBackground(Selectable.COLOR_WHITE);
     jTextAreaEquation.setEnabled(true);
@@ -403,14 +460,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     if (!currentVertex.getIsGivenValueCorrect() || typeChange) {
       givenValueTextField.setBackground(Selectable.COLOR_WHITE);
       givenValueTextField.setEnabled(true);
-//      setKeyboardStatus(true);
       currentVertex.setIsGivenValueCorrect(false);
     } else {
       givenValueTextField.setBackground(Selectable.COLOR_CORRECT);
     }
     
     if (!currentVertex.getIsCalculationTypeCorrect() || typeChange) {
-      //  radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
       currentVertex.setIsInputsTypeCorrect(false);
       if (currentVertex.getType() == Vertex.STOCK || currentVertex.getType() == Vertex.FLOW) {
         givenValueButton.setSelected(false);
@@ -437,6 +492,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
   }
   
+  /**
+   * this method resets the colors
+   */
   public void resetColors() {
     jTextAreaEquation.setBackground(Selectable.COLOR_WHITE);
     jTextAreaEquation.setEnabled(true);
@@ -517,6 +575,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
   }
 
+  /**
+   * This method updates the components when needed
+   */
   public void update() {
     if (parent.getInputsPanel().getValueButtonSelected()) {
       givenValueButton.setSelected(true);
@@ -546,6 +607,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
   }
   
+  /**
+   * This method clears the givenValueTextField and jTextAreaEquation based on the type change
+   * @param typeChange
+   */
   public void clearEquationArea(boolean typeChange) {
     jTextAreaEquation.setText("");
     if ((currentVertex.getInitialValue() != Vertex.NOTFILLED) || typeChange) {
@@ -553,6 +618,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
   }
   
+  /**
+   * This method clears the givenValueTextField and jTextAreaEquation
+   */
   public void clearEquationArea() {
     jTextAreaEquation.setText("");
     if (currentVertex.getInitialValue() != Vertex.NOTFILLED) {
@@ -560,6 +628,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
   }
   
+  /**
+   * This method inserts text in the jListModel that shows that it is empty
+   */
   public void showThatJListModelHasNoInputs() {
     jListModel.clear();
     jListModel.add(0, "This node does not have any inputs defined yet,");
@@ -569,6 +640,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     jListModel.add(4, "the needed nodes using the \"New node\" button.");    
   }  
   
+  /**
+   * This method updates the inputs
+   */
   public void updateInputs() {
     LinkedList<String> inputList = new LinkedList<String>();
     if (currentVertex.getCalculationsButtonStatus() != currentVertex.GAVEUP
@@ -646,49 +720,54 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   
   private void formWindowClosing(java.awt.event.WindowEvent evt) {
     status = "closing";
-//    updateEquations();
     gc.repaint();
   }
   
   private boolean checkCorrectnessForFlow() {
-    
+
     boolean correct = false;
-    
+
     String enteredFormula = currentVertex.getFormula(); // get the user formula
     String correctFormula = correctVertex.getFormula(); // get the correct formula
 
-    if (enteredFormula.equals(correctFormula)) {
-      currentVertex.setIsFormulaCorrect(true); // if it is correct right away, then return
-      return (correct = true);
-    } else {
-      String[] values = enteredFormula.split(" "); // split the formula
-      char operator = values[1].charAt(0); // always in the middle of the equation for a flow
-      String rearrangedFormula = "";
-      
-      switch (operator) {
-        case '+':
-          rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-          if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-            currentVertex.setIsFormulaCorrect(true);
-            return (correct = true);
-          } else {
-            currentVertex.setIsFormulaCorrect(false);
-            return (correct = false);
-            
-          }
-        case '*':
-          rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
-          if (rearrangedFormula.equals(correctFormula)) { // check the new formula
-            currentVertex.setIsFormulaCorrect(true);
-            return (correct = true);
-          } else {
-            currentVertex.setIsFormulaCorrect(false);
-            return (correct = false);
-          }
+    try {
+      if (enteredFormula.equals(correctFormula)) {
+        currentVertex.setIsFormulaCorrect(true); // if it is correct right away, then return
+        return (correct = true);
+      } else {
+        String[] values = enteredFormula.split(" "); // split the formula
+        char operator = values[1].charAt(0); // always in the middle of the equation for a flow
+        String rearrangedFormula = "";
+
+        switch (operator) {
+          case '+':
+            rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
+            if (rearrangedFormula.equals(correctFormula)) { // check the new formula
+              currentVertex.setIsFormulaCorrect(true);
+              return (correct = true);
+            } else {
+              currentVertex.setIsFormulaCorrect(false);
+              return (correct = false);
+
+            }
+          case '*':
+            rearrangedFormula = values[2] + " " + values[1] + " " + values[0]; // rearrange the formula
+            if (rearrangedFormula.equals(correctFormula)) { // check the new formula
+              currentVertex.setIsFormulaCorrect(true);
+              return (correct = true);
+            } else {
+              currentVertex.setIsFormulaCorrect(false);
+              return (correct = false);
+            }
+        }
+
+        currentVertex.setIsFormulaCorrect(false);
+        return (correct = false);
       }
-      
-      currentVertex.setIsFormulaCorrect(false);
-      return (correct = false);
+
+    } catch (Exception e) {
+      System.out.println(e + " at checkCorrectnessForFlow() in CalculationsPanel.java");
+      return false;
     }
   }
   
@@ -718,7 +797,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           String[] values = enteredFormula.split(" "); // split the formula
           
           if (values.length != 3) {
-            return false;
+            currentVertex.setIsFormulaCorrect(false);
           } else {
             char operator = values[1].charAt(0); // always in the middle of the equation for a flow
             String rearrangedFormula = "";
@@ -761,256 +840,28 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     }
   }
 
+  /**
+   * getter method for givenValueTextField
+   * @return
+   */
   public JFormattedTextField getGivenValueTextField() {
     return givenValueTextField;
   }
 
+  /**
+   * setter method for the givenValueTextField
+   * @param givenValueTextField
+   */
   public void setGivenValueTextField(JFormattedTextField givenValueTextField) {
     this.givenValueTextField = givenValueTextField;
   }
   
-  
 
-//  private boolean checkEquation() 
-//  {
-//    //ANDREW: this should be way simpler with our use of the "formula" field, 
-//    //just a comparison of Strings, by separating each component by operator and input...
-//    //using the splitEquation method just below this one.
-//    boolean isCorrect = false;
-//    currentVertex.setIsFormulaCorrect(false);
-//    currentVertex.setIsGivenValueCorrect(false);
-//
-//    //Verify the vertex is the correct type
-//    try 
-//    {
-//      if (!currentVertex.getFormula().equalsIgnoreCase("")) 
-//      {
-//        if (currentVertex.getType() == correctVertex.getType() || currentVertex.getIsDebug()) 
-//        {
-//          //Verify the vertex has the correct equation
-//          if (currentVertex.getType() == Vertex.CONSTANT && !currentVertex.getFormula().equalsIgnoreCase("")) 
-//          {
-//            String userEquation = currentVertex.getFormula();
-//            userEquation = userEquation.replaceAll(",",""); // this is used to remove all the commas from the equation
-//            double userAnswer = Double.parseDouble(userEquation);
-//            double correctAnswer = 0.0;
-//            if (correctVertex.getInitialValue() != Vertex.NOTFILLED)
-//              correctAnswer = correctVertex.getInitialValue();
-//
-//            if (userAnswer == correctAnswer) 
-//            {
-//              isCorrect = true;
-//              currentVertex.setIsGivenValueCorrect(true);
-//            }
-//          } 
-//          else 
-//            if (currentVertex.getType() == Vertex.FLOW || currentVertex.getType() == Vertex.AUXILIARY) 
-//            {
-//              LinkedList<String> userAnswer = splitEquation(currentVertex.getFormula());
-//              LinkedList<String> correctAnswer = splitEquation(correctVertex.getFormula());
-//
-//              /***********************************************
-//               * NOTE: Add functionality for parenthesis later
-//               ***********************************************/
-//              String userAnswerString = "";
-//              String correctAnswerString = "";
-//              if (userAnswer.size() == correctAnswer.size()) 
-//              {
-//                while (!userAnswer.isEmpty()) 
-//                {
-//                  //If both contain the element being looked at, add this element to each string and remove it from the linked list
-//                  if (userAnswer.contains("/") || userAnswer.contains("-")) 
-//                  {
-//                    if (correctAnswer.contains(userAnswer.get(0))) 
-//                    {
-//                      String added = userAnswer.get(0);
-//                      String correct = correctAnswer.get(0);
-//                      userAnswerString += added;
-//                      correctAnswerString += correct;
-//                      userAnswer.remove(added);
-//                      correctAnswer.remove(correct);
-//                      currentVertex.setIsFormulaCorrect(true);
-//                    } 
-//                    else 
-//                    {
-//                      //Both equations do not contain all of the same elements, so the user's is not correct
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      return false;
-//                    }
-//                  } 
-//                  else 
-//                  {
-//                    if (correctAnswer.contains(userAnswer.get(0))) 
-//                    {
-//                      String added = userAnswer.get(0);
-//                      userAnswerString += added;
-//                      correctAnswerString += added;
-//                      userAnswer.remove(added);
-//                      correctAnswer.remove(added);
-//                      currentVertex.setIsFormulaCorrect(true);
-//                    } 
-//                    else 
-//                    {
-//                      //Both equations do not contain all of the same elements, so the user's is not correct
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      return false;
-//                    }
-//                  }
-//                }
-//              
-//                //Verify that both strings are the same
-//                if (userAnswerString.equals(correctAnswerString)) 
-//                {
-//                  currentVertex.setIsFormulaCorrect(true);
-//                  isCorrect = true;
-//                } 
-//                else 
-//                  currentVertex.setIsFormulaCorrect(false);
-//              }
-//            
-//            } 
-//            else 
-//              if (currentVertex.getType() == Vertex.STOCK) 
-//              {
-//                //Check that the equation is correct
-//                if (!currentVertex.getFormula().equalsIgnoreCase("")) 
-//                {
-//                  String userEquation = currentVertex.getFormula();
-//                  double userAnswer = -1;
-//                  try 
-//                  {
-//                    userAnswer = Double.parseDouble(userEquation);
-//                  } catch (NumberFormatException nfe) 
-//                  {
-//                    //ADD CORRECT LOGGER HERE
-//                  }
-//                  double correctAnswer = 0.0;
-//                  if (correctVertex.getFormula().equalsIgnoreCase("")) 
-//                  {
-//                    correctAnswer = correctVertex.getInitialValue();
-//                  }
-//                  //to check the given value is correct
-//                  if (userAnswer == correctAnswer) 
-//                    currentVertex.setIsFormulaCorrect(true);
-//                  else
-//                    currentVertex.setIsFormulaCorrect(false);
-//                }
-//
-//                //Check whether the stock's flows are correct
-//                String[] stockEquation = jTextAreaEquation.getText().trim().split(" ");
-//                //Find the correct flows
-//                LinkedList<String> correctFlows = new LinkedList<String>();
-//                String[] inputs = currentVertex.getCorrectInputs().split(",");
-//                String[] outputs = currentVertex.getCorrectOutputs().split(",");
-//                for (int i = 0; i < inputs.length; i++) 
-//                {
-//                  if (inputs[i].trim().startsWith("flowlink")) 
-//                  {
-//                    String toAdd = inputs[i].trim().replace("flowlink - ", "");
-//                    correctFlows.add(toAdd);
-//                  }
-//                }
-//                for (int i = 0; i < outputs.length; i++) 
-//                {
-//                  if (outputs[i].trim().startsWith("flowlink")) 
-//                  {
-//                    String toAdd = outputs[i].trim().replace("flowlink - ", "");
-//                    correctFlows.add("- " + toAdd);
-//                  }
-//                }
-//
-//                boolean allAdded = true; //used after to verify that all the correct values were added
-//                boolean inflow = true;
-//                LinkedList<String> userFlows = new LinkedList<String>();
-//                //Verify that the user's flows are supposed to be there
-//                for (int i = 0; i < stockEquation.length; i++) 
-//                {
-//                  if (inflow == true) 
-//                  {
-//                    if (stockEquation[i].equals("+")) 
-//                      continue;
-//                    else 
-//                        if (stockEquation[i].equals("-")) 
-//                        {
-//                          inflow = false;
-//                          continue;
-//                        } 
-//                        else 
-//                        {
-//                          //the value in userflow is a node
-//                          if (correctFlows.contains(stockEquation[i].replace("_", " "))) 
-//                          {
-//                            userFlows.add(stockEquation[i].replace("_", " "));
-//                            continue;
-//                          } 
-//                          else 
-//                          {
-//                            allAdded = false;
-//                            break;
-//                          }
-//                        }
-//                  } 
-//                  else 
-//                    if (inflow == false) 
-//                    {
-//                      if (stockEquation[i].equals("-")) 
-//                        continue;
-//                      else 
-//                        if (stockEquation[i].equals("+")) 
-//                        {
-//                          inflow = true;
-//                          continue;
-//                        } 
-//                        else 
-//                        {
-//                          //the value in userflow is a node
-//                          if (correctFlows.contains("- " + stockEquation[i].replace("_", " "))) 
-//                          {
-//                            userFlows.add("- " + stockEquation[i].replace("_", " "));
-//                            continue;
-//                          } 
-//                          else 
-//                          {
-//                            allAdded = false;
-//                            break;
-//                          }
-//                        }
-//                    }
-//                  }
-//
-//                  //Ensure that all flows in the correct equation
-//                  for (int i = 0; i < correctFlows.size(); i++) 
-//                  {
-//                    if (!userFlows.contains(correctFlows.get(i))) 
-//                    {
-//                      allAdded = false;
-//                      currentVertex.setIsFormulaCorrect(false);
-//                      isCorrect = false;
-//                    }
-//                  }
-//                  if (allAdded == false) 
-//                    isCorrect = false;
-//                  else
-//                    currentVertex.setIsFormulaCorrect(true);
-//                }
-//        }
-//        /*makes sure all correct and then set isCorrect true*/
-//        if (currentVertex.getIsGivenValueCorrect() && currentVertex.getIsFormulaCorrect()) 
-//            isCorrect = true;
-//      } 
-//      else
-//        currentVertex.setIsCalculationTypeCorrect(false); 
-//
-//      if (currentVertex.getType() != correctVertex.getType()) {
-//        currentVertex.setIsCalculationTypeCorrect(false); 
-//      }
-//
-//    } catch (Exception e) {
-//      // Catch any exception that might come up
-//    }
-//
-//    return isCorrect;
-//  }
+  /**
+   * this method splits the equations
+   * @param equation
+   * @return
+   */
   public LinkedList<String> splitEquation(String equation) {
     LinkedList<String> parsed = new LinkedList<String>();
     String variable = "";
@@ -1043,6 +894,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       disableKeyPad();
     }
   }
+  
+    public boolean checkForCompletion() {
+      
+
+    return checkOrGiveUpButtonClicked;
+  }
 
   /**
    * This method is called from within the constructor to initialize the form.
@@ -1058,7 +915,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         //Code commented by Josh 011912 -- starts here
         //givenValueTextField = new javax.swing.JFormattedTextField();
         //Code commented by Josh 011912 -- ends here
-        givenValueTextField = new DecimalTextField();
+        givenValueTextField = new DecimalTextField(this);
         radioButtonPanel = new javax.swing.JPanel();
         givenValueButton = new javax.swing.JRadioButton();
         accumulatesButton = new javax.swing.JRadioButton();
@@ -1093,6 +950,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         subtractButton = new javax.swing.JButton();
         multiplyButton = new javax.swing.JButton();
         divideButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        viewSlidesButton = new javax.swing.JButton();
 
         givenValueLabel.setText("<html><b>Fixed value = </b></html>");
 
@@ -1150,7 +1009,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                     .addComponent(givenValueButton)
                     .addComponent(functionButton)
                     .addComponent(accumulatesButton))
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         radioButtonPanelLayout.setVerticalGroup(
             radioButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1165,7 +1024,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
         quantityLabel.setText("The node's quantity:");
 
-        keyPanel.setLayout(new java.awt.GridLayout());
+        keyPanel.setLayout(new java.awt.GridLayout(1, 0));
 
         keyOne.setText("1");
         keyOne.setEnabled(false);
@@ -1280,20 +1139,17 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         contentPanelLayout.setHorizontalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(contentPanelLayout.createSequentialGroup()
-                .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(quantityLabel)
-                    .addGroup(contentPanelLayout.createSequentialGroup()
-                        .addComponent(needInputLabel)
+                .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(keyPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(quantityLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(needInputLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radioButtonPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, contentPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(givenValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(keyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(radioButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(givenValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(givenValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                        .addComponent(givenValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1302,11 +1158,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addComponent(quantityLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(radioButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(givenValueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(givenValueTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(keyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(needInputLabel)
@@ -1414,7 +1270,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                             .addGroup(calculatorPanelLayout.createSequentialGroup()
                                 .addComponent(divideButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(102, 102, 102)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         calculatorPanelLayout.setVerticalGroup(
             calculatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1436,7 +1292,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addGroup(calculatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(multiplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(divideButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -1444,9 +1300,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(calculatorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(calculatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1456,23 +1311,41 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addContainerGap())
         );
 
+        closeButton.setText("Save & Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        viewSlidesButton.setText("View Slides");
+        viewSlidesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewSlidesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(checkButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(giveUpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewSlidesButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(closeButton)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(checkButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(giveUpButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(14, 14, 14))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1481,10 +1354,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 .addComponent(contentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(44, 44, 44)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewSlidesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -1615,9 +1490,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       
       if (!initializing) {
 
-//        if (currentVertex.getType() != Vertex.FLOW) 
-//        {
-        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
         currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
         resetGraphStatus();
         
@@ -1662,7 +1534,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         gc.setCalculationsPanelChanged(true, currentVertex);
         
         if (currentVertex.inedges.size() == 0) {
-          //needInputLabel.setText("Need Inputs!");
         } else {
           for (int i = 0; i < currentVertex.inedges.size(); i++) {
             currentVertex.inedges.get(i).showInListModel = true;
@@ -1682,7 +1553,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           deleteButton.setEnabled(true);
         }
       }
-      //}
     }//GEN-LAST:event_functionButtonActionPerformed
 
   /**
@@ -1691,9 +1561,11 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    */
     private void jListVariablesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListVariablesMouseClicked
       
-      if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) // if the question is not part of the challenge
+      if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) 
+        // if the question is not part of the challenge
       {
-        checkButton.setEnabled(true); // set the check button to true
+        checkButton.setEnabled(true); 
+        // set the check button to true
       }
       if (jListVariables.isEnabled()) {
         if (jListVariables.getSelectedIndex() != -1) {
@@ -1888,8 +1760,9 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 (functionButton.isSelected()
                 && jTextAreaEquation.getText().isEmpty()))) {
           // everything that should have been entered has been, check whether it is correct
-          if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) {
+          if (!parent.getDescriptionPanel().duplicatedNode(currentVertex)) {
             logger.concatOut(Logger.ACTIVITY, "No message", "Click check button try");
+            checkOrGiveUpButtonClicked = true;
             String returnMsg = "";
             if (Main.MetaTutorIsOn) {
               returnMsg = query.listen("Click check button");
@@ -1898,7 +1771,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
             }
             if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
             {
-              new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
+              new MetaTutorMsg(returnMsg.split(":")[1], false);
               return;
             }
             
@@ -2029,10 +1902,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   
     private void giveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giveUpButtonActionPerformed
       gc.setCalculationsPanelChanged(false, currentVertex);
-      if (initializing == false /*
-               * && parent.getInputsPanel().correctinput
-               */) {
-        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) {
+      if (initializing == false ) {
+        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex)) {
           boolean incorrectInputFound = false;
           boolean incorrectOutputFound = false;
           boolean incorrectNodeTypeDefined = false;
@@ -2090,7 +1961,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               for (int i = 0; i < currentVertex.inputNodesSelected.size(); i++) {
                 correctOutputsSelected[i] = false;
                 for (int j = 0; j < correctVertex.getCorrectOutputs().split(",").length; j++) {
-                  if (correctVertex.getCorrectOutputs().split(",")[j].contains("flowlink - " + currentVertex.inputNodesSelected.get(i).getText())) {
+                  if (correctVertex.getCorrectOutputs().split(",")[j].contains("flowlink - " + currentVertex.inputNodesSelected.get(i).getText().replaceAll("_", " "))) {
                     correctOutputsSelected[i] = true;
                   }
                 }
@@ -2099,7 +1970,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               for (int i = 0; i < currentVertex.inputNodesSelected.size(); i++) {
                 correctInputsSelected[i] = false;
                 for (int j = 0; j < correctVertex.getCorrectInputs().split(",").length; j++) {
-                  if (correctVertex.getCorrectInputs().split(",")[j].contains(currentVertex.inputNodesSelected.get(i).getText())) {
+                  if (correctVertex.getCorrectInputs().split(",")[j].contains(currentVertex.inputNodesSelected.get(i).getText().replaceAll("_", " "))) {
                     correctInputsSelected[i] = true;
                   }
                 }
@@ -2113,10 +1984,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
             }
           }
           
-          if ((parent.getInputsPanel().getInputsButtonSelected()
-                  && (currentVertex.getType() == Vertex.CONSTANT)) || (!parent.getInputsPanel().getInputsButtonSelected()
-                  && (currentVertex.getType() == Vertex.STOCK || (currentVertex.getType() == Vertex.FLOW))) || !parent.getInputsPanel().getInputsButtonSelected()
-                  && !this.givenValueButton.isSelected()) {
+//          if ((parent.getInputsPanel().getInputsButtonSelected()
+//                  && (currentVertex.getType() == Vertex.CONSTANT)) || (!parent.getInputsPanel().getInputsButtonSelected()
+//                  && (currentVertex.getType() == Vertex.STOCK || (currentVertex.getType() == Vertex.FLOW))) || !parent.getInputsPanel().getInputsButtonSelected()
+//                  && !this.givenValueButton.isSelected()) {
+//            incorrectNodeTypeDefined = true;
+//          }
+          
+          if (currentVertex.getType() != correctVertex.getType()){
             incorrectNodeTypeDefined = true;
           }
           
@@ -2133,11 +2008,12 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               }
               if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
               {
-                new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
+                new MetaTutorMsg(returnMsg.split(":")[1], false);
                 return;
               }
               
               logger.out(Logger.ACTIVITY, "CalculationsPanel.giveUpButtonActionPerformed.1");
+              checkOrGiveUpButtonClicked = true;
               //Clear existing answer
               initializing = true;
 
@@ -2202,7 +2078,6 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 givenValueLabel.setText("Initial Value = ");
                 disableKeyPad();
                 deleteButton.setEnabled(false);
-                //showAllFlows();
                 jTextAreaEquation.setText(currentVertex.getFormula());
                 updateInputs();
               } else if (currentVertex.getType() == Vertex.STOCK) {
@@ -2307,12 +2182,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                         }
                       }
                       Edge ed = graph.addEdge(v, currentVertex, "flowlink");
-
-                      // -- Change by Curt, is this correct? Should currentVertext add an InEdge
-                      // and v add an OutEdge like the first for loop above?
                       currentVertex.addOutEdge(ed);
                       v.addInEdge(ed);
-                      // ---
                       gc.repaint(0);
                     }
                     String toAdd = outputs[i].trim().replace("flowlink - ", "");
@@ -2366,46 +2237,43 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
 }//GEN-LAST:event_giveUpButtonActionPerformed
-  
+
     private void givenValueTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_givenValueTextFieldKeyReleased
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+
+      currentVertex.setCalculationsButtonStatus(Vertex.NOSTATUS);
       gc.setCalculationsPanelChanged(true, currentVertex);
-      
-      resetGraphStatus();
-      givenValueTextField.setBackground(Selectable.COLOR_WHITE);
-      try {
-        givenValueTextField.commitEdit();
-      } catch (ParseException ex) {
-        if (!givenValueTextField.getText().equals(".")) {
-          givenValueTextField.setText("");
-        }
-      }
 
 
-//      if (!givenValueTextField.getText().isEmpty()) {
-//        currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText().replaceAll(",", "")));
-//      } else {
-//        currentVertex.setInitialValue(Vertex.NOTFILLED);
-//      }
+        resetGraphStatus();
+        givenValueTextField.setBackground(Selectable.COLOR_WHITE);
+//        try {
+//          givenValueTextField.commitEdit();
+//        } catch (ParseException ex) {
+//          if (!givenValueTextField.getText().equals(".")) {
+//            givenValueTextField.setText("");
+//          }
+//        }
+        gc.repaint(0);
       
-      gc.repaint(0);
     }//GEN-LAST:event_givenValueTextFieldKeyReleased
-  
+
     private void givenValueTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_givenValueTextFieldKeyTyped
       // TODO add your handling code here:
       gc.setCalculationsPanelChanged(true, currentVertex);
-      try {
-        givenValueTextField.commitEdit();
-      } catch (ParseException ex) {
-        if (!givenValueTextField.getText().equals(".")) {
-          givenValueTextField.setText("");
+
+//        try {
+//          givenValueTextField.commitEdit();
+//        } catch (ParseException ex) {
+//          if (!givenValueTextField.getText().equals(".")) {
+//            givenValueTextField.setText("");
+//          }
+//        }
+
+        if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) { // if the question is not a test question
+          checkButton.setEnabled(true); // set the check button to true
         }
-      }
       
-      if (parent.server.getActualTask().getPhaseTask() != Task.CHALLENGE) { // if the question is not a test question
-        checkButton.setEnabled(true); // set the check button to true
-      }
-      
+
     }//GEN-LAST:event_givenValueTextFieldKeyTyped
   
   private void givenValueTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_givenValueTextFieldActionPerformed
@@ -2460,29 +2328,60 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
       if (canAdd) {
+        KeyEvent key = new KeyEvent(button, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, c);
+//        givenValueTextFieldKeyReleased(key);
         givenValueTextField.setText(givenValueTextField.getText() + c);
+        givenValueTextField.repaint();
       }
     } else {
-      givenValueTextField.setText(givenValueTextField.getText() + c);
+      if (givenValueTextField instanceof DecimalTextField) {
+        String currentText = givenValueTextField.getText();
+        KeyEvent key = new KeyEvent(button, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, c);
+//      givenValueTextFieldKeyReleased(key);
+        DecimalTextField temp = (DecimalTextField) givenValueTextField;
+        temp.processKeyEvent(key);
+        givenValueTextField = temp;
+    //    givenValueTextField.setText(givenValueTextField.getText() + c);
+        String textAfterEdit = givenValueTextField.getText();
+
+        repaint();
+      }
+
+
     }
-    
+
     enableButtons(true);
-    KeyEvent key = new KeyEvent(button, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, c);
-    givenValueTextFieldKeyReleased(key);
+    
   }//GEN-LAST:event_keyboardButtonActionPerformed
   
   private void keyDeletekeyboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyDeletekeyboardButtonActionPerformed
     String currentText = givenValueTextField.getText();
     String newText = currentText.substring(0, currentText.length() - 1);
     givenValueTextField.setText(newText);
+
     enableButtons(true);
   }//GEN-LAST:event_keyDeletekeyboardButtonActionPerformed
+
+  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+  }//GEN-LAST:event_closeButtonActionPerformed
+
+  private void viewSlidesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewSlidesButtonActionPerformed
+    if (parent.getGraphCanvas().getFrame() instanceof Main) { // if the frame is main
+      Main m = (Main) parent.getGraphCanvas().getFrame(); // get the frame
+      m.getTabPane().setSelectedIndex(0); // set the tab index to the slides
+    }
+  }//GEN-LAST:event_viewSlidesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton accumulatesButton;
     private javax.swing.JButton addButton;
     private javax.swing.JLabel availableInputsLabel;
     private javax.swing.JPanel calculatorPanel;
     private javax.swing.JButton checkButton;
+    private javax.swing.JButton closeButton;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton divideButton;
@@ -2515,9 +2414,14 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     private javax.swing.JPanel radioButtonPanel;
     private javax.swing.JButton subtractButton;
     private javax.swing.JLabel valuesLabel;
+    private javax.swing.JButton viewSlidesButton;
     // End of variables declaration//GEN-END:variables
 
-  public void propertyChange(PropertyChangeEvent pce) {
+    /**
+     * 
+     * @param pce
+     */
+    public void propertyChange(PropertyChangeEvent pce) {
 //    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -133,7 +133,6 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   //The following variable is used to tell whether the inputs, calculations, and
   //graph panels are all correct for all nodes in the graph
   private boolean allCorrect = true;
-//TAKEN OUT ONCE TRANSORMATION COMPLETE
   public LinkedList<String> listOfVertexes = null;
   public LinkedList<String> extraNodes = null;
   private Query query = Query.getBlockQuery();
@@ -141,7 +140,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Constructor Creates the main frame
    *
-   * @param frame is the main frame
+   * @param jf 
    */
   public GraphCanvas(Main jf) {
     super();
@@ -180,14 +179,26 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     initFirstProblem();
   }
 
+  /**
+   * The getter method for GraphCanvas's frame
+   * @return frame
+   */
   public JFrame getFrame() {
     return frame;
   }
 
+  /**
+   * Getter method for the current task
+   * @return the actual task from the server
+   */
   public Task getTask() {
     return this.server.getActualTask();
   }
 
+  /**
+   * Getter method for GraphCanvas's instance of the graph class
+   * @return graph
+   */
   public Graph getGraph() {
     return this.graph;
   }
@@ -207,11 +218,17 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * the colors of the vertex's are changed or not
    *
    * @param x
+   * @param v  
    */
   public void setInputsPanelChanged(boolean x, Vertex v) {
     v.setInputsPanelChanged(x);
   }
 
+  /**
+   * This method takes the parameters and sets the calculationsPanelChanged via the vertex class
+   * @param x
+   * @param v
+   */
   public void setCalculationsPanelChanged(boolean x, Vertex v) {
     v.setCalculationsPanelChanged(x);
   }
@@ -270,6 +287,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return takeQuizButton;
   }
 
+  /**
+   * This is the setter method for the number of points for the current level
+   * @param points
+   */
   public void setCurrentLevelPoints(int points) {
     currentLevelPoints = points;
   }
@@ -406,6 +427,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   /**
    * Set whether the quiz has been opened
+   * @param o 
    */
   public void setQuizOpen(boolean o) {
     this.quizOpen = o;
@@ -438,6 +460,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return modelHasBeenRun;
   }
 
+  /**
+   * This is the getter method for GraphCanvas's allCorrect variable
+   * @return allCorrect
+   */
   public boolean getAllCorrect() {
     return allCorrect;
   }
@@ -504,6 +530,8 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   public void setContinues(boolean g) {
     this.continues = g;
   }
+  
+  
 
   /**
    * this method returns whether the user passed the task and moves on to the
@@ -554,7 +582,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * this method sets the current level
    *
-   * @return the current level
+   * @param g 
    */
   public void setCurrentLevel(int g) {
     currentLevel = g;
@@ -612,6 +640,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return imageSize;
   }
 
+  /**
+   * This method paints the vertex
+   * @param v
+   */
   public void paintVertex(Vertex v) {
     int height;
     if (this.getParent() != null) {
@@ -629,14 +661,20 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       //System.out.println(vertexCount);
     } else {
       //System.out.println("else "+vertexCount);
-      this.newVertex(v, 100 + vertexCount * 125, height - v.paintNoneHeight * 2);
+      this.newVertex(v, 100 + vertexCount * 150, 100);
       //     this.newVertex(selectedVertex, 150 + vertexCount * 125, height - selectedVertex.paintNoneHeight * 12);
     }
 
   }
 
-  // I needed to create this method for Test problems only becuase paintMenu() was getting really messy and very hard to read,
-  // by creating this method, I have increased readability.
+
+  /**
+   * This method paints the vertex's icons if the problem is a test problem
+   * We needed to create this method for Test problems only becuase paintMenu() was getting really messy and very hard to read,
+   * by creating this method, I have increased readability.
+   * @param g
+   * @param v
+   */
   public void paintMenuIfTestProblem(Graphics g, Vertex v) {
 
     Point pos = v.getPosition();
@@ -728,7 +766,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * This method paints the version 2 buttons over the vertex selectedVertex
    *
    * @param g is the graphics
-   * @param selectedVertex is the vertex
+   * @param v  
    */
   public void paintMenu(Graphics g, Vertex v) {
     Point pos = v.getPosition();
@@ -921,7 +959,8 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
         studentReceivedLevelPoint = true;
       }
       passed = false;
-      logger.concatOut(Logger.ACTIVITY, "MenuBar.doneButtonActionPerformed.1", Integer.toString(problemList.get(currentLevel)[0]));
+      currentLevel = server.getActualTask().getLevel();
+      logger.concatOut(Logger.ACTIVITY, "MenuBar.doneButtonActionPerformed.1", Integer.toString(problemList.get(currentLevel-1)[0]));
     } else if (continues == true) {
       loadNextTask();
       continues = false;
@@ -949,6 +988,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   }
 
+  /**
+   * This method loads the level via the parameter
+   * @param taskNum
+   */
   public void loadLevel(int taskNum) {
     int problemsCompletedSize = problemsCompleted.size();
 
@@ -1011,21 +1054,27 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       //Gets the label of the extranodes for the selected task.
       extraNodes = server.getActualTask().getExtraNodes();
 
+      if (InstructionPanel.canNewNodeButtonBePressed || server.getActualTask().getPhaseTask() != Task.INTRO || Main.debuggingModeOn) {
+        if (task.listOfVertexesDebug != null) {
+          System.out.println("Number of vertexes given as debug:" + task.listOfVertexesDebug.size());
 
-      if (task.listOfVertexesDebug != null) {
-        System.out.println("Number of vertexes given as debug:"+task.listOfVertexesDebug.size());
-        if (task.listOfVertexes == null
-                || (task.listOfVertexes.size() == task.listOfVertexesDebug.size())
-                || (task.listOfVertexes.size() != listOfVertexes.size())) {
-          cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          if (task.listOfVertexes == null
+                  || (task.listOfVertexes.size() == task.listOfVertexesDebug.size())
+                  || (task.listOfVertexes.size() != listOfVertexes.size())) {
+            cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          } else {
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          }
         } else {
-          cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          if (task.listOfVertexes == null || task.listOfVertexes.size() != listOfVertexes.size()) {
+            cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          } else {
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          }
         }
-      } else {
-        if (task.listOfVertexes == null || task.listOfVertexes.size() != listOfVertexes.size()) 
-          cover.getMenuBar().getNewNodeButton().setEnabled(false);
-        else 
-          cover.getMenuBar().getNewNodeButton().setEnabled(true);
+      }
+      else {
+        cover.getMenuBar().getNewNodeButton().setEnabled(false);
       }
 
 
@@ -1044,6 +1093,31 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
     problemIndex = 0;
     run.setForeground(Color.GRAY);
+  }
+  
+  public boolean checkNewNodeButton(){
+    if (InstructionPanel.canNewNodeButtonBePressed || server.getActualTask().getPhaseTask() != Task.INTRO || Main.debuggingModeOn) {
+        if (task.listOfVertexesDebug != null) {
+          System.out.println("Number of vertexes given as debug:" + task.listOfVertexesDebug.size());
+
+          if (task.listOfVertexes == null
+                  || (task.listOfVertexes.size() == task.listOfVertexesDebug.size())
+                  || (task.listOfVertexes.size() != listOfVertexes.size())) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          if (task.listOfVertexes == null || task.listOfVertexes.size() != listOfVertexes.size()) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+      else {
+        return false;
+      }
   }
 
   private void closeWindows() {
@@ -1130,6 +1204,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Return an array with the indexes of the vertex shuffled
    *
+   * @param listOfVertexes 
    * @return
    */
   public int[] suffledIndexes(LinkedList<String> listOfVertexes) {
@@ -1153,6 +1228,9 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return indices;
   }
 
+  /**
+   * This method runs the model from launch if the type of problem is Debug
+   */
   public void runModelFromDebug() {
     try {
       System.out.println("CURT: type is debug");
@@ -1196,6 +1274,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
   }
 
+  /**
+   * This method returns a boolean based off of if the problem can run at this point
+   * @return runnable
+   */
   public boolean canRun() {
     Vertex v;
     int noneCount = 0; //counts the vertices that fail the runnable test
@@ -1398,6 +1480,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     repaint(0);
   }
 
+  /**
+   * This is the setter method for the boolean which corresponds to wether or not the menu is open
+   * @param o
+   */
   public void setMenuOpen(boolean o) {
     this.menuOpen = o;
   }
@@ -1441,6 +1527,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param x Mouse x position
    * @param y Mouse y position
    * @param e Mouse event
+   * @return  
    */
   public final boolean mouseDraggedAvatar(int x, int y, MouseEvent e) {
     if (graph.getSelected() instanceof Avatar) {
@@ -1460,6 +1547,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param x Mouse x position
    * @param y Mouse y position
    * @param e Mouse event
+   * @return  
    */
   public final boolean mouseDraggedVertex(int x, int y, MouseEvent e) {
     if (graph.getSelected() instanceof Vertex) {
@@ -1553,6 +1641,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param x Mouse x position
    * @param y Mouse y position
    * @param e Mouse event
+   * @return true or false
    */
   public final boolean mouseDraggedDescription(int x, int y, MouseEvent e) {
     if (hitDescription(e) == true) {
@@ -1574,6 +1663,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param x Mouse x position
    * @param y Mouse y position
    * @param e Mouse event
+   * @return  
    */
   public final boolean mouseDraggedEdge(int x, int y, MouseEvent e) {
     if (graph.getSelected() instanceof Edge) {
@@ -1773,7 +1863,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Method to process that allEdges Vertex was pressed.
    *
-   * @param selectedVertex the Vertex
+   * @param a 
    * @param e mouse event
    * @return true if the mouse was pressed on the vertex, false otherwise.
    */
@@ -1788,7 +1878,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Method to process that allEdges Vertex was pressed.
    *
-   * @param selectedVertex the Vertex
+   * @param v 
    * @param e mouse event
    * @return true if the mouse was pressed on the vertex, false otherwise.
    */
@@ -1813,7 +1903,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Method to process that allEdges Vertex was pressed.
    *
-   * @param selectedVertex the Vertex
+   * @param v 
    * @param e mouse event
    * @return true if the mouse was pressed on the vertex, false otherwise.
    */
@@ -2001,6 +2091,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * Method to alter the size (by d) of all items of the same type as the
    * selected item.
+   * @param d 
    */
   public void adjustSizes(int d) {
     if ((graph.getSelected() == null) || (graph.getSelected() instanceof Vertex)) {
@@ -2021,6 +2112,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   /**
    * Method to alter the font size of the selected object
+   * @param d 
    */
   public void adjustFont(int d) {
     if (graph.getSelected() != null) {
@@ -2138,10 +2230,17 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     image = null;
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void componentMoved(ComponentEvent e) {
   }
 
+  /**
+   * 
+   */
   public void enableChangeShape() {
     changeShape = true;
   }
@@ -2311,6 +2410,11 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return cont;
   }
 
+  /**
+   * This method creates a new edge and adds it to the graph
+   * @param e
+   * @return true
+   */
   public boolean newEdge(Edge e) {
     graph.addEdge(e);
     repaint(0);
@@ -2318,6 +2422,12 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   }
 
   // HELEN - MAY 10TH -- THIS METHODS IS NOT USED AT ALL
+  /**
+   * This method creates an edge between two vertexes
+   * @param start
+   * @param end
+   * @returntrue
+   */
   public boolean newEdge(Vertex start, Vertex end) {
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
@@ -2330,9 +2440,9 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * Method to create allEdges new Vertex, in an x,y position and with allEdges
    * label name. This methods is only used to do the initialization.
    *
+   * @param v 
    * @param x is the x-coordinate
    * @param y is the y-coordinate
-   * @param name is the label
    * @return true as acknowledge
    */
   public boolean newVertex(Vertex v, int x, int y) {
@@ -2344,6 +2454,11 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return true;
   }
 
+  /**
+   * This method creates a new vertex and adds it to graph
+   * @param v
+   * @return
+   */
   public boolean newVertex(Vertex v) {
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
@@ -2382,6 +2497,10 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return null;
   }
 
+  /**
+   * This method handles a mouseClick event
+   * @param e
+   */
   @Override
   public void mouseClicked(MouseEvent e) {
     int x = e.getX();
@@ -2412,12 +2531,12 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       } else if (!hitVertex(x, y).getIsOpen()) {
         String returnMsg = "";
         if (Main.MetaTutorIsOn) {
-          returnMsg = query.listen("Open a node:"+name);
+          returnMsg = query.listen("Open a node:"+name.replace("_", " "));
         } else if (!Main.MetaTutorIsOn) {
           returnMsg = "allow";
         }
         if (returnMsg.equals("allow")) {
-          logs.concatOut(Logger.ACTIVITY, "GraphCanvas.mouseClicked.5", name);
+          logs.concatOut(Logger.ACTIVITY, "GraphCanvas.mouseClicked.5", name.replace("_", " "));
           NodeEditor openWindow = NodeEditor.getInstance(hitVertex(x, y), graph, this, true, false);
           try {
             openWindow.setCorrectVertex(server.getActualTask().getNode(name)); // set the correct vertex in NodeEditor
@@ -2428,7 +2547,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
           openWindow.setVisible(true);
           openTabs.add(openWindow);
         } else {
-          new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
+          new MetaTutorMsg(returnMsg.split(":")[1], false);
           logs.concatOut(Logger.ACTIVITY, "No message", "Meta tutor denied the action.");
         }
       } else {
@@ -2446,7 +2565,6 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   /**
    * getEquationEditorForVertex
    *
-   * @param selectedVertex
    * @return EquationEditor
    */
 /*  public EquationEditor getEquationEditorForVertex(Vertex v) {
@@ -2539,10 +2657,21 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
   }
 
+  /**
+   * Getter method for the prefered size of the scrollable Viewport
+   * @return
+   */
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
 
+  /**
+   * 
+   * @param visibleRect
+   * @param orientation
+   * @param direction
+   * @return
+   */
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
     int current = 0;
     if (orientation == SwingConstants.VERTICAL) {
@@ -2553,6 +2682,13 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return current;
   }
 
+  /**
+   * 
+   * @param visibleRect
+   * @param orientation
+   * @param direction
+   * @return
+   */
   public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
     int current = 0;
     if (orientation == SwingConstants.VERTICAL) {
@@ -2563,29 +2699,64 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return current;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean getScrollableTracksViewportWidth() {
     return false;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean getScrollableTracksViewportHeight() {
     return false;
   }
 
+  /**
+   * This method calls the nodeEditor and checkes the node for the correct Calculations
+   * @param vertexIndex
+   * @return
+   */
   public boolean checkNodeForCorrectCalculations(int vertexIndex) {
     return NodeEditor.getInstance((Vertex) graph.getVertexes().get(vertexIndex), graph, this, false, true).getCalculationsPanel().checkForCorrectCalculations();
   }
 
+  /**
+   * This method calls the nodeEditor and checkes the node for the correct inputs 
+   * @param vertexIndex
+   * @return
+   */
   public boolean checkNodeForCorrectInputs(int vertexIndex) {
     return NodeEditor.getInstance((Vertex) graph.getVertexes().get(vertexIndex), graph, this, false, true).getInputsPanel().checkForCorrectInputs();
   }
 
+  /**
+   * This method calls the nodeEditor and checkes the node for the correct input syntax
+   * @param vertexIndex
+   * @return
+   */
   public boolean checkNodeForCorrectInputSyntactics(int vertexIndex) {
-    return !(NodeEditor.getInstance((Vertex) graph.getVertexes().get(vertexIndex), graph, this, false, true).getInputsPanel().checkForSyntaxErrors());
+    return !(NodeEditor.getInstance((Vertex) graph.getVertexes().get(vertexIndex), graph, this, false, true).getInputsPanel().checkForCompletion());
   }
 
+    /**
+   * This method calls the nodeEditor and checkes the node for the correct input syntax
+   * @param vertexIndex
+   * @return
+   */
+  public boolean checkNodeForCorrectCalculationSyntactics(int vertexIndex) {
+    return !(NodeEditor.getInstance((Vertex) graph.getVertexes().get(vertexIndex), graph, this, false, true).getCalculationsPanel().checkForCompletion());
+  }
+  
 
-  // This method checks a vertex to see if that vertex is an input of another vertex, if it is, the vertex that takes this vertex as
-  // an input will have its graphButtonStatus reset.
+  /**
+   * This method checks a vertex to see if that vertex is an input of another vertex, if it is, the vertex that takes this vertex as
+   * an input will have its graphButtonStatus reset.
+   * @param v
+   */
   public void checkNodeForLinksToOtherNodes(Vertex v) {
 
     if (modelHasBeenRanAtLeastOnce) { // if the model has been run at least once
@@ -2602,26 +2773,50 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void componentShown(ComponentEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void componentHidden(ComponentEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void focusLost(FocusEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   @Override
   public void mouseEntered(MouseEvent e) {
   }
 
+  /**
+   * 
+   * @param me
+   */
   public void mousePressed(MouseEvent me) {
     
   }

@@ -124,7 +124,7 @@ public class Cover implements Runnable {
 
     //Determine whether the model can be run
 
-      try {
+     
         if(gc.canRun())
         {
           menuBar.getPredictButton().setEnabled(true);
@@ -140,7 +140,8 @@ public class Cover implements Runnable {
         } else {
           menuBar.getPredictButton().setEnabled(false);
         }
-        LinkedList<String> extraNodes = TaskFactory.getInstance().getActualTask().getExtraNodes();
+        LinkedList<String> extraNodes = null;
+        //LinkedList<String> extraNodes = TaskFactory.getInstance().getActualTask().getExtraNodes();
 
         if (extraNodes == null){
           extraNodes = new LinkedList<String>();
@@ -169,9 +170,7 @@ public class Cover implements Runnable {
         } else {
           menuBar.setDoneButtonStatus(false);
         }
-      } catch (CommException ex) {
-        Logger.getLogger(Cover.class.getName()).log(Level.SEVERE, null, ex);
-      }
+ 
    
     
   }

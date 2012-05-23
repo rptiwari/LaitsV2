@@ -137,9 +137,9 @@ public class DataArchive {
       Element url = taskNode.element("URL");
       task.setImageUrl(url.getText());
       Element description = taskNode.element("TaskDescription");
-      task.setDescription(description.getText());
+      task.setDescription(description.getText().replaceAll("\n", "\n"));
       Element shortDescription = taskNode.element("ShortDescription");
-      task.setSummary(shortDescription.getText());
+      task.setSummary(shortDescription.getText().replaceAll("\n", "\n"));
       Element startTime = taskNode.element("StartTime");
       try {
         int n = Integer.parseInt(startTime.getText());
@@ -199,7 +199,7 @@ public class DataArchive {
       // fill up the decision tree
       LinkedList<String> tree = new LinkedList<String>();
 
-      if (task.getPhaseTask()!=Task.THE_BREAK) {
+      if (task.getPhaseTask() != Task.THE_BREAK) {
         Element taskTree = taskNode.element("DescriptionTree");
         java.util.List<Element> treerootVertex = taskTree.elements("Node");
         for (Element e : treerootVertex) {
@@ -207,12 +207,20 @@ public class DataArchive {
           tree.add(rootLabel);
           java.util.List<Element> treeIntermediateVertex = e.elements("Node");
           for (Element ei : treeIntermediateVertex) {
-            String InterLabel = "--:" + ei.element("Description").getText();
-            tree.add(InterLabel);
-            java.util.List<Element> treeleafVertex = ei.elements("Node");
-            for (Element el : treeleafVertex) {
-              String leafLabel = "---:" + el.element("Description").getText() + "." + el.element("NodeName").getText();
-              tree.add(leafLabel);
+            if (ei.element("Description").getText().isEmpty()) {
+              java.util.List<Element> treeleafVertex = ei.elements("Node");
+              for (Element el : treeleafVertex) {
+                String leafLabel = "--:" + el.element("Description").getText() + "." + el.element("NodeName").getText();
+                tree.add(leafLabel);
+              }
+            } else {
+              String InterLabel = "--:" + ei.element("Description").getText();
+              tree.add(InterLabel);
+              java.util.List<Element> treeleafVertex = ei.elements("Node");
+              for (Element el : treeleafVertex) {
+                String leafLabel = "---:" + el.element("Description").getText() + "." + el.element("NodeName").getText();
+                tree.add(leafLabel);
+              }
             }
           }
         }
@@ -382,7 +390,7 @@ public class DataArchive {
             if ((debugNode = this.getVertexByName(vertexesDebug, nodeName)) == null) {
               debugNode = this.addVertexByName(vertexesDebug, nodeName);
             }
-            
+            debugNode.setIsDebug(true);
             int type = amt.graph.Vertex.NOTYPE;
             String typeString =e.attributeValue("type");
             if (typeString.equalsIgnoreCase("STOCK"))
@@ -622,41 +630,41 @@ public class DataArchive {
         /**
          * ***************TO DELETE WHEN TASKS WORK 100% CORRECTLY!!!***************
          */
-        File file = new File("For Andrew/" + "L-" + task.getLevel() + " ID-" + task.getId() + " - " + task.getTitle() + ".txt");
-        java.io.FileWriter fstream = null;
-        java.io.BufferedWriter out = null;
-
-        try {
-          fstream = new java.io.FileWriter(file);
-        } catch (IOException ex) {
-          Logger.getLogger(DataArchive.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (fstream != null) {
-          out = new java.io.BufferedWriter(fstream);
-        }
-
-        String send = "";
-        for (int i = 0; i < task.listOfVertexes.size(); i++) {
-          send += "************NODE #" + (i+1) + "**************\n";
-          send += task.listOfVertexes.get(i).toString();
-          send += "\n\n";
-        }
-        
-        if (task.listOfVertexesDebug != null) {
-          for (int i = 0; i < task.listOfVertexesDebug.size(); i++) {
-            send += "************DEBUG NODE #" + (i+1) + "*************\n";
-            send += task.listOfVertexesDebug.get(i).toString();
-            send += "\n\n";
-          }
-        }
-
-        try {
-          out.write(send);
-          out.close();
-        } catch (IOException ex) {
-          Logger.getLogger(DataArchive.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        File file = new File("For Andrew/" + "L-" + task.getLevel() + " ID-" + task.getId() + " - " + task.getTitle() + ".txt");
+//        java.io.FileWriter fstream = null;
+//        java.io.BufferedWriter out = null;
+//
+//        try {
+//          fstream = new java.io.FileWriter(file);
+//        } catch (IOException ex) {
+//          Logger.getLogger(DataArchive.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        if (fstream != null) {
+//          out = new java.io.BufferedWriter(fstream);
+//        }
+//
+//        String send = "";
+//        for (int i = 0; i < task.listOfVertexes.size(); i++) {
+//          send += "************NODE #" + (i+1) + "**************\n";
+//          send += task.listOfVertexes.get(i).toString();
+//          send += "\n\n";
+//        }
+//        
+//        if (task.listOfVertexesDebug != null) {
+//          for (int i = 0; i < task.listOfVertexesDebug.size(); i++) {
+//            send += "************DEBUG NODE #" + (i+1) + "*************\n";
+//            send += task.listOfVertexesDebug.get(i).toString();
+//            send += "\n\n";
+//          }
+//        }
+//
+//        try {
+//          out.write(send);
+//          out.close();
+//        } catch (IOException ex) {
+//          Logger.getLogger(DataArchive.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         /**
          * *************************************************************************
@@ -672,7 +680,7 @@ public class DataArchive {
 
   private Vertex getVertexByName(LinkedList<Vertex> vertexes, String name) {
     for (int i = 0; i < vertexes.size(); i++) {
-      if (vertexes.get(i).getNodeName().equals(name)) {
+      if (vertexes.get(i).getNodeName().equals(name.replaceAll(" ", "_"))) {
         return vertexes.get(i);
       }
     }

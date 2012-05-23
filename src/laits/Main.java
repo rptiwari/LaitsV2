@@ -624,13 +624,13 @@ public class Main extends JFrame implements WindowListener {
     if (rc == JFileChooser.APPROVE_OPTION) {
       File savedFile = fc.getSelectedFile();
       newFile = new File(savedFile.getAbsolutePath() + extension);
-//      try {        
-//        graph.save(newFile);
-//        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.1", fc.getSelectedFile().getName());
-//      } catch (IOException ex) {
-//        //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.2", ex.toString());
-//      }
+      try {        
+        graph.save(newFile);
+        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.1", fc.getSelectedFile().getName());
+      } catch (IOException ex) {
+        //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        logger.concatOut(Logger.ACTIVITY, "Main.menuItemSaveTaskActionPerformed.2", ex.toString());
+      }
     }
   }//GEN-LAST:event_menuItemSaveTaskActionPerformed
 
@@ -641,6 +641,7 @@ public class Main extends JFrame implements WindowListener {
    * @param evt
    */
   private void menuItemOpenTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenTaskActionPerformed
+    
     JFileChooser fc = new JFileChooser();
     File newFile = null;
     fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
@@ -648,7 +649,14 @@ public class Main extends JFrame implements WindowListener {
     fc.setDialogTitle("Open File");
     if (rc == JFileChooser.APPROVE_OPTION) {
       File openFile = fc.getSelectedFile();
+      
       try {
+        // Implement Loading of SituationPanel
+        
+        
+        //Implement Loading of Model Panel
+        
+        
         graphCanvasScroll.getGraphCanvas().deleteAll();
     //    graph.load(openFile);
         graphCanvasScroll.getGraphCanvas().setModelChanged(true);

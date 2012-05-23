@@ -29,11 +29,17 @@ public class GraphsPanel extends javax.swing.JPanel {
   Image correctAnswer = null;
   Task t;
   Logger logger = Logger.getLogger();
+  NodeEditor parent = null;
   //the width and height of the panel
   int width, height;
   private Component buttonPanel;
 
-  /** Creates new form GraphsPanel */
+  /** Creates new form GraphsPanel
+   * @param parent 
+   * @param v 
+   * @param gc
+   * @param g  
+   */
   public GraphsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
     TaskFactory server = null;
     try 
@@ -49,6 +55,8 @@ public class GraphsPanel extends javax.swing.JPanel {
     this.currentVertex = v;
     this.graph = g;
     initComponents();
+    
+    this.parent = parent;
 
     correctAnswerPanel = new PlotPanel(this.currentVertex, t.getStartTime(), t.getTitle(), t.getUnitTime());
     if (grafica != null) 
@@ -60,13 +68,16 @@ public class GraphsPanel extends javax.swing.JPanel {
     this.testResetLayout();
   }
 
+  /**
+   * This method resets the layout if it is a test problem
+   */
   public void testResetLayout() {
     allGraphsPanel.removeAll();
     allGraphsPanel.setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
     //Only display the correct graph once the user has assigned the correct name and description to the node
-//    if (currentVertex.nodeName.equals()) 
-//    {
+    if (!currentVertex.getNodeName().equals("")) 
+    {
       //Add the correct graph label
       c.fill = GridBagConstraints.HORIZONTAL;
       c.weighty = 1;
@@ -80,21 +91,18 @@ public class GraphsPanel extends javax.swing.JPanel {
       c.gridy = 1;
       c.weightx = 0.0;
       allGraphsPanel.add(userAnswerPanel, c);
-//    }
+    }
     //Add the predicted values label
     c.fill = GridBagConstraints.HORIZONTAL;
     c.weighty = 1;
     c.gridx = 0;
     c.gridy = 2;
     c.weightx = 0.0;
-    //allGraphsPanel.add(predictedValuesLabel, c);
     //Add the predicted values item box
     c.fill = GridBagConstraints.HORIZONTAL;
-    //c.weighty = 1;
     c.gridx = 0;
     c.gridy = 3;
     c.weightx = 0.0;
-    //allGraphsPanel.add(itemBox, c);
     //Add the user graph label
     c.fill = GridBagConstraints.HORIZONTAL;
     c.weighty = 1;
@@ -118,6 +126,9 @@ public class GraphsPanel extends javax.swing.JPanel {
     descriptionLabel.setText("<html><b>Description:</b> " + currentVertex.getSelectedDescription() + "</html>");
   }
 
+  /**
+   * This method resets the layout
+   */
   public void resetLayout() {
     this.removeAll();
     userAnswerPanel.setPreferredSize(new java.awt.Dimension(300, 200));
@@ -148,9 +159,13 @@ public class GraphsPanel extends javax.swing.JPanel {
         userAnswerPanel = new javax.swing.JPanel();
         correctGraphLabel1 = new javax.swing.JLabel();
         correctGraphLabel2 = new javax.swing.JLabel();
+        closeButton = new javax.swing.JButton();
         descriptionLabel = new javax.swing.JLabel();
 
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         nodeDescriptionLabel.setText("<html></html>");
+        add(nodeDescriptionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(743, 6, -1, -1));
 
         correctGraphLabel.setText("Expected Graph:");
 
@@ -160,11 +175,11 @@ public class GraphsPanel extends javax.swing.JPanel {
         correctAnswerPanel.setLayout(correctAnswerPanelLayout);
         correctAnswerPanelLayout.setHorizontalGroup(
             correctAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 417, Short.MAX_VALUE)
+            .addGap(0, 432, Short.MAX_VALUE)
         );
         correctAnswerPanelLayout.setVerticalGroup(
             correctAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 165, Short.MAX_VALUE)
+            .addGap(0, 184, Short.MAX_VALUE)
         );
 
         userGraphLabel.setText("User's Graph:");
@@ -187,6 +202,13 @@ public class GraphsPanel extends javax.swing.JPanel {
 
         correctGraphLabel2.setText("                   ");
 
+        closeButton.setText("Validate and Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout allGraphsPanelLayout = new javax.swing.GroupLayout(allGraphsPanel);
         allGraphsPanel.setLayout(allGraphsPanelLayout);
         allGraphsPanelLayout.setHorizontalGroup(
@@ -194,18 +216,24 @@ public class GraphsPanel extends javax.swing.JPanel {
             .addGroup(allGraphsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(userGraphLabel)
-                    .addComponent(correctGraphLabel)
-                    .addComponent(correctGraphLabel1)
-                    .addComponent(correctGraphLabel2))
-                .addContainerGap(61, Short.MAX_VALUE))
+                    .addGroup(allGraphsPanelLayout.createSequentialGroup()
+                        .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userGraphLabel)
+                            .addComponent(correctGraphLabel)
+                            .addComponent(correctGraphLabel1)
+                            .addComponent(correctGraphLabel2))
+                        .addGap(0, 189, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, allGraphsPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(closeButton)))
+                .addContainerGap())
             .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allGraphsPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(31, Short.MAX_VALUE)))
+                    .addContainerGap(180, Short.MAX_VALUE)))
         );
         allGraphsPanelLayout.setVerticalGroup(
             allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +242,7 @@ public class GraphsPanel extends javax.swing.JPanel {
                 .addComponent(userGraphLabel)
                 .addGap(18, 18, 18)
                 .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
                 .addComponent(correctGraphLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(correctGraphLabel1)
@@ -222,48 +250,33 @@ public class GraphsPanel extends javax.swing.JPanel {
                 .addComponent(correctGraphLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(correctAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
+                .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allGraphsPanelLayout.createSequentialGroup()
                     .addGap(303, 303, 303)
                     .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(262, Short.MAX_VALUE)))
+                    .addContainerGap(271, Short.MAX_VALUE)))
         );
+
+        add(allGraphsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 70, -1, -1));
 
         descriptionLabel.setText("<html><b>Description:</b></html>");
         descriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(287, 287, 287)
-                .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(286, 286, 286)))
-                .addGap(90, 90, 90))
-        );
+        add(descriptionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 450, 58));
     }// </editor-fold>//GEN-END:initComponents
+
+  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+
+  }//GEN-LAST:event_closeButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel allGraphsPanel;
+    private javax.swing.JButton closeButton;
     private javax.swing.JPanel correctAnswerPanel;
     private javax.swing.JLabel correctGraphLabel;
     private javax.swing.JLabel correctGraphLabel1;

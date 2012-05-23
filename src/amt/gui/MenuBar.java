@@ -88,21 +88,12 @@ public class MenuBar {
     buttonPanel.add(predictButton);
     buttonPanel.add(doneButton);
     buttonPanel.add(button3);
-    //Added FeedBack Button by zpwn
     JButton sendFeedBack_btn = Main.getTicketButton();
     sendFeedBack_btn.setVisible(true);
     sendFeedBack_btn.setBackground(Color.WHITE);
     Font normal = new Font("Arial", Font.PLAIN, 16);
     sendFeedBack_btn.setFont(normal);
     buttonPanel.add(sendFeedBack_btn);
-    //**End**//
-
-    //Helen: For the pilot testing we are not showing the Score to the student
-    //We need to calculate and show it for the Summer 2011
-    //scoreLabel.setFont(n);
-    //scoreLabel.setText("Score: 100%");
-    //buttonPanel.add(scoreLabel);
-
 
     FlowLayout f = new FlowLayout(FlowLayout.RIGHT, 18, startPosition);
     gc.setLayout(f);
@@ -187,8 +178,8 @@ public class MenuBar {
           return;
         }
 
-        if (gc.openTabs.size() > 0) {
-          gc.openTabs.get(0).setVisible(true);
+        if (GraphCanvas.openTabs.size() > 0) {
+          GraphCanvas.openTabs.get(0).setVisible(true);
           MessageDialog.showMessageDialog(null, true, "You are currently creating or editing a node. If you want to create a new node, please close this node editor.", graph);
           return;
         }
@@ -202,8 +193,9 @@ public class MenuBar {
         }
         if (returnMsg.equals("allow")) {
           newNodeButtonActionPerformed(evt, gc);  //the action is allowed by meta tutor
+          logger.concatOut(Logger.ACTIVITY, "NodeEditor.NodeEditor.10", "New Node");
         } else {
-          new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true); //the action is denied by meta tutor
+          new MetaTutorMsg(returnMsg.split(":")[1], false); //the action is denied by meta tutor
         }
       }
 
@@ -234,14 +226,26 @@ public class MenuBar {
         openWindow.getDescriptionPanel().initButtonOnTask();
         openWindow.getCalculationsPanel().initButtonOnTask();
         openWindow.getInputsPanel().initButtonOnTask();
+        
+          if (!Main.debuggingModeOn)
+              {
+                InstructionPanel.setLastActionPerformed(SlideObject.STOP_CREATE_NODE);
+              }
       }
     });
   }
 
+  /**
+   * 
+   */
   public void resetRunBtnClickCount() {
     runBtnClickCount = 0;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isMissingNode() {
     boolean isMissingNode = true;
     int actualSize = gc.listOfVertexes.size() - gc.extraNodes.size();
@@ -274,7 +278,7 @@ public class MenuBar {
   }
 
   /**
-   * FOR VERSION 2, this button predicts how the user is doing on the level
+   * this button predicts how the user is doing on the level
    */
   private void initPredictButton() {
     predictButton = new JButton("Run Model");
@@ -321,8 +325,6 @@ public class MenuBar {
         boolean aMissingNode = isMissingNode();
         boolean aDuplicateNode = false;
         boolean errorInModel = false;
-        //boolean inputsError = false;
-        //boolean calculationsError = false;
         boolean syntacticErrors = false;
         boolean allRight = true;
 
@@ -341,7 +343,6 @@ public class MenuBar {
         }
 
         logs.out(Logger.ACTIVITY, "GraphCanvas.initRunButton.1");
-        //TO DO: IMPLEMENT PREDICT BUTTON
         if (predictButton.isEnabled()) {
           try {
             String previousDescription = "previous";
@@ -351,7 +352,6 @@ public class MenuBar {
               String currentDescription = current.getSelectedDescription();
               // Check to see if there is node whose description does not match the description in the solution file
               if (currentDescription.equals(previousDescription)) {
-                // aDuplicateNode = true;
                 previousDescription = currentDescription;
               } else if (!currentDescription.equals(previousDescription)) {
                 previousDescription = currentDescription;
@@ -361,7 +361,7 @@ public class MenuBar {
                 aWrongDescription = true;
               } // Else, check to see if there are any syntax errors
               else if (!aWrongDescription) {
-                if (gc.checkNodeForCorrectInputSyntactics(i)) {
+                if (gc.checkNodeForCorrectInputSyntactics(i) == false || gc.checkNodeForCorrectCalculationSyntactics(i) == false) {
                   syntacticErrors = true;
                 } // Finally, check to see if either the input or calculation tabs have the correct equation...only if the those tabs are set to NOSTATUS
                else {
@@ -373,7 +373,6 @@ public class MenuBar {
                       inputsError[i] = 0;
                       logger.concatOut(Logger.ACTIVITY, "No message", "Inputs tab of the node--" + current.getNodeName() + " is: correct");
                     }
-//ANDREW: you should use the correct vertex here to compare, and we do not use selectedType anymore but type which is an int with constant values (cf Vertex)
                     if (correct.getType() == current.getType()) {
                       logger.concatOut(Logger.ACTIVITY, "No message", "The type of the node--" + current.getNodeName() + " is: correct");
                     } else {
@@ -437,7 +436,8 @@ public class MenuBar {
                 }
 
               }
-            } // Every thing seems correct, begin checking whether every calculation and input matches
+            } 
+            // Every thing seems correct, begin checking whether every calculation and input matches
             // what's in the solution file
             else {
               TaskFactory.getInstance().getActualTask().calculateCorrectVertexValues(graph.getVertexes());
@@ -476,7 +476,6 @@ public class MenuBar {
               MessageDialog.showMessageDialog(null, true, "Model run complete!", graph);
               if (!Main.debuggingModeOn)
               {
-                InstructionPanel.setProblemBeingSolved(TaskFactory.getInstance().getActualTask().getLevel()+1);
                 InstructionPanel.setLastActionPerformed(SlideObject.STOP_RUN);
               }
             }
@@ -485,7 +484,6 @@ public class MenuBar {
             //ADD LOGGER
           }
         } else {
-          //JOptionPane.showMessageDialog(null, "All nodes should be connected and have an equation before the model can be run");
           MessageDialog.showMessageDialog(null, true, "All nodes should be connected and have an equation before the model can be run", graph);
           logs.out(Logger.ACTIVITY, "GraphCanvas.initRunButton.2");
         }
@@ -512,38 +510,58 @@ public class MenuBar {
     return newNodeButton;
   }
 
+  /**
+   * getter method for the predictButton
+   * @return predictButton
+   */
   public JButton getPredictButton() {
     return predictButton;
   }
 
+  /**
+   * getter method for the doneButton
+   * @return doneButton
+   */
   public JButton getDoneButton() {
     return doneButton;
   }
 
-  // returns the button panel. This panel is needed in mouseDraggedVertex() in GraphCanvas.java
+  /**
+   * returns the button panel. This panel is needed in mouseDraggedVertex() in GraphCanvas.java
+   * @return
+   */
   public JPanel getButtonPanel() {
     return buttonPanel;
   }
   
+  
   // Created this method so that we can control the color of the DoneButton when needed
+  /**
+   * sets the done button status
+   * @param enabled
+   */
   public void setDoneButtonStatus(boolean enabled) {
     if (enabled) {
       if (!doneButton.isEnabled()) {
-        Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/GREEN_DONE.JPG"));
-        ImageIcon icon = new ImageIcon(image);
-        doneButton.setIcon(icon);
-  //      doneButton.setBackground(Color.GREEN);
-        doneButton.setEnabled(true);
-        doneButton.setOpaque(true);
-        doneButton.setBorderPainted(false);
-        doneButton.repaint();
+        try {
+          if (InstructionPanel.canDoneButtonBePressed || TaskFactory.getInstance().getActualTask().getPhaseTask() != Task.INTRO) {
+            Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/GREEN_DONE.JPG"));
+            ImageIcon icon = new ImageIcon(image);
+            doneButton.setIcon(icon);
+            doneButton.setEnabled(true);
+            doneButton.setOpaque(true);
+            doneButton.setBorderPainted(false);
+            doneButton.repaint();
+          }
+        } catch (CommException ex) {
+          java.util.logging.Logger.getLogger(MenuBar.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
     } else {
       if (doneButton.isEnabled()) {
         Image image = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/BLANCK_DONE.JPG"));
         ImageIcon icon = new ImageIcon(image);
         doneButton.setIcon(icon);
-  //      doneButton.setBackground(new Color(212, 208, 200));
         doneButton.setEnabled(false);
         doneButton.setOpaque(true);
         doneButton.setBorderPainted(false);
@@ -559,8 +577,6 @@ public class MenuBar {
    */
   private void initDoneButton() {
     doneButton = new JButton(new ImageIcon("images/BLANCK_DONE.JPG"));
-//    doneButton = new JButton("Done");
-    
     Font normal = new Font("Arial", Font.PLAIN, 16);
     doneButton.setFont(normal);
     setDoneButtonStatus(false);
@@ -591,11 +607,22 @@ public class MenuBar {
           return;
         }
 
-
-        PromptDialog promptDialog = new PromptDialog(gc.getFrame(), true);
-        promptDialog.popup();
-        promptDialog.setGC(gc);
-        promptDialog.setLocationRelativeTo(gc);
+         if (!Main.debuggingModeOn)
+         {
+          try {
+            InstructionPanel.setProblemBeingSolved(TaskFactory.getInstance().getActualTask().getLevel()+1);
+          } catch (CommException ex) {
+            java.util.logging.Logger.getLogger(MenuBar.class.getName()).log(Level.SEVERE, null, ex);
+          }
+            InstructionPanel.setLastActionPerformed(SlideObject.STOP_DONE);
+         }
+         
+        if (!Main.debuggingModeOn) {
+          PromptDialog promptDialog = new PromptDialog(gc.getFrame(), true);
+          promptDialog.popup();
+          promptDialog.setGC(gc);
+          promptDialog.setLocationRelativeTo(gc);
+        }
         
         int num1 = 0;
         try {
@@ -614,11 +641,14 @@ public class MenuBar {
           GraphCanvas.openTabs.get(i).dispose();
           GraphCanvas.openTabs.clear();
         }
-        // doneAction();
+        
       }
     });
   }
 
+  /**
+   * This method handles the actions when the done button is pressed
+   */
   public void doneAction() {
     // Modify javiergs
     int num1 = -1, num2 = -1;
@@ -698,7 +728,6 @@ public class MenuBar {
         }
         if (desktop.isSupported(Desktop.Action.BROWSE)) {
           URI uri = null;
-          //Process p = new ProcessBuilder()
           File f = new File("localhtml/i-glossary.html");
           String path = f.getAbsolutePath().toString();
           String url = path.replace("\\", "/");
@@ -725,6 +754,8 @@ public class MenuBar {
 
   /**
    * This method draws the box around the help
+   * @param g 
+   * @param f 
    */
   public void drawHelpBox(Graphics g, Font f) {
     int componentWidth = gc.getParent().getWidth();
@@ -751,6 +782,7 @@ public class MenuBar {
 
   /**
    * This method returns whether the user used a hint
+   * @return usedHint
    */
   public boolean getUsedHint() {
     return usedHint;

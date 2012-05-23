@@ -121,6 +121,7 @@ public final class Database {
             // TODO:pass the real case to done flag.
             done = true;
         } catch (Exception e) {
+          System.out.println("The exception happens at line 124 in Database.java");
           e.printStackTrace();
             if (!activity.equalsIgnoreCase("")) {
                 activityList.add(activity);

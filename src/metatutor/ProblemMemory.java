@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,10 +26,8 @@ import java.util.logging.Logger;
  */
 
 
-enum Phase{Test, Intro, Whole, Constructing, Debugging, ConstructInDebug}
-
 public class ProblemMemory {
-    Phase phase;
+    private Phase phase;
 
     public String initTNName;
     public String underline;
@@ -42,7 +41,6 @@ public class ProblemMemory {
     private boolean targetVarPending=false; //true indicates that there are more than one candidate and MT cannot decide which one should be selected as t.v.
     private List<String> soughtSet; //it is a subset of onlineNodes
     boolean init=false;
-    boolean constructionDone=false;
 
     private int curtab=Context.ModelTab;
     public boolean inNewNodePopup=false;
@@ -54,8 +52,6 @@ public class ProblemMemory {
     ////boolean curDescIslegal=false;
     /////boolean descRightToTVS=false;
     ////String curDescName="undefined";//the node name can only be decided after the description is corret.
-    int chkNumInMeaning=0;//number of check button clicked in meaning
-    OnlineNode giveupNode=null;
 
     //variable for dialog
     int ansOfCurDialog=-1;
@@ -66,8 +62,6 @@ public class ProblemMemory {
     String []options;
     boolean asked=true;
 
-    boolean showedDialog10=false; //when go to calculations tab, show recalling
-    boolean showedDialog4=false;
     
 
     //status for finishing the input tab of a node
@@ -78,7 +72,8 @@ public class ProblemMemory {
     /////////boolean nodeRightToTVS=false;
 
     //variables for debug phase
-    List<OnlineNode> possibleStarting=new LinkedList<OnlineNode>();
+    public List<String> possibleStarting=new LinkedList<String>();
+    private boolean debugInit=false;
     boolean fixedonebug=false;
     boolean rightNodeToOpen=false;
     boolean locatingInDebug=true;
@@ -139,12 +134,29 @@ public class ProblemMemory {
     return initCreated;
   }
 
+  public Phase getPhase() {
+    return phase;
+  }
+
+  public boolean isDebugInit() {
+    return debugInit;
+  }
+
   
   
 
 
     
     private void refresh(Phase phase){
+    targetNodeName="";
+    preTargetVarName="";
+    targetVarPending=false; //true indicates that there are more than one candidate and MT cannot decide which one should be selected as t.v.
+    init=false;
+    debugInit=false;
+    initCreated=false;
+    inNewNodePopup=false;
+    curtab=Context.ModelTab;
+    inNewNodePopup=false;
       this.phase=phase;
         
         this.tutorisoff=true;
@@ -203,8 +215,8 @@ public class ProblemMemory {
         System.out.println("Meta tutor is off: "+this.tutorisoff);
         System.out.println("-------------New cycle of problem memory---------------");
         System.out.println("Current Phase: "+this.phase);
-        System.out.println("Is construction done? "+this.constructionDone);
         System.out.println("Timestamp:"+this.timestamp);
+        System.out.println("init created:"+this.initCreated);
         System.out.println("Current Tab: "+this.curtab);
         if(this.targetVarPending && this.targetNodeName.equals(""))
             System.out.println("Target variable is pending right now!");
@@ -220,12 +232,6 @@ public class ProblemMemory {
         System.out.print("\n");
         System.out.println("           Information in Description tab:");
 
-        System.out.println("The number of the student clicking check buttons: "+this.chkNumInMeaning);
-        if(giveupNode!=null)
-            System.out.println("Give up node name: "+this.giveupNode.name);
-        else
-            System.out.println("Give up node name: null");
-
         System.out.println("           Information in input tab");
         if(workingNode!=null)
             System.out.println("The current node that the student is working to solve: "+this.workingNode.name);
@@ -236,7 +242,6 @@ public class ProblemMemory {
             OnlineNode onlineNode=this.onlineNodes.get(i);
             System.out.println("name: "+onlineNode.name);
             System.out.println("status: "+onlineNode.getStatus());
-            System.out.println("input color: "+onlineNode.inputColor);
             System.out.println("radio status: "+onlineNode.comRadio);
             System.out.println("input status: "+onlineNode.comInputs);
         }
@@ -245,16 +250,15 @@ public class ProblemMemory {
         System.out.println("------------Debug------------");
         for(int i=0;i<this.onlineNodes.size();i++){
             OnlineNode node=onlineNodes.get(i);
-            System.out.println(node.name+"'s correctness of input tab: "+node.correctnessOfInput);
-            System.out.println(node.name+"'s correctness of calculation tab: "+node.correctnessOfCal);
-            System.out.println(node.name+"'s color of calculation tab: "+node.calColor);
+            System.out.println(node.name+"'s color of input tab: "+node.getInputColor());
+            System.out.println(node.name+"'s color of calculation tab: "+node.getCalColor());
             System.out.println(node.name+"'s color of graph tab: "+node.graphColor);
         }
         System.out.println("Status for debug phase:");
         if(!possibleStarting.isEmpty()){
             System.out.print("Possible starting nodes: ");
             for(int i=0;i<this.possibleStarting.size();i++)
-                System.out.print(this.possibleStarting.get(i).name+"   ");
+                System.out.print(this.possibleStarting.get(i)+"   ");
             System.out.print("\n");
         }
         System.out.println("Fixed one bug: "+this.fixedonebug);
@@ -315,9 +319,25 @@ public class ProblemMemory {
 
         if(!checkOnlineNodeInit())
             return false;
-
+             
         init=true;
         return true;
+    }
+    
+    public void debugInit(){
+      if(this.phase==Phase.Debugging){
+          this.possibleStarting=this.getStartingNodesForDebug();
+          if(possibleStarting.size()>1)
+            this.targetVarPending=true;
+          else if(possibleStarting.size()==1){
+            this.targetVarPending=false;
+            this.targetNodeName=this.possibleStarting.get(0);
+          }
+          else
+            JOptionPane.showMessageDialog(null, "error in debugging init");
+        }
+        this.debugInit=true;
+        this.initCreated=true;
     }
 
     private boolean checkOnlineNodeInit(){
@@ -376,7 +396,7 @@ public class ProblemMemory {
     private void NodeSumUpdate(){  //update target variable and sought set.
         
         //If target variable is null, try to find a qualified variable from sought set and update target variable
-        if(this.targetNodeName.isEmpty())
+        if(this.targetNodeName.isEmpty() && this.phase==Phase.Constructing)
         {
             List<OnlineNode> candidates=this.getCandidates();
 
@@ -386,12 +406,6 @@ public class ProblemMemory {
             else if(candidates.size()>1)
             {
                 this.targetVarPending=true;
-            }
-            else if(candidates.isEmpty() && this.soughtSet.isEmpty())
-            {
-                this.constructionDone=true;
-                if(this.phase==Phase.ConstructInDebug)
-                    this.phase=Phase.Debugging;
             }
             else if(candidates.isEmpty() && !this.soughtSet.isEmpty())
             {
@@ -403,6 +417,15 @@ public class ProblemMemory {
                 System.out.println("unexpected error in NodeSumUpdate");
                 return;
             }
+        }
+        else if(this.targetNodeName.isEmpty() && this.phase==Phase.Debugging){
+          this.possibleStarting=this.getStartingNodesForDebug();
+          if(possibleStarting.size()==1){
+            setTargetNode(possibleStarting.get(0));
+          }
+          else if(possibleStarting.size()>1){
+            this.targetVarPending=true;
+          }
         }
     }
     
@@ -431,6 +454,10 @@ public class ProblemMemory {
    
         targetVarPending=false;
     }
+   
+   public void setTargetNode(String nodename){
+     this.setTargetNode(this.getOnlineNodeByName(nodename));
+   }
   
    public boolean calculationFinishedUpdate(String nodeName){
         if(this.workingNode==null){
@@ -541,6 +568,15 @@ public class ProblemMemory {
           listOfNodes.add(soughtSet.get(i));
       }
       return listOfNodes;
+    }
+    
+    public List<String> getStartingNodesForDebug(){
+      List<String> nodes=new LinkedList<String>();
+      for(int i=0;i<this.onlineNodes.size();i++){
+        if(this.onlineNodes.get(i).getInputColor()==NodeColor.Red || this.onlineNodes.get(i).getCalColor()==NodeColor.Red)
+          nodes.add(onlineNodes.get(i).name);
+      }
+      return nodes;
     }
 
     

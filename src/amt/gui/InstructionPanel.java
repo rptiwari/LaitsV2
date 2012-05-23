@@ -13,6 +13,7 @@ import javax.swing.tree.*;
 
 // This is the class that controls the cell rendering so that each node shows its slide image next to it
 
+
 /**
  * This is the updated version of TaskView.java that completely controls the
  * interface now
@@ -46,6 +47,27 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   private static int FIRST_STOP = 15; 
   private static int SECOND_STOP = 60;
   private static int THIRD_STOP = 69;
+  
+  private static int IP1_NODE_CREATION = 20;
+  private static int IP2_NODE_CREATION = 40;
+  private static int IP3_NODE_CREATION = 50;
+  
+  private static int IP1_START = 20;
+  private static int IP2_START = 38;
+  private static int IP3_START = 48;
+  private static int IP4_START = 60;
+  
+  public static boolean clickedNextAfterDescription = false; // if the user clicked next after the description panel, then this will be true
+  public static boolean clickedNextAfterPlan = false; // if the user clicked next after the plan panel, then this will be true
+  public static boolean clickedNextAfterInput = false; // if the user clicked next after the input panel, then this will be true
+  
+  public static boolean planStopActivated = false; // if the plan stop has been activated, this will be true
+  public static boolean inputStopActivated = false; // if the input stop has been activated, this will be true
+  public static boolean calcStopActivated = false; // if the calc stop has been activated, this will be true
+  
+  public static boolean canNewNodeButtonBePressed = false; // this controls the new node button
+  public static boolean canDoneButtonBePressed = false; // this controls the done button
+  
   // creates the images that go under the slide
   public Image partInit = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/INIT.jpg"));  
   public Image partBasics = java.awt.Toolkit.getDefaultToolkit().createImage(Main.class.getResource("images/BASICS.jpg"));
@@ -63,17 +85,23 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   private static int lastActionPerformed = SlideObject.STOP_NONE;
   private static int problemBeingSolved = SlideObject.PROBLEM_BEFORE;
   public static int slideProblem = SlideObject.PROBLEM_BEFORE;
+  private Main parent = null;
+  
+
 
   /**
    * Constructor
    */
-  public InstructionPanel() {
+  public InstructionPanel(Main parent) {
     super();
     createSlides();
     initComponents();
     initTree();
     this.setPreferredSize(new Dimension((int) (this.getToolkit().getScreenSize().getWidth() / 2) - 200 / 2 - 300, 140));
-
+    
+    this.parent = parent;
+    
+    
     // The below are taken from taskView.java
     // They need to be cleaned
     taskDescriptionLabel = new JLabel("", JLabel.RIGHT);
@@ -90,6 +118,11 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     toolBar = new JToolBar();
     toolBar.setBounds(290, 5, toolBarWidth, toolBarHeight);
     add(taskDescriptionLabel);
+    
+    if (cover != null) {
+        checkNewNodeButton();
+    }
+    checkForwardButton();
 
   }
 
@@ -132,23 +165,23 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
           iterator.setjTreeName("Fixed value");
           constructRoot.add(new DefaultMutableTreeNode(iterator));
           break;
-        case 41:
+        case 39:
           iterator.setjTreeName("Function");
           constructRoot.add(new DefaultMutableTreeNode(iterator));
           break;
-        case 51:
+        case 49:
           iterator.setjTreeName("Accumulator");
           constructRoot.add(new DefaultMutableTreeNode(iterator));
           break;
-        case 61:
+        case 59:
           iterator.setjTreeName("What To Fix");
           fixRoot.add(new DefaultMutableTreeNode(iterator));
           break;
-        case 64:
+        case 62:
           iterator.setjTreeName("Fixing Notation");
           fixRoot.add(new DefaultMutableTreeNode(iterator));
           break;
-        case 69:
+        case 67:
           iterator.setjTreeName("Design");
           designRoot.add(new DefaultMutableTreeNode(iterator));
           break;
@@ -203,7 +236,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
             if (ow instanceof SlideObject) 
             {
               SlideObject slideNode = (SlideObject) ow; // cast it to a SlideObject
-              if (slideNode.getHasBeenViewed() == true || Main.debuggingModeOn) 
+              if (slideNode.getHasBeenViewed() == true || Main.debuggingModeOn || Main.switchedTasksViaMenu) 
                 // only select the slide if it has been viewed
               { 
                 returningSlide = slideList.currentSlide;
@@ -217,6 +250,37 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
       }
     };
     treeController.addMouseListener(ml); // adds the mouse listener
+  }
+  
+  public void prepareForChangeOfTask(int i) {
+    int stoppingSlide = -1;
+    switch (i) {
+      case 105: // intro problem 1
+        stoppingSlide = IP1_START;
+        break;
+      case 106: // intro problem 2
+        stoppingSlide = IP2_START;
+        break;
+      case 107: // intro problem 3
+        stoppingSlide = IP3_START;
+        break;
+      case 108: // intro problem 4
+        stoppingSlide = IP4_START;
+        break;
+    }
+    if (stoppingSlide != -1) {
+      if (slideList.currentSlide.getSlideNumber() > stoppingSlide) { // we need to count down
+        while (slideList.currentSlide.getSlideNumber() != stoppingSlide) {
+          slideList.currentSlide = slideList.currentSlide.getPrevious();
+          slideList.currentSlide.setHasBeenViewed(true);
+        }
+      } else {
+        while (slideList.currentSlide.getSlideNumber() != stoppingSlide) { // we need to count up
+          slideList.currentSlide = slideList.currentSlide.getNext();
+          slideList.currentSlide.setHasBeenViewed(true);
+        }
+      }
+    }
   }
 
   /**
@@ -257,6 +321,10 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
         slideLabel.setIcon(new ImageIcon(slideList.currentSlide.getImage())); // replace the icon that controls the image
         slideList.currentSlide.setHasBeenViewed(true);
         imageOnDisplay = ((ImageIcon) progressLabel.getIcon()).getImage();
+        
+        if (slideList.currentSlide.getSlideNumber() >= 37) {
+          canDoneButtonBePressed = true;
+        }
 
         // The below lines add the picture under each slide
         switch(slideList.currentSlide.getProgressPicture())
@@ -295,6 +363,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
       formatTree("Node Entered"); // format the tree
       setSelected = true; // true because the tree has been formatted which takes care of this
     }
+    checkForwardButton();
     repaint();
   }
 
@@ -381,6 +450,9 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     makeNodeSelected(str);
   }
 
+  /**
+   * This method creates all the slides to what they should be
+   */
   public void createSlides() 
   {
 
@@ -480,6 +552,11 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
+    
+    slide = new SlideObject(20, SlideObject.STOP_CREATE_NODE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
+    slide.setPrevious(preSlide);
+    preSlide.setNext(slide);
+    preSlide = slide;
 
     slide = new SlideObject(21, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
@@ -501,17 +578,17 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(25, SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(25, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(26, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(26, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(27, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(27, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -521,12 +598,12 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(29, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(29, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(30, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(30, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -536,17 +613,17 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(32, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(32, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(33, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(33, SlideObject.STOP_RUN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(34, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(34, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -556,12 +633,12 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(36, SlideObject.STOP_RUN, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(36, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(37, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(37, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -571,17 +648,17 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(39, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB1, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(39, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(40, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(40, SlideObject.STOP_CREATE_NODE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(41, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(41, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -592,32 +669,32 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide = slide;
 
     
-    slide = new SlideObject(43, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(43, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(44, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(44, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(45, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(45, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(46, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(46, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(47, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(47, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(48, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB2, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(48, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -627,12 +704,12 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(50, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(50, SlideObject.STOP_CREATE_NODE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(51, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(51, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -642,37 +719,37 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(53, SlideObject.STOP_DESC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(53, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(54, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(54, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(55, SlideObject.STOP_PLAN, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(55, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(56, SlideObject.STOP_INPUT, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(56, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(57, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(57, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(58, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(58, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(59, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB3, SlideObject.PROGRESS_CONSTRUCT);
+    slide = new SlideObject(59, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -682,7 +759,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(61, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
+    slide = new SlideObject(61, SlideObject.STOP_RUN, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -703,12 +780,12 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(65, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
+    slide = new SlideObject(65, SlideObject.STOP_CALC, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(66, SlideObject.STOP_NONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
+    slide = new SlideObject(66, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -718,7 +795,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     preSlide.setNext(slide);
     preSlide = slide;
 
-    slide = new SlideObject(68, SlideObject.STOP_DONE, SlideObject.PROBLEM_PB4, SlideObject.PROGRESS_FIX);
+    slide = new SlideObject(68, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
@@ -762,61 +839,71 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     slide.setPrevious(preSlide);
     preSlide.setNext(slide);
     preSlide = slide;
-
-    slide = new SlideObject(77, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(78, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(79, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_CREATE);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
     
-    slide = new SlideObject(80, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_END);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
-
-    slide = new SlideObject(81, SlideObject.STOP_NONE, SlideObject.PROBLEM_AFTER, SlideObject.PROGRESS_END);
-    slide.setPrevious(preSlide);
-    preSlide.setNext(slide);
-    preSlide = slide;
 
     slideList.setLastSlide(slide);
 
   }
   
   
+  /**
+   * setter method for the problem being solved
+   * @param pbs
+   */
   public static void setProblemBeingSolved(int pbs) 
   {
-    problemBeingSolved = pbs;
+    if (problemBeingSolved != pbs) {
+      problemBeingSolved = pbs;
+      clickedNextAfterDescription = false;
+      clickedNextAfterPlan = false;
+      clickedNextAfterInput = false;
+      planStopActivated = false;
+      inputStopActivated = false;
+      calcStopActivated = false;
+    }
   }
 
+  /**
+   * getter method for the problem being solved
+   * @return problemBeingSolved
+   */
   public static int getHasBeenViewed() 
   {
     return problemBeingSolved;
   }
   
+  /**
+   * setter method for the last action performed
+   * @param lap
+   */
   public static void setLastActionPerformed(int lap) 
   {
-    if (lap != 6){
+    if (lap != SlideObject.STOP_DONE){
         lastActionPerformed = lap;
     }
     else {
-        lastActionPerformed = 0;
+      lastActionPerformed = 0;
+       if (problemBeingSolved == SlideObject.PROBLEM_AFTER) {
+         canNewNodeButtonBePressed = false; // because it is the last problem, release control of the new node button to the other classes         
+       }   
     }
   }
 
+  /**
+   * getter method for the last action performed
+   * @return
+   */
   public static int getLastActionPerformed() 
   {
     return lastActionPerformed;
   }
+
+  public ListSlides getSlideList() {
+    return slideList;
+  }
+
+
+  
   
   
   /**
@@ -995,6 +1082,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
         slideList.setCurrentLastSlide(slideList.currentSlide);
         slideList.setCurrentSlide(slideList.currentSlide.getPrevious());
         this.allForwardButton.setEnabled(true);
+        checkForwardButton();
         repaint();
       }
     logger.concatOut(Logger.ACTIVITY, "TaskView.previousButtonActionPerformed.1", Integer.toString(index + 1));
@@ -1003,13 +1091,27 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
 
   private void allForwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allForwardButtonActionPerformed
     logger.out(Logger.ACTIVITY, "TaskView.lastButtonActionPerformed.1");
-    slideList.setCurrentSlide(slideList.getCurrentLastSlide());
+    
+    int count = 0;
+    SlideObject temp = slideList.firstSlide;
+    while (temp.hasNext()){
+      if (!temp.getHasBeenViewed()){
+        count = temp.getSlideNumber();
+        break;
+      }
+      else {
+        temp = temp.getNext();
+      }
+    }
+    
+    slideList.setCurrentSlide(temp);
     this.allForwardButton.setEnabled(false);
+    
     repaint();
   }//GEN-LAST:event_allForwardButtonActionPerformed
 
   private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
-
+    System.out.println("Slide Number:" + slideList.currentSlide.getSlideNumber());
     System.out.println("problemBeingSolved("+problemBeingSolved+") < SlideObject.PROBLEM_AFTER("+SlideObject.PROBLEM_AFTER+"): " + (problemBeingSolved < SlideObject.PROBLEM_AFTER));
     System.out.println("slideProblem("+slideProblem+") == problemBeingSolved("+problemBeingSolved+"): " + (slideProblem == problemBeingSolved));
  //   System.out.println("slideList.currentSlide.getSlideNumber()("+slideList.currentSlide.getSlideNumber()+") == problemBeingSolved("+problemBeingSolved+"): " + (slideList.currentSlide.getSlideNumber() == problemBeingSolved));
@@ -1021,32 +1123,115 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     if (!Main.debuggingModeOn 
             && problemBeingSolved < SlideObject.PROBLEM_AFTER
             && slideProblem == problemBeingSolved
- //           && slideList.currentSlide.getSlideNumber() == problemBeingSolved
             && slideList.currentSlide.getStopDetection() != SlideObject.STOP_NONE
-            && lastActionPerformed < slideList.currentSlide.getStopDetection()) {
+            && lastActionPerformed < slideList.currentSlide.getStopDetection()) 
+    {
               JOptionPane.showMessageDialog(this, "Finish all the instructions in this slide before going to the next one.");
-          }
+    }
     else 
     {
           // replace the previous slide with the one that is currently on and then replace it by calling repaint     
           if (slideList.currentSlide.getNext()!=null)
-          {
-            slideList.previousSlide = slideList.currentSlide;
-            slideList.currentSlide = slideList.currentSlide.getNext();
-            slideList.setCurrentLastSlide(slideList.currentSlide);
-            slideProblem = slideList.currentSlide.getsolvingProblem();
-          }
+      {
+        slideList.previousSlide = slideList.currentSlide;
+        slideList.currentSlide = slideList.currentSlide.getNext();
+        slideList.setCurrentLastSlide(slideList.currentSlide);
+        slideProblem = slideList.currentSlide.getsolvingProblem();
+
+        if (!Main.debuggingModeOn){
+        if (planStopActivated) {
+          clickedNextAfterDescription = true;
+          planStopActivated = false;
+
+        } else if (inputStopActivated) {
+          clickedNextAfterPlan = true;
+          inputStopActivated = false;
+
+        } else if (calcStopActivated) {
+          clickedNextAfterInput= true;
+          calcStopActivated = false;
+
+        }
+        }
+      }
           else
           {
             this.allForwardButton.setEnabled(false);
             this.forwardButton.setEnabled(false);
             //forward desactive
-          }             
+          }      
+          
+          
           repaint();
           logger.concatOut(Logger.ACTIVITY, "TaskView.nextButtonActionPerformed.1", Integer.toString(index + 1));
+          
+
      }
+    checkNewNodeButton();
+    checkForwardButton();
+    
  }//GEN-LAST:event_forwardButtonActionPerformed
 
+  public void checkForwardButton(){
+        if (!Main.debuggingModeOn 
+            && problemBeingSolved < SlideObject.PROBLEM_AFTER
+            && slideProblem == problemBeingSolved
+            && slideList.currentSlide.getStopDetection() != SlideObject.STOP_NONE
+            && lastActionPerformed < slideList.currentSlide.getStopDetection()) 
+        {
+            forwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/amt/images/navigate_right_icon.png")));
+        }
+        else {
+          forwardButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/amt/images/navigate_right_icon_green.png")));
+        }
+  }
+  
+  public void checkNewNodeButton() {
+    if (cover != null) {
+      if (problemBeingSolved == SlideObject.PROBLEM_PB1) {
+        if (slideList.currentSlide.getSlideNumber() >= IP1_START) {
+          canNewNodeButtonBePressed = true;
+          if (cover.getGraphCanvas().checkNewNodeButton()) {
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          } else {
+            cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          }
+        } else {
+          canNewNodeButtonBePressed = false;
+          cover.getMenuBar().getNewNodeButton().setEnabled(false);
+        }
+      } else if (problemBeingSolved == SlideObject.PROBLEM_PB2) {
+        if (slideList.currentSlide.getSlideNumber() >= IP2_START) {
+          canNewNodeButtonBePressed = true;
+          if (cover.getGraphCanvas().checkNewNodeButton()) {
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          } else {
+            cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          }
+        } else {
+          canNewNodeButtonBePressed = false;
+          cover.getMenuBar().getNewNodeButton().setEnabled(false);
+        }
+      } else if (problemBeingSolved == SlideObject.PROBLEM_PB3) {
+        if (slideList.currentSlide.getSlideNumber() >= IP3_START) {
+          canNewNodeButtonBePressed = true;
+          if (cover.getGraphCanvas().checkNewNodeButton()) {
+            cover.getMenuBar().getNewNodeButton().setEnabled(true);
+          } else {
+            cover.getMenuBar().getNewNodeButton().setEnabled(false);
+          }
+        } else {
+          canNewNodeButtonBePressed = false;
+          cover.getMenuBar().getNewNodeButton().setEnabled(false);
+        }
+      } else if (problemBeingSolved == SlideObject.PROBLEM_PB4) {
+
+        canNewNodeButtonBePressed = true;
+
+      }
+    }
+  }
+  
   
    /**
    * This method sets the cover
@@ -1056,7 +1241,10 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
    * @param cover
    */
   public void setCover(Cover cover) {
-    this.cover = cover;
+    if (this.cover == null){
+          this.cover = cover;
+          canNewNodeButtonBePressed = false;
+    }
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton allBackButton;
@@ -1089,7 +1277,6 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }
-
 class SlideNodeCellRenderer extends DefaultTreeCellRenderer {
   
   private String nodeText = "";
@@ -1175,12 +1362,13 @@ class SlideObject {
 
   // Definition of the constants for the stops corresponding to the slide
   public static final int STOP_NONE = 0;
-  public static final int STOP_DESC = 1;
-  public static final int STOP_PLAN = 2;
-  public static final int STOP_INPUT = 3;
-  public static final int STOP_CALC = 4;
-  public static final int STOP_DONE = 5;
-  public static final int STOP_RUN = 6;  
+  public static final int STOP_CREATE_NODE = 1;
+  public static final int STOP_DESC = 2;
+  public static final int STOP_PLAN = 3;
+  public static final int STOP_INPUT = 4;
+  public static final int STOP_CALC = 5;
+  public static final int STOP_RUN = 6;
+  public static final int STOP_DONE = 7;
   
   
   /**

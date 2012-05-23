@@ -17,6 +17,7 @@ public class Dialog {
   
   //type
   public static int ChooseTN=21;
+  public static int ChooseStarting=22;
   
   
   private int type;
@@ -52,5 +53,16 @@ public class Dialog {
     new MetaTutorQues(content,params);
     KnowledgeSession ksession=KnowledgeSession.getKnowledgeSession();
     ksession.showingADialog(new Dialog(Dialog.IsShowing,Dialog.ChooseTN));
+  }
+  
+  public static void genChooseStartingForDebug(List<String> candidates){
+    String content="choose debug";
+    String []params=new String[candidates.size()+1];
+    params[0]="-";
+    for(int i=0;i<candidates.size();i++)
+      params[i+1]=candidates.get(i);
+    new MetaTutorQues(content,params);
+    KnowledgeSession ksession=KnowledgeSession.getKnowledgeSession();
+    ksession.showingADialog(new Dialog(Dialog.IsShowing,Dialog.ChooseStarting));
   }
 }

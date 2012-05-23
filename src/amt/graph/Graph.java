@@ -67,6 +67,7 @@ public class Graph extends Selectable {
   /**
    * Method to find out if there is a selected object
    *
+   * @param s 
    * @return true or false
    */
   public boolean isSelected(Selectable s) {
@@ -78,6 +79,7 @@ public class Graph extends Selectable {
 
   /**
    * This method sets the value for dialogueValue which is the value from yes/no dialogs
+   * @param d 
    */
   public void setDialogueValue(int d) {
     this.dialogueValue = d;
@@ -85,6 +87,7 @@ public class Graph extends Selectable {
 
   /**
    * This method returns the value for dialogueValue which is the value from yes/no dialogs
+   * @return dialogueValue
    */
   public int getDialogueValue() {
     return dialogueValue;
@@ -92,7 +95,7 @@ public class Graph extends Selectable {
 
   /**
    * This method gets the value of taskID
-   * @return
+   * @return taskID
    */
   public int getTaskID() {
     return taskID;
@@ -275,6 +278,7 @@ public class Graph extends Selectable {
    *
    * @param a is the initial vertex
    * @param b is the ending vertex
+   * @param type 
    * @return the new inserted edge
    */
   public final Edge addEdge(Vertex a, Vertex b, String type) {
@@ -396,6 +400,11 @@ public class Graph extends Selectable {
     return null;
   }
 
+  /**
+   * This method counts the types of nodes
+   * @param nodeType
+   * @return
+   */
   public int countNodesOfType(int nodeType) {
     int counter = 0;
     for (int i = 0; i < vertexes.size(); i++) {
@@ -407,6 +416,11 @@ public class Graph extends Selectable {
     return counter;
   }
 
+  /**
+   * This method gets the labels of the type of node corresponding to the parameter
+   * @param nodeType
+   * @return
+   */
   public LinkedList<String> getLabelsOfNodesType(int nodeType) {
     LinkedList<String> labels = new LinkedList<String>();
     LinkedList<Edge> inEdges = new LinkedList<Edge>();
@@ -444,6 +458,9 @@ public class Graph extends Selectable {
 
   /**
    * Method to run the Model
+   * @param server 
+   * @param graphCanvas 
+   * @return 
    */
   public boolean run(TaskFactory server, GraphCanvas graphCanvas) {
     int count = 0;
@@ -657,6 +674,10 @@ public class Graph extends Selectable {
   /*
    * GETTER AN SETTER -------------------------------------------------------
    */
+  /**
+   * getter method for the selected variable
+   * @return selected
+   */
   public Selectable getSelected() {
     return selected;
   }
@@ -670,6 +691,10 @@ public class Graph extends Selectable {
     return vertexes;
   }
 
+  /**
+   * setter method for the LinkedList of vertexes 
+   * @param vertexes
+   */
   public void setVertexes(LinkedList vertexes) {
     this.vertexes = vertexes;
   }
@@ -683,6 +708,10 @@ public class Graph extends Selectable {
     return edges;
   }
 
+  /**
+   * Setter method for the linkedlist of edges
+   * @param edges
+   */
   public void setEdges(LinkedList edges) {
     this.edges = edges;
   }

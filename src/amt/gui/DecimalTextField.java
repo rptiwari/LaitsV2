@@ -3,6 +3,9 @@ package amt.gui;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.text.Format;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 
 /*
@@ -18,10 +21,12 @@ public class DecimalTextField extends JFormattedTextField {
 
     // after it was decided that a comma should be allowed as input, it was added to this list
     private final static String goodChars = "0123456789.,\b"; //allowable input
+    private CalculationsPanel cPanel = null;
     
     //constructors- do the same thing as the parent class
-    public DecimalTextField(){
+    public DecimalTextField(CalculationsPanel cPanel){
         super();
+        this.cPanel = cPanel;
     }
     public DecimalTextField(Format format){
         super(format);
@@ -64,7 +69,20 @@ public class DecimalTextField extends JFormattedTextField {
           ev.consume();
           return;
         }
+        
+        if (ev.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+          String currentText = getText();
+          super.processKeyEvent(ev);
+          String textAfterEvent = getText();
+       
+        if (textAfterEvent.isEmpty()){
+      //    cPanel.setGivenValueTextField(new DecimalTextField(cPanel));
+        }
 
+        System.out.println(currentText);
+        System.out.println(textAfterEvent);
+      }
+          
         //otherwise process key event as normal
         else 
         {      
@@ -72,6 +90,7 @@ public class DecimalTextField extends JFormattedTextField {
         }
       }
    }
+
     
     
     

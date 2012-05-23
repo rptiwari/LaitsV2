@@ -69,11 +69,10 @@ public final class Task implements Product {
   }
 
   /**
-   *
+   * This is the constructor for Task.
    * @param id
    * @param level
    * @param title
-   * @param type
    */
   public Task(int id, int level, String title) {
     setId(id);
@@ -128,7 +127,7 @@ public final class Task implements Product {
   /**
    * Setter method to define the level (difficulty) of the task.
    *
-   * @param an String with the level of the task
+   * @param level 
    */
   public void setLevel(int level) {
     this.level = level;
@@ -183,7 +182,7 @@ public final class Task implements Product {
   /**
    * Setter method to define the short description of the task
    *
-   * @param an String with the short description of the task
+   * @param summary 
    */
   public void setSummary(String summary) {
     this.summary = summary;
@@ -221,7 +220,7 @@ public final class Task implements Product {
    * Setter method to define the type of a task, using the constant variables to
    * represent the type
    *
-   * @param tpye: the constant that represents the value of the phase
+   * @param newphaseTask 
    */
   public void setPhaseTask(int newphaseTask) {
     this.phaseTask = newphaseTask;
@@ -231,7 +230,7 @@ public final class Task implements Product {
    * Setter method to define the experimental phaseof a task using a String to
    * represent the phase, trnasformed into one of the static variables options
    *
-   * @param tpye: a String with the task phase
+   * @param newphaseTask 
    */
   public void setPhaseTask(String newphaseTask) {
     if (newphaseTask.equalsIgnoreCase("intro")) {
@@ -287,7 +286,7 @@ public final class Task implements Product {
    * Setter method to change the task type (modeling, construction, debugging,
    * and whole)
    *
-   * @return the value of the constant that represents this particular type
+   * @param newtypeTask 
    */
   public void setTypeTask(int newtypeTask) {
     this.typeTask = newtypeTask;
@@ -297,7 +296,7 @@ public final class Task implements Product {
    * Setter method to define the type of a task using the string that represents
    * the type, to be converted into the static varibles
    *
-   * @param tpye: a String with the task type
+   * @param type 
    */
   public void setTypeTask(String type) {
     if (type.equalsIgnoreCase("construct")) {
@@ -319,7 +318,7 @@ public final class Task implements Product {
   /**
    * toString method to represent the possible values given in the task type
    *
-   * @param tpye: a String with the task type
+   * @return 
    */
   public String TypeTaskToString() {
     switch (typeTask) {
@@ -353,7 +352,7 @@ public final class Task implements Product {
   /**
    * Setter method to define the node that the problem is seeking
    *
-   * @param tpye: a String with the name of the node that we are seeking
+   * @param problemSeeking 
    */
   public void setProblemSeeking(String problemSeeking) {
     this.problemSeeking = problemSeeking;
@@ -374,8 +373,7 @@ public final class Task implements Product {
    * Setter method to define the text associated to the the node that the
    * problem is seeking
    *
-   * @param newproblemSeekingCorrespondingSentence: a String with the text
-   * associated to the name of the node that we are seeking
+   * @param newproblemSeekingCorrespondingSentence 
    */
   public void setproblemSeekingCorrespondingSentence(String newproblemSeekingCorrespondingSentence) {
     this.problemSeekingCorrespondingSentence = newproblemSeekingCorrespondingSentence;
@@ -395,7 +393,7 @@ public final class Task implements Product {
    * important to remember thas this value should be coherent with the one in
    * the db.
    *
-   * @param vertexNames
+   * @param vertexes 
    */
   public void setVertexNames(LinkedList<String> vertexes) {
     this.vertexNames = vertexes;
@@ -413,7 +411,7 @@ public final class Task implements Product {
   /**
    * Setter method to define the start time to run the model
    *
-   * @param an integer with the start time of the model
+   * @param startTime 
    */
   public void setStartTime(int startTime) {
     this.startTime = startTime;
@@ -431,7 +429,7 @@ public final class Task implements Product {
   /**
    * Setter method to define end time to run the model.
    *
-   * @param an integer endTime
+   * @param endTime 
    */
   public void setEndTime(int endTime) {
     this.endTime = endTime;
@@ -449,42 +447,80 @@ public final class Task implements Product {
   /**
    * Setter method to define the unitTime for the time in our model
    *
-   * @param an String with the unitTime of the model
+   * @param unitTime 
    */
   public void setUnitTime(String unitTime) {
     this.unitTime = unitTime;
   }
 
+  /**
+   * Getter method for the LinkedList containing the strings that are in the JTree.
+   * @return tree
+   */
   public LinkedList<String> getTree() {
     return tree;
   }
 
+  /**
+   * Setter method for the LinkedList containing the strings that are in the JTree.
+   * @param tree
+   */
   public void setTree(LinkedList<String> tree) {
     this.tree = tree;
   }
 
+  /**
+   * Getter method for the extra nodes in this task
+   * @return extranodes
+   */
   public LinkedList<String> getExtraNodes() {
     return this.extranodes;
   }
 
+  /**
+   * Setter method for the extra nodes in this task
+   * @param extranodes
+   */
   public void setExtraNodes(LinkedList<String> extranodes) {
     this.extranodes = extranodes;
   }
 
-  /*
-   * this method returns the node present in this task with the name "nodeName"
+
+  /**
+   * This is a getter method for a certain node determined by the 'nodeName' string. 
+   * Send the nodeName of the node you need and this will return it if it can find it,
+   * or null if it cant.
+   * @param nodeName
+   * @return Vertex corresponding to the 'nodeName' parameter or null if not found
    */
   public Vertex getNode(String nodeName) {
     for (int i = 0; i < listOfVertexes.size(); i++) {
-      if (listOfVertexes.get(i).getNodeName().equals(nodeName)) { // if the current vertex's nodename equals the nodeName variable
+      if (listOfVertexes.get(i).getNodeName().equals(nodeName) ) { // if the current vertex's nodename equals the nodeName variable
         return listOfVertexes.get(i); // return it
-      } else if (listOfVertexes.get(i).getNodeName().equals(nodeName)) { // else if the current vertex's label equals the nodeName variable
+      } 
+    }
+    return null;
+  }
+  
+  public Vertex checkNode(Vertex v) {
+    for (int i = 0; i < listOfVertexes.size(); i++) {
+      
+      String userNodeName = v.getNodeName();
+      String correctNodeName = listOfVertexes.get(i).getNodeName();
+      String userDesc = v.getSelectedDescription();
+      String correctDesc = listOfVertexes.get(i).getSelectedDescription();
+      
+      if (correctNodeName.equals(userNodeName) && (correctDesc.equals(userDesc)) ) { // if the current vertex's nodename equals the nodeName variable
         return listOfVertexes.get(i); // return it
-      }
+      } 
     }
     return null;
   }
 
+  /**
+   * This method calculates the correct values for the nodes that are sent to it via a linked list containing Vertexs. 
+   * @param vertexList
+   */
   public void calculateCorrectVertexValues(LinkedList<Vertex> vertexList) {
 
     int numberOfPoints = endTime - startTime; // the number of values that will be needed

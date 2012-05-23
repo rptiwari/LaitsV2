@@ -17,6 +17,10 @@ public class PopUpAvatarMenu extends PopupMenu implements ActionListener {
 
     private Selectable selected;
 
+    /**
+     * Constructor
+     * @param selected
+     */
     public PopUpAvatarMenu(Selectable selected)
     {
         super();
@@ -59,6 +63,10 @@ public class PopUpAvatarMenu extends PopupMenu implements ActionListener {
         add(temp);
     }
 
+    /**
+     * 
+     * @param e
+     */
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == "Wave" && selected instanceof Avatar)
         {

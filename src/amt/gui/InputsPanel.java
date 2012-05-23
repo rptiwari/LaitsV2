@@ -48,10 +48,15 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
   private final boolean NO_TYPE_CHANGE = false;
   private boolean giveUpPressed = false;
   private JDialog newNodeFrame;
-  //Iterator inputStack =
   Query query=Query.getBlockQuery();
+  private boolean checkOrGiveUpButtonClicked = false;
 
-  /** Creates new form InputsPanel */
+  /** Creates new form InputsPanel
+   * @param parent
+   * @param v 
+   * @param g
+   * @param gc  
+   */
   public InputsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) 
   {
     initComponents();
@@ -82,6 +87,9 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
   }
   
+  /**
+   * This method updates the inputs panel
+   */
   public void updateInputPanel()
   {
     currentInputPanel.removeAll();
@@ -146,8 +154,6 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
         currentInputPanel.setBackground(Selectable.COLOR_CORRECT);
       }
       
-      checkButton.setEnabled(true);
-      
     } 
     else if (currentVertex.getInputsButtonStatus() == currentVertex.GAVEUP) 
     {
@@ -199,16 +205,41 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     }
 }
 
+  /**
+   * This method initializes the buttons based on the type of task
+   */
   public void initButtonOnTask() 
   {
     // Depending on what type the current task is, checkButton oand giveUpButton should either be
     // disabled or enabled
-    giveUpButton.setEnabled(false); 
-    checkButton.setEnabled(false);
-    if (parent.server.getActualTask().getPhaseTask()== Task.CHALLENGE)
+    
+    
+    if (valueButton.isSelected() || inputsButton.isSelected()){
+      checkButton.setEnabled(false);
       giveUpButton.setEnabled(false);
+    }
+    else {
+      checkButton.setEnabled(true);
+      giveUpButton.setEnabled(true);
+    }
+    
+    if (!currentVertex.getNodeName().equals("")) {
+      closeButton.setEnabled(true);
+    } else {
+      closeButton.setEnabled(false);
+    }
+    if (this.parent.server.getActualTask().getPhaseTask() != Task.INTRO) {
+      viewSlidesButton.setEnabled(false);
+      viewSlidesButton.setVisible(false);
+    }
+    if (parent.server.getActualTask().getPhaseTask() == Task.CHALLENGE) {
+      giveUpButton.setEnabled(false);
+    }
   }
 
+  /**
+   * This method initializes the initial state of the components
+   */
   public void initInitialState() 
   {
     if (currentVertex.getType()==amt.graph.Vertex.CONSTANT) 
@@ -262,6 +293,9 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       newNode.setEnabled(false);
   }
 
+  /**
+   * This method resets the colors
+   */
   public void resetColors() 
   {
     currentInputPanel.setBackground(Selectable.COLOR_WHITE);
@@ -336,6 +370,10 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     parent.canGraphBeDisplayed();
   }
 
+  /**
+   * This method clears the inputs
+   * @param trueFalse
+   */
   public void clearInputs(boolean trueFalse) {
     if (trueFalse) 
     {
@@ -345,6 +383,10 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     }
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void itemStateChanged(ItemEvent e) {
     boolean skip = false;
 
@@ -447,13 +489,10 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
                 Edge edge = currentVertex.inedges.get(j);
                 if (edge.start == v && edge.end == currentVertex) 
                 {                 
-                  /*added these to replace the above call*/
                   g.getEdges().remove(edge);
                   currentVertex.inedges.remove(edge);
-                  /*end*/
                   gc.repaint();
                   edgeRemoved = true;
-                  //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
                   logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
                   if(this.correctnessOfInputs()) //the current inputs are correct
                     logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.3", "correct");
@@ -472,7 +511,6 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
                   {
                     g.delEdge(edge);
                     gc.repaint();
-                    //parent.getCalculationsPanel().updateInputs();// moved to NodeEditor.java
                     logger.concatOut(Logger.ACTIVITY, "InputsPanel.itemStateChanged.2", v.getNodeName() + "-" + currentVertex.getNodeName());
                     System.out.println("removeing the outedge");
                     if(this.correctnessOfInputs()) //the current inputs are correct
@@ -523,8 +561,20 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       return false;
   }
 
+  /**
+   * getter method for the new node frame
+   * @return
+   */
   public JDialog getNewNodeFrame() {
     return newNodeFrame;
+  }
+  
+  public JButton getCloseButton() {
+    return closeButton;
+  }
+
+  public void setCloseButton(JButton closeButton) {
+    this.closeButton = closeButton;
   }
   
   
@@ -557,6 +607,8 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
         newNode = new javax.swing.JButton();
         giveUpButton = new javax.swing.JButton();
         checkButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        viewSlidesButton = new javax.swing.JButton();
 
         checkBoxScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         checkBoxScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -636,7 +688,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
                 .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(contentPanelLayout.createSequentialGroup()
                         .addComponent(currentVertexDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(9, Short.MAX_VALUE))
+                        .addContainerGap(19, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(newNode)
@@ -669,20 +721,37 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
             }
         });
 
+        closeButton.setText("Save & Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        viewSlidesButton.setText("View Slides");
+        viewSlidesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewSlidesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(checkButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(giveUpButton)
-                        .addGap(0, 424, Short.MAX_VALUE))
-                    .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(checkButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(giveUpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(viewSlidesButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(closeButton)
+                .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -692,7 +761,9 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewSlidesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -906,23 +977,24 @@ private boolean correctnessOfInputs() {
  * @author Curt Tyler
  * @return boolean
  */
-public boolean checkForSyntaxErrors() {
-  boolean syntaxError = false;
-  if (currentVertex.getIsDebug() == false) { // we are having issues with this function and debug nodes, this is a temporary fix
-  if (this.getValueButtonSelected() != true || this.getInputsButtonSelected() != true)
-    syntaxError = true;
-  else if (this.getInputsButtonSelected() == true) 
-  {
-    syntaxError = true;
-    for (JCheckBox box : boxList) 
-    {
-      // If there is at least one inputs check box selected, then there is no error
-      if (box.isSelected() != false) 
-        syntaxError = false;
-    }
-  }
-  }
-  return syntaxError;
+public boolean checkForCompletion() {
+//  boolean syntaxError = false;
+//  if (currentVertex.getIsDebug() == false) { // we are having issues with this function and debug nodes, this is a temporary fix
+//    if (this.getValueButtonSelected() != true || this.getInputsButtonSelected() != true) {
+//      syntaxError = true;
+//    } else if (this.getInputsButtonSelected() == true) {
+//      syntaxError = true;
+//      for (JCheckBox box : boxList) {
+//        // If there is at least one inputs check box selected, then there is no error
+//        if (box.isSelected() != false) {
+//          syntaxError = false;
+//        }
+//      }
+//    }
+//  }
+  
+  // This method needs to be rewritten!! The line if (this.getValueButtonSelected() != true || this.getInputsButtonSelected() != true) does not work even if they are selected
+  return checkOrGiveUpButtonClicked;
 }
 
 /**
@@ -1029,15 +1101,16 @@ public boolean checkForCorrectInputs()
           returnMsg = "allow";
         if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
         {
-          new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true);
+          new MetaTutorMsg(returnMsg.split(":")[1], false);
           return;
         }
-        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) 
+        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex)) 
         {
           if (correctVertex == null)
             correctVertex = parent.correctVertex;
           
           logger.out(Logger.ACTIVITY, "InputsPanel.checkButtonActionPerformed.1");
+          checkOrGiveUpButtonClicked = true;
           boolean correct = true, correctType = true, correctInput = true;
           if (!valueButton.isSelected() && !inputsButton.isSelected()) 
           {
@@ -1087,6 +1160,7 @@ public boolean checkForCorrectInputs()
                   {
                     InstructionPanel.setProblemBeingSolved(parent.server.getActualTask().getLevel());
                     InstructionPanel.setLastActionPerformed(SlideObject.STOP_INPUT);
+                    InstructionPanel.calcStopActivated = true;
                   }
               
               // disable access to radioPanel, valueButton, inputsButton, currentInputPanel,
@@ -1148,8 +1222,11 @@ public boolean checkForCorrectInputs()
       
 }//GEN-LAST:event_checkButtonActionPerformed
 
-// LOOK WHERE THOSE CORRECTINPUTS AND OUTPUTS COME FROM FOR TRANSFORMATION
-public boolean areAllCorrectInputsAvailable() {
+    /**
+     * 
+     * @return
+     */
+    public boolean areAllCorrectInputsAvailable() {
   String [] correctInputs = currentVertex.getCorrectInputs().split(",");
   String [] correctOutputs = currentVertex.getCorrectOutputs().split(",");
   boolean yesNo = false;
@@ -1207,7 +1284,7 @@ public boolean areAllCorrectInputsAvailable() {
     private void giveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giveUpButtonActionPerformed
       if (!initializing) 
       {
-        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex.getNodeName())) 
+        if (!parent.getDescriptionPanel().duplicatedNode(currentVertex)) 
         {
           if (areAllCorrectInputsAvailable() != false) 
           {
@@ -1223,9 +1300,11 @@ public boolean areAllCorrectInputsAvailable() {
               returnMsg = "allow";
             if (!returnMsg.equalsIgnoreCase("allow")) //the action is not allowed by meta tutor
             {
-              new MetaTutorMsg(returnMsg.split(":")[1],false).setVisible(true);
+              new MetaTutorMsg(returnMsg.split(":")[1],false);
               return;
             }
+            
+            checkOrGiveUpButtonClicked = true;
 
             correctinput = false;
             System.out.println("#vertexes Inputs pannel:"+g.getVertexes().size());
@@ -1341,8 +1420,7 @@ public boolean areAllCorrectInputsAvailable() {
     }
     
     if (returnMsg.equals("allow")) {
-      logger.out(Logger.ACTIVITY, "No message", "Student opened the node editor only with description tab for the node named :New Node");
-      
+logger.out(Logger.ACTIVITY, "No message", "Student opened the node editor only with description tab for the node named :New Node");     
       Vertex v=new Vertex();
     v.setNodeName("");
     gc.paintVertex(v);
@@ -1363,14 +1441,17 @@ public boolean areAllCorrectInputsAvailable() {
        newNodeFrame.setAlwaysOnTop(true);
        newNodeFrame.setModal(true); // locks the window behind it and the graph canvas
        newNodeFrame.setVisible(true);
+
        updateInputPanel();
        inputsButton.doClick();
        currentInputPanel.repaint();
 
     this.parent.setAlwaysOnTop(true);
+    
+    
        
     } else {
-      new MetaTutorMsg(returnMsg.split(":")[1], false).setVisible(true); //the action is denied by meta tutor
+      new MetaTutorMsg(returnMsg.split(":")[1], false); //the action is denied by meta tutor
       logger.out(Logger.ACTIVITY, "No message", "Meta tutor denied the creating");
     }
     
@@ -1380,10 +1461,25 @@ public boolean areAllCorrectInputsAvailable() {
     
   }//GEN-LAST:event_newNodeActionPerformed
 
+  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+
+      java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+      this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+    
+  }//GEN-LAST:event_closeButtonActionPerformed
+
+  private void viewSlidesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewSlidesButtonActionPerformed
+    if (parent.getGraphCanvas().getFrame() instanceof Main) { // if the frame is main
+      Main m = (Main) parent.getGraphCanvas().getFrame(); // get the frame
+      m.getTabPane().setSelectedIndex(0); // set the tab index to the slides
+    }
+  }//GEN-LAST:event_viewSlidesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JScrollPane checkBoxScrollPane;
     private javax.swing.JButton checkButton;
+    private javax.swing.JButton closeButton;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JPanel currentInputPanel;
     private javax.swing.JLabel currentVertexDescriptionLabel;
@@ -1392,6 +1488,7 @@ public boolean areAllCorrectInputsAvailable() {
     private javax.swing.JButton newNode;
     private javax.swing.JPanel radioPanel;
     private javax.swing.JRadioButton valueButton;
+    private javax.swing.JButton viewSlidesButton;
     // End of variables declaration//GEN-END:variables
 
 }

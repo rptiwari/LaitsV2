@@ -71,6 +71,8 @@ public class Vertex extends Selectable {
    * booleans that describe the current state of the node: what is selected, and
    * correct
    */
+  private boolean isCalculationPanelCorrect = false;
+  private boolean isInputsPanelCorrect = false;
   private boolean inputsSelected = false;
   private boolean isOpen = false;// is the node currently opened in the nodeEditor
   private boolean isinputsTypeCorrect = false;
@@ -146,7 +148,6 @@ public class Vertex extends Selectable {
     /**
    * Setter method for the type of node of the vertex.
    * @param newType the new type to put in the vertex
-   * @return
    */
   public void setType(int newType) {
     this.typeNode = newType;
@@ -161,6 +162,10 @@ public class Vertex extends Selectable {
   }
 
   /* gives the description in a string of what the type of node is*/
+  /**
+   * This method takes th node type and returns a string representation of it
+   * @return string with the node type
+   */
   public String typeNodeToString() {
   
     switch (typeNode)
@@ -270,6 +275,10 @@ public class Vertex extends Selectable {
   }
 
   /* gives the description in a string of what the plan of node is*/
+  /**
+   * This method takes the node plan and returns a string representation of it
+   * @return string with the nodes plan
+   */
   public String planNodeToString() {
   
     switch (this.nodePlan)
@@ -1063,10 +1072,18 @@ public class Vertex extends Selectable {
     return this.graphOpen;
   }
 
+  /**
+   * Getter method to see if the node is a debug Node
+   * @return
+   */
   public boolean getIsDebug() {
     return isDebug;
   }
 
+  /**
+   * Setter method to tell if the node is a debug node
+   * @param isDebug
+   */
   public void setIsDebug(boolean isDebug) {
     this.isDebug = isDebug;
   }

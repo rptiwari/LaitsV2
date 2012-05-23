@@ -53,16 +53,14 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
     this.takeQuiz = takeQuiz;
     this.jf = jf;
 
-    //JGS - It was a global variable, now is local.
     String vertexType[] = {"","none", "stock", "flow", "auxiliary", "constant"};
 
-    //HELEN - Draw the title of the popup menu
+    //Draw the title of the popup menu
     Vertex v = (Vertex) sx;
-    //setBorder(new CompoundBorder(new TitledBorder(v.label), new EmptyBorder(10, 10, 10, 10)));
     JMenuItem titleMenu = new JMenuItem(v.getNodeName());
     titleMenu.setBackground(Color.BLACK);
     titleMenu.setForeground(Color.WHITE);
-    titleMenu.disable();
+    titleMenu.enable(false);
     titleMenu.enableInputMethods(false);
     this.add(titleMenu);
     this.addSeparator();
@@ -104,7 +102,6 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
     JMenuItem graphMenu = new JMenuItem("Graph");
     
     if((!((Vertex)sx).getFormula().isEmpty()) 
-//ANDREW            || (!((Vertex)sx).formulaCorrect()) 
             || (((Vertex)sx).getAlreadyRun() == false) 
             || graphcanvas.getModelChanged() == true 
             || ((Vertex)sx).getGraphOpen() == true)
@@ -140,20 +137,10 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
       }
       else
       {
-//          EquationEditor equationEditor = graphcanvas.getEquationEditorForVertex((Vertex) selected);
           logs.out(Logger.ACTIVITY, "PopupCanvasMenu.actionPerformed.3");
           graphcanvas.setModelChanged(true);
           graphcanvas.setMenuOpen(false);
-  /*        if (equationEditor != null && ((Vertex)selected).getEditorOpen() == false)
-          {
-            equationEditor.setVisible(true);
-            ((Vertex)selected).setEditorOpen(true);
-          }
-          else
-          {
-            logs.out(Logger.ACTIVITY, "PopupCanvasMenu.actionPerformed.4");
-          }
-    */  }
+      }
     } else if (e.getActionCommand().equals("Graph") && selected instanceof Vertex) {
         logs.out(Logger.ACTIVITY, "PopupCanvasMenu.actionPerformed.5");
         if (((Vertex)selected).getType()==amt.graph.Vertex.NOTYPE)
@@ -161,7 +148,6 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
             MessageDialog.showMessageDialog(null, true, "Please select a type for this node!", graph);
         }
         else if((!((Vertex)selected).getFormula().isEmpty()) 
-//ANDREW                || (((Vertex)selected).formulaCorrect())
                 || (((Vertex)selected).getAlreadyRun() == false) 
                 || graphcanvas.getModelChanged() == true)        
         {
@@ -222,7 +208,6 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
    * which is changing its type
    * @param v The vertex who just changed its type.    */
   private void cleanEdges(Vertex v) {
-    //Object[] inE = v.inedges.elements;
     Object[] inE = new Object[v.inedges.size()];
     if(v.inedges.size() > 0)
     {
@@ -232,7 +217,6 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
         }
     }
 
-    //Object[] outE = v.outedges.elements;
     Object[] outE = new Object[v.outedges.size()];
     if(v.outedges.size() > 0)
     {
@@ -255,7 +239,6 @@ class PopupCanvasMenu extends JPopupMenu implements ActionListener, PopupMenuLis
       }
     }
 
-    //HELEN
     for (int i = 0; i < outE.length; i++){
       Edge edge = (Edge) outE[i];
       logs.concatOut(Logger.ACTIVITY, "PopupCanvasMenu.cleanEdges.2", edge.edgetype);

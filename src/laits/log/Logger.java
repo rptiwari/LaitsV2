@@ -285,7 +285,8 @@ public class Logger {
   public void out(int type, String key) {
     String time = timestamp();
 
-    int taskID = taskFactory.getActualTask().getId();
+    //int taskID = taskFactory.getActualTask().getId();
+    int taskID = 0;
     String Author = System.getProperty("user.name"); ;
 
     try {

@@ -22,7 +22,7 @@ public final class Answer {
    * Constructor
    *
    * @param node
-   * @param variable
+   * @param typeOfQuestion 
    * @param value
    */
   public Answer(String node, String typeOfQuestion, String value) {

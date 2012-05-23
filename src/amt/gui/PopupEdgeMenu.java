@@ -23,8 +23,6 @@ class PopupEdgeMenu extends PopupMenu implements ActionListener {
   private static ArrayList<String> edgeOptions = new ArrayList<String>();
   private Selectable selectable;
   private GraphCanvas gc;
-  // Get JFrame from Main to pass to the equation dialog
-//  private JFrame jf;
   // Get Graph from GraphCanvas to delete edges
   private Graph g;
   // private static Logging log = Logging.getLogging();
@@ -43,19 +41,11 @@ class PopupEdgeMenu extends PopupMenu implements ActionListener {
     super();
     this.selectable = selectable;
     this.gc = gc;
-//    this.jf = jf;
     this.g = g;
     this.run = run;
     this.takeQuiz = takeQuiz;
-//    Edge edge = (Edge) selectable;
     setFont(gc.normal);
     fillOptions();
-    /*If it's not curvedlink, we do not want to enable change shape option*/
-    /* Now we no more have curved links all links are regular links but can be changed to curved link*/
-    /* if(!edge.edgetype.equals("regularlink")) {
-      edgeOptions.remove("change shape");
-    }
-    */
     for (int i = 0; i < edgeOptions.size(); i++) {
       MenuItem temp = new MenuItem(edgeOptions.get(i));
       temp.addActionListener(this);
@@ -72,7 +62,6 @@ class PopupEdgeMenu extends PopupMenu implements ActionListener {
     {
         edgeOptions.clear();
         edgeOptions.add("delete");
-        //edgeOptions.add("change shape");
     }
 
 

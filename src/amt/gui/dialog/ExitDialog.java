@@ -94,13 +94,13 @@ public class ExitDialog extends JDialog {
         Panel.setLayout(PanelLayout);
         PanelLayout.setHorizontalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+            .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
             .addGroup(PanelLayout.createSequentialGroup()
-                .addGap(86, 86, 86)
+                .addGap(115, 115, 115)
                 .addComponent(yesButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(42, 42, 42)
                 .addComponent(noButton)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap())
         );
         PanelLayout.setVerticalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

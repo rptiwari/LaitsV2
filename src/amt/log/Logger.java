@@ -224,42 +224,15 @@ public class Logger {
         Runtime.getRuntime().exec("attrib +H " + logFile);
         Runtime.getRuntime().exec("attrib +H " + activityFile);
       } else if (OSValidator.isMac()) {
-        //does not work as the file is not created at this point
-//          boolean actsuccess = activityFile.renameTo(new File("."+FILEACTIVITY));
-//          boolean logsuccess = logFile.renameTo(new File("."+FILEDEBUG));
-//          if (!actsuccess && logsuccess) {
-//            System.err.println("File cannot be hidden in MAC");
-//          }
       }
-
-      /*
-       * for existing files File folder = new File("."); File[] listOfFiles =
-       * folder.listFiles(); for (int i = 0; i < listOfFiles.length; i++) { if
-       * (listOfFiles[i].isFile()) { String file = listOfFiles[i].getName();
-       *
-       * if (OSValidator.isWindows()) { if ((file.contains("activityDB") &&
-       * !file.contains(timeStamp)) || (file.contains("logDB") &&
-       * !file.contains(timeStamp))) { Runtime.getRuntime().exec("attrib +H " +
-       * file); }
-       *
-       * } else if (OSValidator.isMac()) { if ((file.contains("activityDB") &&
-       * !file.contains(timeStamp)) || (file.contains("logDB") &&
-       * !file.contains(timeStamp))) { File newfile = new File(file); if
-       * (!file.startsWith(".")) { boolean success = newfile.renameTo(new
-       * File(".".concat(file))); if (!success) { System.err.println("File
-       * cannot be hidden in MAC"); } } } } } }
-        /*ends
-       */
 
 
       if (logFile.exists()) {
-//          logFile.delete();
         LogWriter = new BufferedWriter(new FileWriter(FILEDEBUG, true));
       } else {
         LogWriter = new BufferedWriter(new FileWriter(FILEDEBUG));
       }
       if (activityFile.exists()) {
-//          activityFile.delete();
         ActivityWriter = new BufferedWriter(new FileWriter(FILEACTIVITY, true));
       } else {
         ActivityWriter = new BufferedWriter(new FileWriter(FILEACTIVITY));
@@ -283,62 +256,6 @@ public class Logger {
     return logger;
   }
 
-  /**
-   * This method adds a log and should only be used for dynamic logs like when
-   * the student changes to a new task
-   *
-   * @param type is whether the log is a student log or error log
-   * @param key is the key to use to retrieve the message
-   * @param msg is the message to display
-   * @return
-   */
-//  public void concatOut(int type, String key, String msg) {
-//    if (Main.professorVersion != Main.DEMO && Main.professorVersion != Main.DEMO_VERSION2) {
-//      String time = calculateTime();
-//      try {
-//        if (type == ACTIVITY) {
-//          String newLine=time + " + " + ACTIVITYMSG.get(key) + msg;
-//          ActivityWriter.write(newLine);
-//          ActivityWriter.newLine();
-//          this.actSocketServer.publishAct(newLine);
-//          if(!Main.MetaTutorIsOn)
-//            System.out.println("log: "+newLine);
-//        } else if (type == DEBUG) {
-//          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
-//          LogWriter.newLine();
-//        }
-//      } catch (Exception ex) {
-//        err("Logger.out.1");
-//      }
-//    }
-//  }
-  /**
-   * Log a message in the corresponding file. There is one file for DEBUG
-   * messages and other for ACTIVITY messages.
-   *
-   * @param type of message (can be DEBUG or ACTIVITY)
-   * @param msg String that represent the message be logged
-   */
-//  public void out(int type, String msg) {
-//    if (Main.professorVersion != Main.DEMO && Main.professorVersion != Main.DEMO_VERSION2) {
-//      String time = calculateTime();
-//      try {
-//        if (type == ACTIVITY) {
-//          String newLine=time + " + " + ACTIVITYMSG.get(msg);
-//          ActivityWriter.write(newLine);//ACTIVITYMSG.get(msg));
-//          ActivityWriter.newLine();
-//          this.actSocketServer.publishAct(newLine);
-//          if(!Main.MetaTutorIsOn)
-//            System.out.println("log: "+newLine);
-//        } else if (type == DEBUG) {
-//          LogWriter.write(time + " + " + LOGMSG.get(msg));//LOGMSG.get(msg));
-//          LogWriter.newLine();
-//        }
-//      } catch (Exception ex) {
-//        err("Logger.out.1");
-//      }
-//    }
-//  }
   public void err(String msg) {
     String time = calculateTime();
     if (LOGMSG.get(msg) != null) {
@@ -348,13 +265,25 @@ public class Logger {
   }
 
 
-  /*
-   * Added by zpwn
+  /**
+   * Log a message in the corresponding file. There is one file for DEBUG
+   * messages and other for ACTIVITY messages.
    *
+   * @param type is whether the log is a student log or error log
+   * @param key is the key to use to retrieve the message
+   * @param msg is the message to display
    */
   public void out(int type, String key, String msg) {
     concatOut(type, key, msg);
   }
+
+  /**
+   * Log a message in the corresponding file. There is one file for DEBUG
+   * messages and other for ACTIVITY messages.
+   *
+   * @param type is whether the log is a student log or error log
+   * @param key is the key to use to retrieve the message
+   */
 
   public void out(int type, String key) {
     String time = timestamp();
@@ -373,7 +302,6 @@ public class Logger {
           System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
-//          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
         LogWriter.write(time + " + " + student + " + " + taskID + " + " + LOGMSG.get(key) + " + " + Main.VERSIONID);
         LogWriter.newLine();
       }
@@ -383,6 +311,33 @@ public class Logger {
 
   }
 
+  /**
+   * Log an instance of DepthDetector in the ACTIVITY logfile.
+   *
+   * @param segment the segment to log with the corresponding list of detectors
+   */
+  public void outDetector(String segment) 
+  {
+    try {
+        ActivityWriter.write(segment);
+        ActivityWriter.newLine();
+        ActivityWriter.flush();
+        this.activitySubs.listen(segment);
+    } catch (Exception ex) {
+      err("Logger.out.1");
+    }
+   }
+
+  
+  /**
+   * This method adds a log and should only be used for dynamic logs like when
+   * the student changes to a new task
+   *
+   * @param type is whether the log is a student log or error log
+   * @param key is the key to use to retrieve the message
+   * @param msg is the message to display
+   * @return
+   */
   public void concatOut(int type, String key, String msg) {
     String time = timestamp();
 
@@ -469,15 +424,26 @@ public class Logger {
    * Close logging. THIS METHOD MUST BE CALLED WHEN student CLOSE THE
    * APPLICATION!!!! CLOSE THE FILES LOG AND ACTIVITY WRITERS - AND OPEN THE
    * FILES FOR READING
+   * @param p
+   * @param c
+   * @throws CommException  
    */
   public void close(Frame p, ClosingDialog c) throws CommException {
     out(ACTIVITY, "Logger.close.1");
     try {
       LogWriter.flush();
+      System.out.println("Line 478 made it");
       LogWriter.close();
+      System.out.println("Line 480 made it");
       ActivityWriter.flush();
+      System.out.println("Line 482 made it");
       ActivityWriter.close();
+      System.out.println("Line 484 made it");
     } catch (Exception ex) {
+      System.out.println("The exception happens at line 483 in Logger.java");
+      System.out.println(ex);
+      System.out.println(LogWriter.toString());
+      System.out.println(ActivityWriter.toString());
       err("Logger.close.2");
     }
     logLines = countLogLines(FILEDEBUG);
@@ -562,6 +528,8 @@ public class Logger {
 
   /**
    * This method sends the information in the log file to the database
+   * @param task
+   * @param c  
    */
   public void sendLog(Task task, ClosingDialog c) {
     int progress = 0;
@@ -569,6 +537,7 @@ public class Logger {
     try {
       server = Database.getInstance();
     } catch (CommException de) {
+      System.out.println("The exception happens at line 577 in Logger.java");
       return; //exit
     }
     try {
@@ -581,21 +550,13 @@ public class Logger {
       }
       logList = server.getLogList();
     } catch (Exception e) {
+      System.out.println("The exception happens at line 590 in Logger.java");
       err("issue in sendLog, write everything not sent back to logDB.txt");
     }
     // if the activity list from the server is empty, we can delete or clear the file
     // otherwise we save the lines that were not sent to the server to a file
     try {
       if (logList.isEmpty()) {
-//          logFile.delete();
-//          if (logFile.exists()) {
-//            System.out.println("Log file delete failed, clear file");
-//            LogWriter = new BufferedWriter(new FileWriter(logFile));
-//            LogWriter.write("");
-//            LogWriter.flush();
-//            LogWriter.close();
-//            logFile.deleteOnExit();
-//          }
       } else {
         LogWriter = new BufferedWriter(new FileWriter(logFile));
         for (int i = 0; i < logList.size(); i++) {
@@ -606,6 +567,7 @@ public class Logger {
         LogWriter.close();
       }
     } catch (Exception e) {
+      System.out.println("The exception happens at line 617 in Logger.java");
     }
 
   }
@@ -613,7 +575,9 @@ public class Logger {
   /**
    * This method sends the information in the activity file
    *
+   * @param task 
    * @param c
+   * @throws CommException  
    */
   public void sendActivity(Task task, ClosingDialog c) throws CommException {
     int progress = 0;
@@ -623,21 +587,12 @@ public class Logger {
       track++;
       progress = (track * 100) / (logLines + activityLines);
       c.updateCount(progress);
-//        activityList.removeFirst();
     }
     activityList = server.getActivityList();
     // if the activity list from the server is empty, we can delete or clear the file
     // otherwise we save the lines that were not sent to the server to a file
     try {
       if (activityList.isEmpty()) {
-//          activityFile.delete();
-//          if (activityFile.exists()) {
-//            ActivityWriter = new BufferedWriter(new FileWriter(activityFile));
-//            ActivityWriter.write("");
-//            ActivityWriter.flush();
-//            ActivityWriter.close();
-//            activityFile.deleteOnExit();
-//          }
       } else {
         ActivityWriter = new BufferedWriter(new FileWriter(activityFile));
         for (int i = 0; i < activityList.size(); i++) {
@@ -648,7 +603,9 @@ public class Logger {
         ActivityWriter.close();
       }
     } catch (Exception e) {
+      System.out.println("The exception happens at line 661 in Logger.java");
     }
 
   }
+
 }

@@ -18,6 +18,7 @@ import amt.graph.Selectable;
 import amt.graph.Vertex;
 import amt.log.Logger;
 import java.awt.Color;
+import javax.swing.JButton;
 import metatutor.Query;
 import metatutor.MetaTutorMsg;
 
@@ -39,6 +40,13 @@ public class PlanPanel extends javax.swing.JPanel {
   private GraphCanvas gc;
   // the set of tasks, including the task that we are currently using to have the solution
 
+  /**
+   * Constructor
+   * @param parent
+   * @param v
+   * @param g
+   * @param gc
+   */
   public PlanPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) 
   {
     this.parent = parent;
@@ -51,9 +59,24 @@ public class PlanPanel extends javax.swing.JPanel {
     if (currentVertex.getNodePlan()!= Vertex.NOPLAN)
       displaySelected();
     this.setVisible(true);
+    
+    
+    if (!currentVertex.getNodeName().equals("")) {
+          closeButton.setEnabled(true);
+        }
+        else {
+          closeButton.setEnabled(false);
+        }
+    if (this.parent.server.getActualTask().getPhaseTask() != Task.INTRO) {
+      viewSlidesButton.setEnabled(false);
+      viewSlidesButton.setVisible(false);
+    }
 
   }
 
+  /**
+   * this method checks to see if the user already has an answer
+   */
   public void initSelected()
   {
     this.correctVertex = this.parent.server.getActualTask().getNode(currentVertex.getNodeName());
@@ -61,8 +84,11 @@ public class PlanPanel extends javax.swing.JPanel {
     if (currentVertex.getNodePlan()!= Vertex.NOPLAN)
       displaySelected();
   }
-    // This resets the color on all pannels to select in the PlanPannel. Very useful so that 
-    // there is just one panel that has a different color at any given time.
+    
+  /**
+   *  This resets the color on all pannels to select in the PlanPannel. Very useful so that 
+   * there is just one panel that has a different color at any given time.
+   */
   public void resetColors ()
   {
     fixedNumberPanel.setBackground(Selectable.COLOR_GREY);
@@ -75,6 +101,9 @@ public class PlanPanel extends javax.swing.JPanel {
 
   }
   
+  /**
+   * this method displays the selected answer
+   */
   public void displaySelected()
   {
     resetColors();
@@ -172,6 +201,10 @@ public class PlanPanel extends javax.swing.JPanel {
     }
   }
   
+  /**
+   * This method enables the buttons based on the parameter
+   * @param flag
+   */
   public void setEnableButtons(boolean flag)
   {
     // make the buttons uneditable
@@ -187,18 +220,29 @@ public class PlanPanel extends javax.swing.JPanel {
       ratioTwoQuantitiesButton.setEnabled(flag);
 
   }
+  /**
+   * 
+   */
   public void display() 
   {
     if (Main.MetaTutorIsOn)
     {
       if (!message.isEmpty())
-        new MetaTutorMsg(message).display();
+        new MetaTutorMsg(message);
       this.setName("tutorQues");
       Main.dialogIsShowing = true;
     }
     for (int i = 0; i < GraphCanvas.getOpenTabs().size(); i++)
       GraphCanvas.getOpenTabs().get(i).setEnabled(false);
     this.setVisible(true);
+  }
+  
+  public JButton getCloseButton() {
+    return closeButton;
+  }
+
+  public void setCloseButton(JButton closeButton) {
+    this.closeButton = closeButton;
   }
 
 
@@ -252,6 +296,8 @@ public class PlanPanel extends javax.swing.JPanel {
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         checkButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        viewSlidesButton = new javax.swing.JButton();
 
         buttonGroup1.add(ratioTwoQuantitiesButton);
         ratioTwoQuantitiesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -611,6 +657,20 @@ public class PlanPanel extends javax.swing.JPanel {
             }
         });
 
+        closeButton.setText("Save & Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        viewSlidesButton.setText("View Slides");
+        viewSlidesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewSlidesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -618,14 +678,22 @@ public class PlanPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(proportionalValuePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(increasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(decreasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bothPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(differencePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ratioTwoQuantitiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(checkButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(checkButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(viewSlidesButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(closeButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(proportionalValuePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(increasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(decreasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bothPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(differencePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ratioTwoQuantitiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -645,8 +713,11 @@ public class PlanPanel extends javax.swing.JPanel {
                 .addComponent(differencePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ratioTwoQuantitiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
-                .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewSlidesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -677,7 +748,6 @@ public class PlanPanel extends javax.swing.JPanel {
 
     currentVertex.setNodePlan(selectedIndex);    
     int ans = correctVertex.getNodePlan();
-    //System.out.println("right ans: " + ans);
     if (selectedIndex != ans) 
     {
       // The following lines of code take the jPanel of the chosen JRadioButton
@@ -704,6 +774,7 @@ public class PlanPanel extends javax.swing.JPanel {
       {
         InstructionPanel.setProblemBeingSolved(parent.server.getActualTask().getLevel());
         InstructionPanel.setLastActionPerformed(SlideObject.STOP_PLAN);
+        InstructionPanel.inputStopActivated = true;
       }
 
       // make the correct answer green
@@ -733,11 +804,26 @@ public class PlanPanel extends javax.swing.JPanel {
     checkButton.setEnabled(true); // the check button should be enabled if a radiobutton is selected
   }//GEN-LAST:event_radioButtonActionPerformed
 
+  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+
+  }//GEN-LAST:event_closeButtonActionPerformed
+
+  private void viewSlidesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewSlidesButtonActionPerformed
+    if (parent.getGraphCanvas().getFrame() instanceof Main) { // if the frame is main
+      Main m = (Main) parent.getGraphCanvas().getFrame(); // get the frame
+      m.getTabPane().setSelectedIndex(0); // set the tab index to the slides
+    }
+  }//GEN-LAST:event_viewSlidesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton bothButton;
     private javax.swing.JPanel bothPanel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton checkButton;
+    private javax.swing.JButton closeButton;
     private javax.swing.JRadioButton decreaseButton;
     private javax.swing.JPanel decreasePanel;
     private javax.swing.JRadioButton differenceButton;
@@ -775,5 +861,6 @@ public class PlanPanel extends javax.swing.JPanel {
     private javax.swing.JPanel proportionalValuePanel;
     private javax.swing.JRadioButton ratioTwoQuantitiesButton;
     private javax.swing.JPanel ratioTwoQuantitiesPanel;
+    private javax.swing.JButton viewSlidesButton;
     // End of variables declaration//GEN-END:variables
 }

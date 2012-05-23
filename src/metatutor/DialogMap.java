@@ -257,12 +257,12 @@ public static String getDialogByIDWithParam(String ID, String[]params){
 }
 
     public static void askQuestionToStu(String ques, String []options){
-        new MetaTutorQues(ques,options).setVisible(true);
+        new MetaTutorQues(ques,options);
     }
 
 
     public static void showDialogMessageOnly(String MSG){
-        new MetaTutorMsg(MSG,true).setVisible(true);
+        new MetaTutorMsg(MSG,true);
     }
 
     public static void hintOnInitTargetNode(String corSentence){

@@ -21,16 +21,15 @@ public class OnlineNode extends metatutor.Node{
     public List<OnlineNode> inputs;
     List<OnlineNode> parents=new LinkedList<OnlineNode>();
     int ChkInInputNum=0;
-    NodeColor inputColor=NodeColor.Blank;
+    
     comStatus comRadio=comStatus.NotFilled;
     comStatus comInputs=comStatus.NotFilled;
     boolean isTarget=false;
     private int correctPlan=-1;
 
     //for debug
-    boolean correctnessOfInput=false;
-    boolean correctnessOfCal=false;
-    NodeColor calColor=NodeColor.Blank;
+    private NodeColor inputColor=NodeColor.Blank;
+    private NodeColor calColor=NodeColor.Blank;
     NodeColor graphColor=NodeColor.Blank;
 
     public List<OnlineNode> inputsAssignedByUser=new LinkedList<OnlineNode>();
@@ -50,6 +49,45 @@ public class OnlineNode extends metatutor.Node{
   public void setCorrectPlan(int correctPlan) {
     this.correctPlan = correctPlan;
   }
+
+  public NodeColor getCalColor() {
+    return calColor;
+  }
+
+  public void setCalColor(String calColor) {
+    if(calColor.equals("white"))
+      this.calColor = NodeColor.Blank;
+    else if(calColor.equals("green")){
+      this.calColor=NodeColor.Green;
+      this.calFinished();
+    }
+    else if(calColor.equals("red"))
+      this.calColor=NodeColor.Red;
+    else if(calColor.equals("yellow")){
+      this.calColor=NodeColor.Yellow;
+      this.calFinished();
+    }
+  }
+
+  public NodeColor getInputColor() {
+    return inputColor;
+  }
+
+  public void setInputColor(String inputColor) {
+    if(inputColor.equals("white"))
+      this.inputColor = NodeColor.Blank;
+    else if(inputColor.equals("green")){
+      this.inputColor=NodeColor.Green;
+      this.inputFinished();
+    }
+    else if(inputColor.equals("red"))
+      this.inputColor=NodeColor.Red;
+    else if(inputColor.equals("yellow")){
+      this.inputColor=NodeColor.Yellow;
+      this.inputFinished();
+    }
+  }
+  
 
 
     public void init(Node node){
@@ -104,6 +142,7 @@ public class OnlineNode extends metatutor.Node{
             return false;
         else{
             this.status=NodeStatus.InputFinished;
+            this.setInputColor("green");
             return true;
         }
     }
@@ -113,6 +152,7 @@ public class OnlineNode extends metatutor.Node{
             return false;
         else{
             this.status=NodeStatus.CalculationFinished;
+            this.setCalColor("green");
             return true;
         }
     }

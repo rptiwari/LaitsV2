@@ -44,6 +44,7 @@ public class GraphCanvasScroll extends JPanel implements MouseListener, KeyListe
    * Creates a new canvas of 200 by 200 pixels within a (vertical and horizonat) scroll bar for
    * the center part of the pane.
    * This new canvas has white background and a mouse and key listener.
+   * @param jf 
    */
   public GraphCanvasScroll(Main jf) {
     super(new BorderLayout());

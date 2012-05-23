@@ -1,5 +1,6 @@
 package amt.graph;
 
+import amt.log.Logger;
 import java.awt.*;
 
 /**
@@ -166,7 +167,7 @@ public class Selectable {
   /**
    * Getter method to get the color we are using for drawing
    * 
-   * @param COLOR_DEFAULT is the default value
+   * @param color 
    * @return a new Color object with the current color.
    */
   protected final Color getColor(Color color) {
@@ -204,6 +205,14 @@ public class Selectable {
    */
   public void setInputsButtonStatus(int status) {
     inputsButtonStatus = status;
+    String color="white";
+    if(status==CORRECT)
+      color="green";
+    else if (status==WRONG)
+      color="red";
+    else if (status==GAVEUP)
+      color="yellow";
+    Logger.getLogger().concatOut(Logger.ACTIVITY, "No message", "The i indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
   }
 
   /**
@@ -220,6 +229,14 @@ public class Selectable {
    */
   public void setCalculationsButtonStatus(int status) {
     calculationsButtonStatus = status;
+    String color="white";
+    if(status==CORRECT)
+      color="green";
+    else if (status==WRONG)
+      color="red";
+    else if (status==GAVEUP)
+      color="yellow";
+    Logger.getLogger().concatOut(Logger.ACTIVITY, "No message", "The g indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
   }
 
   /**
@@ -238,10 +255,24 @@ public class Selectable {
     graphsButtonStatus = status;
   }
 
+  /**
+   * This method returns the nodeName
+   * @return
+   */
   public String getNodeName() {
-    return nodeName;
+    if (nodeName == null){
+      nodeName = "";
+      return nodeName;
+    }
+    else {
+      return nodeName;
+    }
   }
 
+  /**
+   * This method sets the nodeName
+   * @param nodeName
+   */
   public void setNodeName(String nodeName) {
     if (nodeName != null) {
       if (nodeName.contains(" ")) {

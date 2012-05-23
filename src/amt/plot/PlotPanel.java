@@ -42,7 +42,8 @@ public class PlotPanel extends JPanel {
    * @param vertex is the name of the vertex that is being ploted
    * @param x0 is the initial value for the x-axis
    * @param xf is the final value for the x-axis
-   * @param relation define the type of tokenList we are drawing
+   * @param g
+   * @param units  
    */
   public PlotPanel(Vertex vertex, int x0, int xf, Graph g, String units) {
     this.vertex = vertex;
@@ -69,8 +70,8 @@ public class PlotPanel extends JPanel {
    * Creates a new window with a plot inside of it
    * @param vertex is the name of the vertex that is being ploted
    * @param x0 is the initial value for the x-axis
-   * @param xf is the final value for the x-axis
-   * @param relation define the type of tokenList we are drawing
+   * @param taskName 
+   * @param units  
    */
   public PlotPanel(Vertex vertex, int x0, String taskName, String units) {
     this.vertex = vertex;
@@ -95,10 +96,9 @@ public class PlotPanel extends JPanel {
    * Constructor
    *
    * Creates a new window with a plot inside of it
-   * @param vertex is the name of the vertex that is being ploted
    * @param x0 is the initial value for the x-axis
+   * @param gc 
    * @param xf is the final value for the x-axis
-   * @param relation define the type of tokenList we are drawing
    */
   public PlotPanel(int x0, int xf, GraphCanvas gc) {
     final XYDataset dataset = createScoreDataset(x0, xf, gc);

@@ -90,6 +90,8 @@ public class Solution {
             Element taskNode = document.getRootElement();
             
             type=taskNode.attributeValue("phase");
+            if(taskNode.attributeValue("type").equals("Debug"))
+              type="Debug";
             
             List<Element> nodeLabelList=taskNode.element("Vertexes").elements("VertexLabel");
             for (Element e : nodeLabelList){

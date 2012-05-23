@@ -10,7 +10,6 @@ import amt.data.DataException;
 import amt.data.Task;
 import amt.data.TaskFactory;
 import amt.graph.*;
-import amt.gui.*;
 import amt.log.Logger;
 import amt.gui.InstructionPanel;
 import amt.gui.NodeEditor;
@@ -46,6 +45,7 @@ import laits.ModeSelector;
  */
 public class Main extends JFrame implements WindowListener {
 
+
   public static final String VERSION = "Version 2.0 release June 8th, 2011";
   public static String VERSIONID = "2";
   private TaskFactory taskFactory;
@@ -61,6 +61,7 @@ public class Main extends JFrame implements WindowListener {
   public static boolean dialogIsShowing = false;
   public static boolean windowIsClosing = false;
   public static boolean debuggingModeOn = false;
+  public static boolean switchedTasksViaMenu = false;
 
   /**
    *
@@ -148,7 +149,7 @@ public class Main extends JFrame implements WindowListener {
 
 
     taskView = new TaskView();
-    instructionView = new InstructionPanel();
+    instructionView = new InstructionPanel(this);
     graphCanvasScroll = new GraphCanvasScroll(this);
     initFonts();
     this.setFont(graphCanvasScroll.getGraphCanvas().normal);
@@ -202,7 +203,10 @@ public class Main extends JFrame implements WindowListener {
     mainPanel.add(pane, java.awt.BorderLayout.WEST);
   }
 
-  //get memo
+  /**
+   * This is the getter method for Main's memo variable
+   * @return memo
+   */
   public static JTextArea getMemo() {
     return memo;
   }
@@ -363,7 +367,7 @@ public class Main extends JFrame implements WindowListener {
         for (Task i : taskFactory.getTasks()) {
 
           // add separators in the menu
-          if (level != i.getLevel()) {
+          if (level!=i.getLevel()) {
             menuItemNewTask.addSeparator();
             level = i.getLevel();
           }
@@ -384,32 +388,52 @@ public class Main extends JFrame implements WindowListener {
                   new JLabel("Password"),
                   password
                 };
+                LinkedList<NodeEditor> tabs = GraphCanvas.getOpenTabs(); // get the tabs so that they can be closed
+                  if (tabs.size() > 0) {
+                    for (int i = 0; i < tabs.size(); i++) {
+                      tabs.get(i).setVisible(false);
+                    }
+                  }
                 JOptionPane.showMessageDialog(null, inputs, "New Task", JOptionPane.PLAIN_MESSAGE);
                 if (!password.getText().equals("amt22amt")) {
+                  if (tabs.size() > 0) {
+                    for (int i = 0; i < tabs.size(); i++) {
+                      tabs.get(i).setVisible(true);
+                    }
+                  }
                   return;
-                }
+                } 
               }
 
               if (taskFactory.getActualTask().getTitle() != null) {
-                if (!debuggingModeOn) {
-                  String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
-                  MessageDialog.showYesNoDialog(m, true, msg, graph);
+                if (!debuggingModeOn){
+                 
+                String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
+                MessageDialog.showYesNoDialog(m, true, msg, graph);
 
-                  if (graph.getDialogueValue() == 0) {
-                    graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
+                instructionView.prepareForChangeOfTask(Integer.parseInt(evt.getActionCommand()));
+                
+                if (graph.getDialogueValue() == 0) {
+                  logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
+                  InstructionPanel.canNewNodeButtonBePressed = false; // allow the use of the new node button
+                  graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
 // CALL TO SOLUTION THE DEBUG
-                    logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
-                    tabPane.setSelectedIndex(1);
-                    graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
-                    graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
+                  
+                  tabPane.setSelectedIndex(1);
+                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
+                  graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
 
-                    for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
-                      GraphCanvas.openTabs.get(i).dispose();
-                      GraphCanvas.openTabs.clear();
-                    }
-                    Main.dialogIsShowing = false;
+                  for (int i = 0; i < GraphCanvas.openTabs.size(); i++) {
+                    GraphCanvas.openTabs.get(i).dispose();
+                    GraphCanvas.openTabs.clear();
                   }
-                } else {
+                  Main.dialogIsShowing = false;
+                  switchedTasksViaMenu = true;
+                }
+                }
+                else {
+                  InstructionPanel.canNewNodeButtonBePressed = false;// allow the use of the new node button
+                  instructionView.prepareForChangeOfTask(Integer.parseInt(evt.getActionCommand()));
                   graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
                   logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
                   tabPane.setSelectedIndex(1);
@@ -421,18 +445,21 @@ public class Main extends JFrame implements WindowListener {
                     GraphCanvas.openTabs.clear();
                   }
                   Main.dialogIsShowing = false;
+                  switchedTasksViaMenu = true;
+                  
                 }
-
+                
               } else {
                 graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
                 tabPane.setSelectedIndex(1);
               }
               //close equationEditor
-/*
-               * if (graphCanvasScroll.getGraphCanvas().ee != null) { for (int i
-               * = 0; i < graphCanvasScroll.getGraphCanvas().ee.size(); i++) {
-               * graphCanvasScroll.getGraphCanvas().ee.get(i).dispose(); } }
-               */             //close plotDialog
+/*              if (graphCanvasScroll.getGraphCanvas().ee != null) {
+                for (int i = 0; i < graphCanvasScroll.getGraphCanvas().ee.size(); i++) {
+                  graphCanvasScroll.getGraphCanvas().ee.get(i).dispose();
+                }
+              }
+ */             //close plotDialog
               if (graph.getPlots() != null) {
                 for (int i = 0; i < graph.getPlots().size(); i++) {
                   graph.getPlots().get(i).dispose();
@@ -451,6 +478,7 @@ public class Main extends JFrame implements WindowListener {
       System.exit(0);
     }
   }
+
 
   /**
    * This method initializes all of the fonts to a standard type
@@ -737,6 +765,10 @@ public class Main extends JFrame implements WindowListener {
     std.setFont(graphCanvasScroll.getGraphCanvas().header);
     std.setVisible(true);
   }//GEN-LAST:event_ticketButtonActionPerformed
+  /**
+   * This is the getter method for Main's ticketButton variable
+   * @return ticketButton
+   */
   public static JButton getTicketButton() {
     return ticketButton;
   }
@@ -853,7 +885,7 @@ public class Main extends JFrame implements WindowListener {
       File openFile = fc.getSelectedFile();
       try {
         graphCanvasScroll.getGraphCanvas().deleteAll();
-        //    graph.load(openFile);
+    //    graph.load(openFile);
         graphCanvasScroll.getGraphCanvas().setModelChanged(true);
         LinkedList l = graph.getVertexes();
         LinkedList<String> list = new LinkedList<String>();
@@ -919,9 +951,13 @@ public class Main extends JFrame implements WindowListener {
         debuggingModeOn = true;
       }
     }
-
+    InstructionPanel.canNewNodeButtonBePressed = false;
   }//GEN-LAST:event_menuItemDebuggingModeActionPerformed
 
+  /**
+   * This method returns true or false depending on if the window is closing. 
+   * @return windowIsClosing
+   */
   public static boolean windowIsClosing() {
     return windowIsClosing;
   }
@@ -938,21 +974,45 @@ public class Main extends JFrame implements WindowListener {
     ed.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowOpened(WindowEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowClosed(WindowEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowIconified(WindowEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowDeiconified(WindowEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowActivated(WindowEvent e) {
   }
 
+  /**
+   * 
+   * @param e
+   */
   public void windowDeactivated(WindowEvent e) {
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -985,14 +1045,26 @@ public class Main extends JFrame implements WindowListener {
     // End of variables declaration//GEN-END:variables
   private JScrollPane scroller;
 
+  /**
+   * This is a getter method for Main's tabPane
+   * @return tabPane
+   */
   public JTabbedPane getTabPane() {
     return tabPane;
   }
 
+  /**
+   * This is the getter method for Main's menuItemRun variable
+   * @return menuItemRun
+   */
   public JMenuItem getMenuItemRun() {
     return menuItemRun;
   }
 
+  /**
+   * This is the getter method for Main's menuItemTakeQuiz variable
+   * @return
+   */
   public JMenuItem getMenuItemTakeQuiz() {
     return menuItemTakeQuiz;
   }

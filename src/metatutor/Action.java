@@ -29,6 +29,9 @@ public class Action {
   public static final int CreateNewNode=113;
   public static final int SubmitAns=114;
   public static final int DeleteNode=115;
+  public static final int IndicatorIChanged=116;
+  public static final int IndicatorGChanged=117;
+  public static final int ToModelTab=118;
   
   //action context
   public static final int DescriptionTab=21;
@@ -168,6 +171,21 @@ public class Action {
         {
           type=Action.SubmitAns;
           param=type_str.split("--")[1];
+        }
+        else if(type_str.startsWith("the i indicator of"))
+        {
+          type=Action.IndicatorIChanged;
+          param=type_str.split("\"")[1];
+          param+=":"+type_str.split("is changed to ")[1];
+        }
+        else if(type_str.startsWith("the g indicator of"))
+        {
+          type=Action.IndicatorGChanged;
+          param=type_str.split("\"")[1];
+          param+=":"+type_str.split("is changed to ")[1];
+        }
+        else if(type_str.startsWith("student changed to the mental model tab.")){
+          type=Action.ToModelTab;
         }
         else
           type=Action.UnknownType;

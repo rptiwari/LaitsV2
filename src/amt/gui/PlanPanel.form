@@ -23,14 +23,25 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel2" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="proportionalValuePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="increasePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="decreasePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="bothPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="differencePanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="ratioTwoQuantitiesPanel" alignment="0" min="-2" max="-2" attributes="1"/>
-                  <Component id="checkButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="checkButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="viewSlidesButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="closeButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jPanel2" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="proportionalValuePanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="increasePanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="decreasePanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="bothPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="differencePanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Component id="ratioTwoQuantitiesPanel" alignment="0" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -53,8 +64,12 @@
               <Component id="differencePanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="ratioTwoQuantitiesPanel" min="-2" max="-2" attributes="1"/>
-              <EmptySpace pref="73" max="32767" attributes="0"/>
-              <Component id="checkButton" min="-2" pref="39" max="-2" attributes="0"/>
+              <EmptySpace pref="71" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="checkButton" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                  <Component id="closeButton" alignment="3" min="-2" pref="41" max="-2" attributes="0"/>
+                  <Component id="viewSlidesButton" alignment="3" min="-2" pref="41" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -600,6 +615,22 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="closeButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Save &amp; Close"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="closeButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="viewSlidesButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="View Slides"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="viewSlidesButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

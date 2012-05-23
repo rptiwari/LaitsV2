@@ -8,7 +8,8 @@ package amt.comm;
 public class CommException extends Exception {
 
   /**
-   *
+   * This is the constructor for CommException. It extends Exception and calls it's
+   * super class with the variable sent to the constructor. 
    * @param string
    */
   public CommException(String string) {

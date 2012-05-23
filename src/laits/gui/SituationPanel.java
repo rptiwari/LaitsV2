@@ -24,6 +24,8 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
   public Desktop desktop = null;
   JFileChooser fc;
   
+  
+  
   /**
    * Constructor
    * Initializes the File Choose and hides preview label
@@ -42,7 +44,21 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     buttonEditMode.setEnabled(false);
   }
 
- 
+ /**
+   * Constructor
+   * Initializes the Situation Panel give the problem Description and Image URL
+   */
+  public SituationPanel(String problemDescription, String imageURL) {
+    super();  
+    initComponents();  
+    
+    fc = new JFileChooser();    
+    fc.setAcceptAllFileFilterUsed(false);
+    fc.setFileFilter(new ImageFilter());
+    
+    previewPanel.setVisible(false);    
+    buttonEditMode.setEnabled(false);
+  }
   /**
    * Paint this panel
    *
@@ -332,6 +348,21 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
   public void actionPerformed(ActionEvent ae) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
+  
+  public String getProblemDescription(){
+    if(descriptionTextArea.getText()!=null)
+      return  descriptionTextArea.getText();
+    else
+      return "";
+  }
+  
+  public String getImageURL(){
+    if(labelFileUrl.getText().compareTo("No File Selected.")!=0){
+      return labelFileUrl.getText();
+    }else{
+      return "";
+    } 
+  }   
 }
 
 

@@ -3,11 +3,13 @@ package amt.cover;
 import amt.Main;
 import amt.alc.PromptDialog;
 import amt.comm.CommException;
+import amt.data.Task;
 import amt.data.TaskFactory;
 import amt.graph.Graph;
 import amt.graph.GraphCanvas;
 import amt.gui.MenuBar;
 import amt.graph.Vertex;
+import amt.gui.InstructionPanel;
 import java.awt.*;
 import java.awt.Graphics;
 import java.util.logging.Level;
@@ -84,6 +86,12 @@ public class Cover implements Runnable {
     n = f;
   }
 
+  public GraphCanvas getGraphCanvas() {
+    return gc;
+  }
+  
+  
+
 
   /**
    * This method paints the avatar and the boxes around the hints and help
@@ -136,11 +144,11 @@ public class Cover implements Runnable {
           gc.setModelHasBeenRun(false);
         }
 
-        if (gc.getGraph().getVertexes().size() != 0) {
-          menuBar.getPredictButton().setEnabled(true);
-        } else {
-          menuBar.getPredictButton().setEnabled(false);
-        }
+//        if (gc.getGraph().getVertexes().size() != 0) {
+//          menuBar.getPredictButton().setEnabled(true);
+//        } else {
+//          menuBar.getPredictButton().setEnabled(false);
+//        }
         LinkedList<String> extraNodes = TaskFactory.getInstance().getActualTask().getExtraNodes();
 
         if (extraNodes == null){
@@ -172,8 +180,7 @@ public class Cover implements Runnable {
       } catch (CommException ex) {
         Logger.getLogger(Cover.class.getName()).log(Level.SEVERE, null, ex);
       }
-   
-    
+       
   }
 
   /**
@@ -190,7 +197,7 @@ public class Cover implements Runnable {
    */
   public void run() {
     while (!Main.windowIsClosing()){
-      popupPromptDialog();
+  //    popupPromptDialog();
       jpanel.repaint();
       try {
           Thread.sleep(150);
@@ -207,7 +214,7 @@ public class Cover implements Runnable {
     if (!Main.windowIsClosing) {
       if (elapsedTime > 299000) //5 mins
       {
-        if (promptDialog == null) {
+        if (promptDialog == null && !Main.debuggingModeOn) {
           promptDialog = new PromptDialog(gc.getFrame(), true);
 
           promptDialog.popup();

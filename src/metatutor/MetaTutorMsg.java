@@ -87,8 +87,9 @@ public class MetaTutorMsg extends javax.swing.JDialog {
           openTabs.get(i).setEnabled(false);
  //       }
          this.setAlwaysOnTop(true);
-         this.setVisible(true);
+         
          this.setModal(true);
+         this.setVisible(true);
     }
 
     /** This method is called from within the constructor to
