@@ -41,7 +41,7 @@ public class Graph extends Selectable {
   private LinkedList<String> professorOutputFile = new LinkedList<String>();
   private int dialogueValue;
   private boolean errorRun;
-  
+
   /**
    * Method to set an object as the one currently selected
    *
@@ -483,39 +483,39 @@ public class Graph extends Selectable {
           constantList.add(this.vertex(i));
           break;
         case Vertex.AUXILIARY:
-          if (auxiliaryList.isEmpty()) 
+          if (auxiliaryList.isEmpty())
           {
             auxiliaryList.add(this.vertex(i));
-          } 
-          else 
+          }
+          else
           {
              int size = auxiliaryList.size();
-             for (int j = 0; j < size; j++) 
+             for (int j = 0; j < size; j++)
              {
-                for (int k = 0; k < auxiliaryList.get(j).inedges.size(); k++) 
+                for (int k = 0; k < auxiliaryList.get(j).inedges.size(); k++)
                 {
-                  if (((Edge) (auxiliaryList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink")) 
+                  if (((Edge) (auxiliaryList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink"))
                   {
                     Vertex v = ((Edge) (auxiliaryList.get(j).inedges.toArray()[k])).start;
-                    if (v == this.vertex(i)) 
+                    if (v == this.vertex(i))
                     {
                       auxiliaryList.add(j, this.vertex(i));
-                    } 
-                    else 
+                    }
+                    else
                     {
                       int temp = 0;
-                      for (int n = 0; n < auxiliaryList.size(); n++) 
+                      for (int n = 0; n < auxiliaryList.size(); n++)
                       {
-                        if (auxiliaryList.get(n) == this.vertex(i)) 
+                        if (auxiliaryList.get(n) == this.vertex(i))
                         {
                           break;
-                        } 
-                        else 
+                        }
+                        else
                         {
                           temp++;
                         }
                       }
-                      if (temp == auxiliaryList.size()) 
+                      if (temp == auxiliaryList.size())
                       {
                         auxiliaryList.add(j + 1, this.vertex(i));
                       }
@@ -525,31 +525,31 @@ public class Graph extends Selectable {
               }
           }
           break;
-            
+
         case Vertex.FLOW:
 
-          if (flowList.isEmpty()) 
+          if (flowList.isEmpty())
           {
             flowList.add(this.vertex(i));
-          } 
-          else 
+          }
+          else
           {
             //for every flow in the flowlist
             boolean alreadyAdded = false;
-            for (int j = 0; j < flowList.size(); j++) 
+            for (int j = 0; j < flowList.size(); j++)
             {
               //Look through all of that flow's edges
-              if (alreadyAdded == false) 
+              if (alreadyAdded == false)
               {
-                for (int k = 0; k < flowList.get(j).inedges.size(); k++) 
+                for (int k = 0; k < flowList.get(j).inedges.size(); k++)
                 {
                   //if there is a regularlink edge
-                  if (((Edge) (flowList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink")) 
+                  if (((Edge) (flowList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink"))
                   {
                     //set vertex v equal to the start of that edge
                     Vertex v = ((Edge) (flowList.get(j).inedges.toArray()[k])).start;
                     //if this vertex equals the vertex that needs to be added
-                    if (v == this.vertex(i)) 
+                    if (v == this.vertex(i))
                     {
                       //add it at a specific location
                       flowList.add(j, this.vertex(i));
@@ -560,33 +560,33 @@ public class Graph extends Selectable {
                 }
               }
             }
-            if (alreadyAdded == false) 
+            if (alreadyAdded == false)
             {
               flowList.add(this.vertex(i));
             }
           }
           break;
         case Vertex.STOCK:
-          if (stockList.isEmpty()) 
+          if (stockList.isEmpty())
           {
             stockList.add(this.vertex(i));
-          } 
-          else 
+          }
+          else
           {
             size = stockList.size();
-            for (int j = 0; j < size; j++) 
+            for (int j = 0; j < size; j++)
             {
-              for (int k = 0; k < stockList.get(j).inedges.size(); k++) 
+              for (int k = 0; k < stockList.get(j).inedges.size(); k++)
               {
-                if (((Edge) (stockList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink")) 
+                if (((Edge) (stockList.get(j).inedges.toArray()[k])).edgetype.equals("regularlink"))
                 {
                   Vertex v = ((Edge) (stockList.get(j).inedges.toArray()[k])).start;
-                  if (v == this.vertex(i)) 
+                  if (v == this.vertex(i))
                   {
                     stockList.add(j, this.vertex(i));
                     break;
-                  } 
-                  else 
+                  }
+                  else
                   {
                     stockList.addLast(this.vertex(i));
                     break;
@@ -599,27 +599,27 @@ public class Graph extends Selectable {
           break;
       }
     }
-    try 
+    try
     {
 
-      for (int x = newStartTime; x <= newEndTime; x++) 
+      for (int x = newStartTime; x <= newEndTime; x++)
       {
-        for (int a = 0; a < constantList.size(); a++) 
+        for (int a = 0; a < constantList.size(); a++)
         {
           double temp = constantList.get(a).execute(this);
           constantList.get(a).setAlreadyRun(true);
         }
-        for (int a = 0; a < auxiliaryList.size(); a++) 
+        for (int a = 0; a < auxiliaryList.size(); a++)
         {
           double temp = auxiliaryList.get(a).execute(this);
           auxiliaryList.get(a).setAlreadyRun(true);
         }
-        for (int a = 0; a < flowList.size(); a++) 
+        for (int a = 0; a < flowList.size(); a++)
         {
           double temp = flowList.get(a).execute(this);
           flowList.get(a).setAlreadyRun(true);
         }
-        for (int a = 0; a < stockList.size(); a++) 
+        for (int a = 0; a < stockList.size(); a++)
         {
           double temp = stockList.get(a).execute(this);
 //ANDREW
@@ -628,24 +628,25 @@ public class Graph extends Selectable {
         }
       }
 
-    } 
-    catch (Exception ex) 
+    }
+    catch (Exception ex)
     {
       ex.printStackTrace();
       System.out.println(ex.toString());
       errorRun = true;
-    } 
-    finally 
+    }
+    finally
     {
-      if (errorRun == true) 
+      if (errorRun == true)
       {
         logs.out(Logger.ACTIVITY, "Graph.run.1");
         runLabel = "";
         enableQuiz = false;
         System.out.println("error in graph.run()");
-      } 
-      else 
+      }
+      else
       {
+        System.out.println("model run complete");
         //MessageDialog.showMessageDialog(null, true, "Model run complete!", this);
         logs.out(Logger.ACTIVITY, "Graph.run.2");
         runLabel = "";
@@ -690,11 +691,11 @@ public class Graph extends Selectable {
   public void setEdges(LinkedList edges) {
     this.edges = edges;
   }
-  
+
   // LAITS Specific Code - Ram
   public final void saveSolution(File f) throws IOException {
         System.out.println("Saving Solution File");
-        
+
         // Creating .txt solution file for current graph  - Ram
           Writer output = null;
           String text = "Task Creation";
@@ -710,14 +711,14 @@ public class Graph extends Selectable {
           finalSolution.append("======== EQUATIONS =========");
           finalSolution.append('\n');
           finalSolution.append("======== TIME:  0==========");
-          
+
           output = new BufferedWriter(new FileWriter(f));
           output.write(finalSolution.toString());
           output.close();
-        
-        
+
+
     }
-  
+
   public final void save(File f) throws IOException {
         System.out.println("INISAVE");
         //FY DataBase server;
@@ -739,16 +740,16 @@ public class Graph extends Selectable {
         for (int i = 0; i < getVertexes().size(); i++) {
             Element xml_vertex = xml_vertexes.addElement("vertex");
             Element xml_id = xml_vertex.addElement("id");
-            
+
             // Adding Label, nodeName and NodeDescription fields
             Element xml_label = xml_vertex.addElement("label");
             Element xml_nodeName = xml_vertex.addElement("nodeName");
             Element xml_desc = xml_vertex.addElement("correctDescription");
-            
+
        //     xml_label.setText(((Vertex) a[i]).label);
        //     xml_nodeName.setText(((Vertex) a[i]).nodeName);
             //xml_desc.setText(((Vertex) a[i]).correctDescription);
-                    
+
             xml_id.setText(((Vertex) a[i]).hashCode() + "");
             Element xml_inedges = xml_vertex.addElement("inedges");
             Object[] b = ((Vertex) a[i]).inedges.toArray();
@@ -798,7 +799,7 @@ public class Graph extends Selectable {
         }
         Element xml_taskID = xml_task.addElement("TaskID");
 
-       
+
         //FY xml_taskID.setText(String.valueOf(server.getActualTask().getId()));
         xml_taskID.setText(String.valueOf(server.getActualTask().getId()));
 
@@ -809,9 +810,9 @@ public class Graph extends Selectable {
         out.close();
         // System.out.println("END");
     }
-  
+
   // Code for LAITS
-  
+
   /**
    * This method sets the value for n which is the value from yes/no dialogs
    */
@@ -827,9 +828,9 @@ public class Graph extends Selectable {
   {
       return n;
   }
-  
-  
-  
+
+
+
   // LAITS Variables Section
   private int n;
 }

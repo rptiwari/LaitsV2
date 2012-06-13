@@ -87,32 +87,32 @@ public class Main extends JFrame implements WindowListener {
   public static void main(String args[]) {
 
     // Switches between Student and Author Mode
-        ModeSelector m = new ModeSelector();
-        m.showModeSelector();
-        // ApplicationEnvironment class contains all the appplication wide properties in static form
-        if (ApplicationEnvironment.applicationMode == 1) {
-            // Mode 1 is for Student
-          // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF  
-          setMetaTutor();
-        }
-    
-    
+//        ModeSelector m = new ModeSelector();
+//        m.showModeSelector();
+//        // ApplicationEnvironment class contains all the appplication wide properties in static form
+//        if (ApplicationEnvironment.applicationMode == 1) {
+//            // Mode 1 is for Student
+//          // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
+//          setMetaTutor();
+//        }
+
+
 
     java.awt.EventQueue.invokeLater(new Runnable() {
 
       @Override
       public void run() {
-         if (ApplicationEnvironment.applicationMode == 1) {
-            Main principal = new Main();
-            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
-            principal.setVisible(true);
-            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-         }else{
+//         if (ApplicationEnvironment.applicationMode == 1) {
+//            Main principal = new Main();
+//            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+//            principal.setVisible(true);
+//            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//         }else{
             laits.Main principal = new laits.Main();
             principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
             principal.setVisible(true);
             principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-         }
+      //   }
       }
     });
   }
@@ -338,7 +338,7 @@ public class Main extends JFrame implements WindowListener {
     Object selectedValue = JOptionPane.showInputDialog(null, "Is the MetaTutor OFF or ON?", "Select an option", JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
 
-//THIS SHOULD BE CHANGED TO CREATE THE SOLUTION YES, BUT ONLY CALL METATUTOR IN THE METATUTOR CASE    
+//THIS SHOULD BE CHANGED TO CREATE THE SOLUTION YES, BUT ONLY CALL METATUTOR IN THE METATUTOR CASE
     if (selectedValue == "MetaTutor OFF") {
       MetaTutorIsOn = false;
     } else if (selectedValue == "MetaTutor ON") {
@@ -402,23 +402,23 @@ public class Main extends JFrame implements WindowListener {
                     }
                   }
                   return;
-                } 
+                }
               }
 
               if (taskFactory.getActualTask().getTitle() != null) {
                 if (!debuggingModeOn){
-                 
+
                 String msg = "<html>You are about to change to a different task. You will lose your work. Do you agree?</html>";
                 MessageDialog.showYesNoDialog(m, true, msg, graph);
 
                 instructionView.prepareForChangeOfTask(Integer.parseInt(evt.getActionCommand()));
-                
+
                 if (graph.getDialogueValue() == 0) {
                   logger.out(1, "Main.loadMenuTask.1", evt.getActionCommand());
                   InstructionPanel.canNewNodeButtonBePressed = false; // allow the use of the new node button
                   graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
 // CALL TO SOLUTION THE DEBUG
-                  
+
                   tabPane.setSelectedIndex(1);
                   graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().setDoneButtonStatus(false);
                   graphCanvasScroll.getGraphCanvas().getCover().getMenuBar().resetRunBtnClickCount();
@@ -446,9 +446,9 @@ public class Main extends JFrame implements WindowListener {
                   }
                   Main.dialogIsShowing = false;
                   switchedTasksViaMenu = true;
-                  
+
                 }
-                
+
               } else {
                 graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
                 tabPane.setSelectedIndex(1);
@@ -955,7 +955,7 @@ public class Main extends JFrame implements WindowListener {
   }//GEN-LAST:event_menuItemDebuggingModeActionPerformed
 
   /**
-   * This method returns true or false depending on if the window is closing. 
+   * This method returns true or false depending on if the window is closing.
    * @return windowIsClosing
    */
   public static boolean windowIsClosing() {
@@ -975,42 +975,42 @@ public class Main extends JFrame implements WindowListener {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowOpened(WindowEvent e) {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowClosed(WindowEvent e) {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowIconified(WindowEvent e) {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowDeiconified(WindowEvent e) {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowActivated(WindowEvent e) {
   }
 
   /**
-   * 
+   *
    * @param e
    */
   public void windowDeactivated(WindowEvent e) {

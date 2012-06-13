@@ -1,5 +1,6 @@
 package laits.parser;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,16 +12,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class PlanTree extends DefaultHandler {
 
-    String title;
-    String description;
-    public ArrayList<Branch> branches;
-    private Branch branch;
-    private String tempVal, target;
-    private static HashMap<String, PlanTree> ptObjects;
-
     private PlanTree() {
         branches = new ArrayList<Branch>();
-        parseDocument("Solution/decisionTree.xml");
+        parseDocument("Solution"+File.separator+"decisionTree.xml");
     }
 
     public static PlanTree getPlanTree(String nodeName) {
@@ -42,7 +36,6 @@ public class PlanTree extends DefaultHandler {
         //get a factory
         SAXParserFactory spf = SAXParserFactory.newInstance();
         try {
-
             //get a new instance of parser
             SAXParser sp = spf.newSAXParser();
 
@@ -88,4 +81,14 @@ public class PlanTree extends DefaultHandler {
             branch.setForks(target, tempVal);
         }
     }
+
+
+    // Variable Declarations
+    String title;
+    String description;
+    public ArrayList<Branch> branches;
+    private Branch branch;
+    private String tempVal, target;
+    private static HashMap<String, PlanTree> ptObjects;
+
 }

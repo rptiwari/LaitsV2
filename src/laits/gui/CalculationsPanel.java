@@ -55,10 +55,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * Creates new form CalculationsPanel
    */
   public CalculationsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    System.out.println("Calc Constructor called");
-    initializing = true;    
+
+    initializing = true;
     initComponents();
-    
+
     parent.addWindowListener(new java.awt.event.WindowAdapter() {
       public void windowClosing(java.awt.event.WindowEvent evt) {
         formWindowClosing(evt);
@@ -79,25 +79,30 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
     inputJustAdded(false);
     initializing = false;
-    
+
+    checkButton.setVisible(false);
+    giveUpButton.setVisible(false);
+    okButton.setVisible(false);
+    closeButton.setVisible(false);
+    deleteButton.setVisible(false);
   }
 
   public void initButtonOnTask() {
-    // Check and Giveup are always disabled    
+    // Check and Giveup are always disabled
     giveUpButton.setEnabled(false);
     checkButton.setEnabled(false);
-        
+
   }
 
   public DefaultListModel getjListModel() {
     return jListModel;
   }
 
- 
+
 
   public void initValues() {
     updateInputs();
-    
+
     radioButtonPanel.setBackground(Selectable.COLOR_BACKGROUND);
     jTextAreaEquation.setBackground(Selectable.COLOR_BACKGROUND);
     givenValueTextField.setBackground(Selectable.COLOR_BACKGROUND);
@@ -112,7 +117,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     if (currentVertex.getType() == laits.graph.Vertex.CONSTANT) {
       // the calculation pannel shows the InitialValue pannel
       givenValueButton.setSelected(true);
-      // the buttons of type pannel are set correctly and disabled: no choice to make 
+      // the buttons of type pannel are set correctly and disabled: no choice to make
       if (functionButton.isSelected()) {
         functionButton.setSelected(false);
       }
@@ -1321,7 +1326,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
       if (!initializing) {
 
-//        if (currentVertex.getType() != Vertex.FLOW) 
+//        if (currentVertex.getType() != Vertex.FLOW)
 //        {
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
         currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
@@ -1397,7 +1402,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    */
     private void jListVariablesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListVariablesMouseClicked
 
-     
+
       if (jListVariables.isEnabled()) {
         if (jListVariables.getSelectedIndex() != -1) {
           String s = jListVariables.getSelectedValue().toString();
@@ -1619,7 +1624,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
             if (!accumulatesButton.isSelected()
                     && !functionButton.isSelected()
                     && !givenValueButton.isSelected()) {
-              // how can this be, it should have been tested before               
+              // how can this be, it should have been tested before
               //The answer is wrong
               logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.3");
               radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
@@ -1666,7 +1671,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
                 jTextAreaEquation.setEnabled(false);
                 disableKeyPad();
                 deleteButton.setEnabled(false);
-             
+
                 currentVertex.setCalculationsButtonStatus(currentVertex.CORRECT);
                 currentVertex.setIsFormulaCorrect(true);
                 if (!Main.debuggingModeOn) {
@@ -2025,7 +2030,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
 
               //Set the color and disable the elements
               initValues();
-            
+
               initializing = false;
 
               if (!givenValueTextField.getText().isEmpty()) {
@@ -2085,7 +2090,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
         }
       }
 
-     
+
 
     }//GEN-LAST:event_givenValueTextFieldKeyTyped
 
@@ -2147,7 +2152,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
       givenValueTextField.setText(givenValueTextField.getText() + c);
     }
 
-   
+
     KeyEvent key = new KeyEvent(button, KeyEvent.KEY_TYPED, System.currentTimeMillis(), 0, KeyEvent.VK_UNDEFINED, c);
     givenValueTextFieldKeyReleased(key);
   }//GEN-LAST:event_keyboardButtonActionPerformed
@@ -2156,13 +2161,13 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
     String currentText = givenValueTextField.getText();
     String newText = currentText.substring(0, currentText.length() - 1);
     givenValueTextField.setText(newText);
-    
+
   }//GEN-LAST:event_keyDeletekeyboardButtonActionPerformed
 
   private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
 
     java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor
 
   }//GEN-LAST:event_closeButtonActionPerformed
 
@@ -2228,7 +2233,7 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           if (!accumulatesButton.isSelected()
                   && !functionButton.isSelected()
                   && !givenValueButton.isSelected()) {
-            // how can this be, it should have been tested before               
+            // how can this be, it should have been tested before
             //The answer is wrong
             logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.3");
             radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
@@ -2255,17 +2260,17 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
               System.out.println("Ans is correct");
               //The answer is correct
               logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.2");
-             
+
               if (currentVertex.getType() == Vertex.CONSTANT
                       || currentVertex.getType() == Vertex.STOCK) {
                 currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
               }
 
-              
+
               currentVertex.setCalculationsButtonStatus(currentVertex.CORRECT);
               currentVertex.setIsFormulaCorrect(true);
-              
-            } 
+
+            }
             if (!givenValueTextField.getText().isEmpty()) {
               currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
             } else {
@@ -2274,14 +2279,13 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
           }
           initializing = false;
           java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-          this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+          this.parent.windowClosing(e); // call the window closing method on NodeEditor
 
         } else {
           MessageDialog.showMessageDialog(null, true, "This node is the same as another node you've already defined, please choose a different description.", graph);
         }
       }
     }
-
 }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton accumulatesButton;
@@ -2329,4 +2333,46 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   public void propertyChange(PropertyChangeEvent pce) {
 //    throw new UnsupportedOperationException("Not supported yet.");
   }
+
+  // Process OK Action
+  public boolean processOKAction(){
+            boolean correct = false;
+
+            if (currentVertex.getType() == Vertex.CONSTANT) {
+              Double enteredValue = Double.parseDouble(givenValueTextField.getText());
+
+
+              correct = true;
+              currentVertex.setIsGivenValueCorrect(true);
+
+            } else if (currentVertex.getType() == Vertex.FLOW) {
+              correct = checkCorrectnessForFlow();
+            } else if (currentVertex.getType() == Vertex.STOCK) {
+              correct = checkCorrectnessForStock();
+            }
+
+            if (correct) {
+              System.out.println("Ans is correct");
+              //The answer is correct
+              logger.out(Logger.ACTIVITY, "CalculationsPanel.checkButtonActionPerformed.2");
+
+              if (currentVertex.getType() == Vertex.CONSTANT
+                      || currentVertex.getType() == Vertex.STOCK) {
+                currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
+              }
+
+
+              currentVertex.setCalculationsButtonStatus(currentVertex.CORRECT);
+              currentVertex.setIsFormulaCorrect(true);
+
+            }
+            if (!givenValueTextField.getText().isEmpty()) {
+              currentVertex.setInitialValue(Double.parseDouble(givenValueTextField.getText()));
+            } else {
+              currentVertex.setInitialValue(Vertex.NOTFILLED);
+            }
+
+            return correct;
+  }
+
 }

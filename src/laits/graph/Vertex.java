@@ -20,75 +20,6 @@ import javax.swing.tree.TreePath;
  */
 public class Vertex extends Selectable {
 
-  //Contants used to define the type of node of the vertex
-  public final static int NOTYPE = 1;
-  public final static int STOCK = 2;
-  public final static int FLOW = 3;
-  public final static int AUXILIARY = 4;
-  public final static int CONSTANT = 5;
-  public final static int INFLOW = 6;
-  public final static int OUTFLOW = 7;
-
-  //Contants used to define the type of plan for a specific node
-  public final static int NOPLAN = 0;/*"no plan has been defined"*/
-  public final static int FIXED_VALUE = 1;/*"fixed value" in XML */
-  public final static int FCT_DIFF = 2;/*"difference of two quantities" in XML*/
-  public final static int FCT_RATIO = 3;/*"ratio of two quantities" in XML*/
-  public final static int FCT_PROP = 4;/*"proportional to accumulator and input" in XML*/
-  public final static int ACC_INC = 5;/*"said to increase" in XML*/
-  public final static int ACC_DEC = 6;/*"said to decrease" in XML*/
-  public final static int ACC_BOTH = 7;/*"said to both increase and decrease" in XML*/
-
-  // list of edges coming in 
-  public LinkedList<Edge> inedges = new LinkedList<Edge>();
-  // list of edges coming out 
-  public LinkedList<Edge> outedges = new LinkedList<Edge>();
-  // position of the node on the panel
-  private Point position;
-  // type of node: constant, stock, or flow
-  private int typeNode = NOTYPE;
-  // the input nodes selected in the node's inputs panel 
-  public LinkedList<JCheckBox> inputNodesSelected = new LinkedList<JCheckBox>();
-  // Content of the tree to display in the description panel
-  private TreePath treePath;
-  //Complete description of the quantity the node describes
-  private String selectedDescription = "";    
-
-  private String correctInputs = "";
-  private String correctOutputs = "";
-  
-  // the plan of the node
-  private int nodePlan = this.NOPLAN;
-  // Each value in 'correctValues' represents a point on the graph
-  public LinkedList<Double> correctValues = new LinkedList<Double>();  
-  // InitialValue for a stock and AllValues for the constant, nothing in case of flow
-  private double initialValue = 0.0;
-  // constant that represents when the initialvalue hasn't been filled yet
-  public final static double NOTFILLED = Double.NEGATIVE_INFINITY;
-  // Inforamtion of the equation used in flow and stock nodes
-  private String formula = null;
-  /*
-   * booleans that describe the current state of the node: what is selected, and
-   * correct
-   */
-  private boolean inputsSelected = false;
-  private boolean isOpen = false;// is the node currently opened in the nodeEditor
-  private boolean isinputsTypeCorrect = false;
-  private boolean isCalculationTypeCorrect = false;
-  private boolean isGivenValueCorrect = false;
-  private boolean isFormulaCorrect = false;
-// THIS IS APPARENTLY NOT USED, SHOULD BE TO DEFINE THE RUN
-  private boolean isGraphCorrect = false;
-  private boolean alreadyRun = false;
-  private boolean editorOpen = false;
-  private boolean graphOpen = false;
-  private boolean inputsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
-  private boolean calculationsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
-  public int paintNoneHeight = 6 * size; // elements needed to display the node
-  public int width = 11 * size; // elements needed to display the node
-  public int height = 6 * size; // elements needed to display the node
-  private boolean isDebug = false;
-
   /**
    * Constructor Creates a new Vertex on the position 0,0 and an empty label
    */
@@ -122,6 +53,8 @@ public class Vertex extends Selectable {
     this.formula = "";
     this.typeNode = NOTYPE;
     defaultLabel();
+
+    planList = new LinkedList<String>();
   }
 
 /**
@@ -162,7 +95,7 @@ public class Vertex extends Selectable {
 
   /* gives the description in a string of what the type of node is*/
   public String typeNodeToString() {
-  
+
     switch (typeNode)
     {
       case NOTYPE:
@@ -184,7 +117,7 @@ public class Vertex extends Selectable {
     }
   }
 
-  
+
   /**
    * Setter method to change the tree of situation description for this task
    * @param tp tree path containing the type of situation for this task
@@ -201,7 +134,7 @@ public class Vertex extends Selectable {
     return this.treePath;
   }
 
-  
+
   /**
    * Setter method to change the name of the description selected
    * @param description the name of the description selected
@@ -218,7 +151,7 @@ public class Vertex extends Selectable {
     return this.correctInputs;
   }
 
-  
+
   /**
    * Setter method to change all the inputs that are correct for this node
    * @param newCorrectInputs all the inputs that are correct for this node
@@ -235,7 +168,7 @@ public class Vertex extends Selectable {
     return this.correctOutputs;
   }
 
-  
+
   /**
    * Setter method to change all the Outputs that are correct for this node
    * @param newCorrectOutputs all the Outputs that are correct for this node
@@ -243,8 +176,8 @@ public class Vertex extends Selectable {
   public void setCorrectOutputs(String newCorrectOutputs) {
     this.correctOutputs = newCorrectOutputs;
   }
-  
-  
+
+
   /**
    * Getter method to get the name of the description selected
    * @return the name of the description selected
@@ -271,7 +204,7 @@ public class Vertex extends Selectable {
 
   /* gives the description in a string of what the plan of node is*/
   public String planNodeToString() {
-  
+
     switch (this.nodePlan)
     {
       case NOPLAN:
@@ -294,8 +227,8 @@ public class Vertex extends Selectable {
         return "ERROR PLAN NODE";
     }
   }
-  
-  
+
+
 
           /**
    * Setter method to change the initialValue of the node
@@ -312,8 +245,8 @@ public class Vertex extends Selectable {
   public double getInitialValue() {
     return this.initialValue ;
   }
-  
-  
+
+
   /**
    * Setter method to change the position of the vertex on the grid
    * @param newPosition the position of the vertex on the grid
@@ -329,7 +262,7 @@ public class Vertex extends Selectable {
   public int getPositionX() {
     return this.position.x;
   }
-  
+
   /**
    * Getter method to get the position of the x axis of the vertex on the grid
    * @return the position of the x axis of the vertex on the grid
@@ -337,7 +270,7 @@ public class Vertex extends Selectable {
   public int getPositionY() {
     return this.position.y;
   }
-  
+
   /**
    * Getter method to get the position of the vertex on the grid in x and y coordinates
    * @return the position of the vertex on the grid in x and y coordinates
@@ -345,7 +278,7 @@ public class Vertex extends Selectable {
   public Point getPosition() {
     return this.position;
   }
-  
+
   /**
    * Getter method to get whether the Inputs of the vertex was selected
    * @return whether the Inputs of the vertex was selected
@@ -353,8 +286,8 @@ public class Vertex extends Selectable {
   public boolean getInputsSelected() {
     return this.inputsSelected ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the Inputs of the vertex was selected
    * @param newInputsSelected whether the Inputs of the vertex was selected
@@ -362,7 +295,7 @@ public class Vertex extends Selectable {
   public void setInputsSelected(boolean newInputsSelected) {
     this.inputsSelected = newInputsSelected;
   }
-  
+
   /**
    * Getter method to get whether the Inputs entered by user is the right one
    * @return whether the Inputs entered by user is the right one
@@ -370,8 +303,8 @@ public class Vertex extends Selectable {
   public boolean getIsInputsTypeCorrect() {
     return this.isinputsTypeCorrect ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the Inputs entered by user is the right one
    * @param newIsInputsTypeCorrect whether the Inputs entered by user is the right one
@@ -379,8 +312,8 @@ public class Vertex extends Selectable {
   public void setIsInputsTypeCorrect(boolean newIsInputsTypeCorrect) {
     this.isinputsTypeCorrect = newIsInputsTypeCorrect;
   }
-  
-  
+
+
   /**
    * Getter method to get whether the node is open in the editor
    * @return whether the node is open in the editor
@@ -388,8 +321,8 @@ public class Vertex extends Selectable {
   public boolean getIsOpen() {
     return this.isOpen ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the node is open in the editor
    * @param newIsOpen whether the node is open in the editor
@@ -404,8 +337,8 @@ public class Vertex extends Selectable {
   public boolean getIsCalculationTypeCorrect() {
     return this.isCalculationTypeCorrect ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the type entered in calcualtion pannel is correct
    * @param newIsCalculationTypeCorrect whether the type entered in calcualtion pannel is correct
@@ -413,7 +346,7 @@ public class Vertex extends Selectable {
   public void setIsCalculationTypeCorrect(boolean newIsCalculationTypeCorrect) {
     this.isCalculationTypeCorrect = newIsCalculationTypeCorrect;
   }
-  
+
     /**
    * Getter method to get whether the fixed value given is correct
    * @return whether the fixed value given is correct
@@ -421,8 +354,8 @@ public class Vertex extends Selectable {
   public boolean getIsGivenValueCorrect() {
     return this.isGivenValueCorrect ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the fixed value given is correct
    * @param newIsGivenValueCorrect whether the fixed value given is correct
@@ -430,7 +363,7 @@ public class Vertex extends Selectable {
   public void setIsGivenValueCorrect(boolean newIsGivenValueCorrect) {
     this.isGivenValueCorrect = newIsGivenValueCorrect;
   }
-  
+
     /**
    * Getter method to get whether the formula given is correct
    * @return whether the formula given is correct
@@ -438,8 +371,8 @@ public class Vertex extends Selectable {
   public boolean getIsFormulaCorrect() {
     return this.isFormulaCorrect ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the formula given is correct
    * @param newIsFormulaCorrect whether the formula given is correct
@@ -447,7 +380,7 @@ public class Vertex extends Selectable {
   public void setIsFormulaCorrect(boolean newIsFormulaCorrect) {
     this.isFormulaCorrect = newIsFormulaCorrect;
   }
-  
+
     /**
    * Getter method to get whether the graph calculated is correct
    * @return whether the graph calculated is correct
@@ -455,8 +388,8 @@ public class Vertex extends Selectable {
   public boolean getIsGraphCorrect() {
     return this.isGraphCorrect ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the graph calculated is correct
    * @param newIsGraphCorrect whether the graph calculated is correct
@@ -464,7 +397,7 @@ public class Vertex extends Selectable {
   public void setIsGraphCorrect(boolean newIsGraphCorrect) {
     this.isGraphCorrect = newIsGraphCorrect;
   }
-  
+
     /**
    * Getter method to get whether the inputsPannel class has been changed
    * @return whether the inputsPannel class has been changed
@@ -472,8 +405,8 @@ public class Vertex extends Selectable {
   public boolean getInputsPanelChanged() {
     return this.inputsPanelChanged ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the inputsPannel class has been changed
    * @param newInputsPanelChanged whether the inputsPannel class has been changed
@@ -481,8 +414,8 @@ public class Vertex extends Selectable {
   public void setInputsPanelChanged(boolean newInputsPanelChanged) {
     this.inputsPanelChanged = newInputsPanelChanged;
   }
-  
-  
+
+
     /**
    * Getter method to get whether the CalculationsPannel class has been changed
    * @return whether the CalculationsPannel class has been changed
@@ -490,8 +423,8 @@ public class Vertex extends Selectable {
   public boolean getCalculationsPanelChanged() {
     return this.calculationsPanelChanged ;
   }
-  
-  
+
+
   /**
    * Setter method to change whether the CalculationsPannel class has been changed
    * @param newCalculationsPanelChanged whether the CalculationsPannel class has been changed
@@ -499,11 +432,11 @@ public class Vertex extends Selectable {
   public void setCalculationsPanelChanged(boolean newCalculationsPanelChanged) {
     this.calculationsPanelChanged = newCalculationsPanelChanged;
   }
-  
-  
-  
-  
-  
+
+
+
+
+
   //TOCHANGE= what is this method used for and why?
 
   /**
@@ -533,11 +466,11 @@ public class Vertex extends Selectable {
              * When using the Version2 of the tool, we can have flows or
              * constants connected to Stocks.
              */
-            if (((et.start.typeNode==FLOW) 
-                    || ((et.start.typeNode==CONSTANT))) 
-                    && et.edgetype.equals("flowlink") 
-                    && node.equals(et.start.getNodeName())) 
-              
+            if (((et.start.typeNode==FLOW)
+                    || ((et.start.typeNode==CONSTANT)))
+                    && et.edgetype.equals("flowlink")
+                    && node.equals(et.start.getNodeName()))
+
             {
               if (add) {
                 inputs = inputs + et.start.execute(g);
@@ -565,8 +498,8 @@ public class Vertex extends Selectable {
     return temp;
   }
 
-  
-  
+
+
   /**
    * Method to calculate the Vertex incoming degree
    *
@@ -793,7 +726,7 @@ public class Vertex extends Selectable {
     Graphics2D g2d = (Graphics2D) g;
     Stroke currentStroke = g2d.getStroke();
     // begin shadow
-    if (formula.isEmpty() 
+    if (formula.isEmpty()
             || (!getIsFormulaCorrect() )
             ) {
       Color sc = getColor(color);
@@ -839,7 +772,7 @@ public class Vertex extends Selectable {
    * @param g
    */
   public void paintAuxiliary(Graphics g) {
-    
+
     // Requested by Sylvie to be a rectangle and not a circle
     int x = position.x;
     int y = position.y;
@@ -868,7 +801,7 @@ public class Vertex extends Selectable {
     g2d.drawLine(centerx, centery + 3, centerx, centery - 3);
     // end shape
     g2d.setStroke(currentStroke);
-    
+
 //    int x = position.x;
 //    int y = position.y;
 //    int centerx = x + width / 2;
@@ -876,7 +809,7 @@ public class Vertex extends Selectable {
 //    Graphics2D g2d = (Graphics2D) g;
 //    Stroke currentStroke = g2d.getStroke();
 //    // begin shadow
-//    if (formula.equalsIgnoreCase("") 
+//    if (formula.equalsIgnoreCase("")
 //            || (!getIsFormulaCorrect() )
 //       ) {
 //      Color sc = getColor(color);
@@ -896,7 +829,7 @@ public class Vertex extends Selectable {
 //      g2d.drawOval(width / 4 + x, y, width / 2, height);
 //    }
 //    // end shadow
-//    // begin shape    
+//    // begin shape
 //    g2d.setStroke(currentStroke);
 //    g2d.setColor(getColor(color));
 //    g2d.drawOval(width / 4 + x, y, width / 2, height);
@@ -986,8 +919,8 @@ public class Vertex extends Selectable {
     Graphics2D g2d = (Graphics2D) g;
     Stroke currentStroke = g2d.getStroke();
     // begin shadow
-    if (formula.equalsIgnoreCase("") 
-            || (!getIsFormulaCorrect() ) 
+    if (formula.equalsIgnoreCase("")
+            || (!getIsFormulaCorrect() )
        ) {
       Color sc = getColor(color);
       int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
@@ -1195,9 +1128,9 @@ public class Vertex extends Selectable {
     return ((Edge) outedges.toArray()[p]);
   }
 
-  
+
   /**
-   * 
+   *
    * @return
    */
   public String getFormula() {
@@ -1205,22 +1138,22 @@ public class Vertex extends Selectable {
   }
 
   /**
-   * 
+   *
    * @param formula
    */
   public void setFormula(String formula) {
     this.formula = formula;
   }
-  
+
   /**
    * This method exists to make it easier to see when and where classes are changing the formula
    * This also serves another purpose by adding spaces and formatting when needed, something that the normal
-   * setFormula() method cannot do. 
-   * 
+   * setFormula() method cannot do.
+   *
    * @param toAdd
    */
   public void addToFormula(String toAdd) {
-    
+
     if (toAdd.length() == 1)  {      // if it is an operator
         setFormula(this.formula + ' ' + toAdd + ' ');
     }
@@ -1228,20 +1161,20 @@ public class Vertex extends Selectable {
         setFormula(this.formula + toAdd);
     }
   }
-  
-  
-  
-  
+
+
+
+
   /**
    * I created this method because in the Task.xml files, the formula does not have spaces. This method adds spaces between operators for readability and functionality
-   * Also, this is a good way to keep track of what is changing the formula when we have bugs. 
-   * 
+   * Also, this is a good way to keep track of what is changing the formula when we have bugs.
+   *
    * @param initialFormula
    */
   public void addInitialFormula(String initialFormula) {
-    
+
     String formulaToBeAdded = "";
-    
+
     for (int i = 0; i < initialFormula.length(); i++) {
       char currentChar = initialFormula.charAt(i);
       if (currentChar == '+' || currentChar == '-' || currentChar == '*' || currentChar == '/') {
@@ -1251,20 +1184,20 @@ public class Vertex extends Selectable {
         else {
           formulaToBeAdded = formulaToBeAdded + ' ' + currentChar + ' ';
         }
-        
+
       }
       else {
-        
+
         formulaToBeAdded += currentChar;
-        
+
       }
-      
+
     }
-    
+
     setFormula(formulaToBeAdded);
   }
-  
-  
+
+
 
   /**
    * Method to move the Vertex and its label
@@ -1320,5 +1253,81 @@ public class Vertex extends Selectable {
     return s;
   }
 
+  public LinkedList<String> getPlanList(){
+    return planList;
+  }
+
+
+
+  //Contants used to define the type of node of the vertex
+  public final static int NOTYPE = 1;
+  public final static int STOCK = 2;
+  public final static int FLOW = 3;
+  public final static int AUXILIARY = 4;
+  public final static int CONSTANT = 5;
+  public final static int INFLOW = 6;
+  public final static int OUTFLOW = 7;
+
+  //Contants used to define the type of plan for a specific node
+  public final static int NOPLAN = 0;/*"no plan has been defined"*/
+  public final static int FIXED_VALUE = 1;/*"fixed value" in XML */
+  public final static int FCT_DIFF = 2;/*"difference of two quantities" in XML*/
+  public final static int FCT_RATIO = 3;/*"ratio of two quantities" in XML*/
+  public final static int FCT_PROP = 4;/*"proportional to accumulator and input" in XML*/
+  public final static int ACC_INC = 5;/*"said to increase" in XML*/
+  public final static int ACC_DEC = 6;/*"said to decrease" in XML*/
+  public final static int ACC_BOTH = 7;/*"said to both increase and decrease" in XML*/
+
+  // list of edges coming in
+  public LinkedList<Edge> inedges = new LinkedList<Edge>();
+  // list of edges coming out
+  public LinkedList<Edge> outedges = new LinkedList<Edge>();
+  // position of the node on the panel
+  private Point position;
+  // type of node: constant, stock, or flow
+  private int typeNode = NOTYPE;
+  // the input nodes selected in the node's inputs panel
+  public LinkedList<JCheckBox> inputNodesSelected = new LinkedList<JCheckBox>();
+  // Content of the tree to display in the description panel
+  private TreePath treePath;
+  //Complete description of the quantity the node describes
+  private String selectedDescription = "";
+
+  private String correctInputs = "";
+  private String correctOutputs = "";
+
+  // the plan of the node
+  private int nodePlan = this.NOPLAN;
+  // Each value in 'correctValues' represents a point on the graph
+  public LinkedList<Double> correctValues = new LinkedList<Double>();
+  // InitialValue for a stock and AllValues for the constant, nothing in case of flow
+  private double initialValue = 0.0;
+  // constant that represents when the initialvalue hasn't been filled yet
+  public final static double NOTFILLED = Double.NEGATIVE_INFINITY;
+  // Inforamtion of the equation used in flow and stock nodes
+  private String formula = null;
+  /*
+   * booleans that describe the current state of the node: what is selected, and
+   * correct
+   */
+  private boolean inputsSelected = false;
+  private boolean isOpen = false;// is the node currently opened in the nodeEditor
+  private boolean isinputsTypeCorrect = false;
+  private boolean isCalculationTypeCorrect = false;
+  private boolean isGivenValueCorrect = false;
+  private boolean isFormulaCorrect = false;
+// THIS IS APPARENTLY NOT USED, SHOULD BE TO DEFINE THE RUN
+  private boolean isGraphCorrect = false;
+  private boolean alreadyRun = false;
+  private boolean editorOpen = false;
+  private boolean graphOpen = false;
+  private boolean inputsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
+  private boolean calculationsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
+  public int paintNoneHeight = 6 * size; // elements needed to display the node
+  public int width = 11 * size; // elements needed to display the node
+  public int height = 6 * size; // elements needed to display the node
+  private boolean isDebug = false;
+  private  int currentTab=0;
+  private LinkedList<String> planList;
 
 }

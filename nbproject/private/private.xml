@@ -2,12 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
         <file>
-            <url>src/laits/Main.java</url>
-            <line>133</line>
-        </file>
-        <file>
             <url>src/amt/Main.java</url>
             <line>400</line>
+        </file>
+        <file>
+            <url>src/laits/Main.java</url>
+            <line>133</line>
         </file>
     </editor-bookmarks>
 </project-private>

@@ -170,16 +170,16 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     initRunButton();
     initShortDescriptionButton();
 
-      
+
     cover = new Cover(this, graph, frame);
     taskView.setCover(cover);
     instructionView.setCover(cover);
     cover.setFont(normal);
 
-    
+
     //initFirstProblem();
-    initAuthorProblem();  
-    
+    initAuthorProblem();
+
   }
 
   public JFrame getFrame() {
@@ -194,7 +194,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     return this.graph;
   }
 
- 
+
 
   /**
    * The two methods below are used for the new system of displaying the
@@ -346,21 +346,21 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     }
     //load the first problem
     loadLevel(problemList.get(firstLevel)[0]);
-    
-  
-   
+
+
+
   }
 
   /**
      * This method Create the basic setup for a Blank problem in Author mode
-     * 
+     *
      */
     private void initAuthorProblem() {
         practice = true;
         tabPane.setSelectedIndex(1);
         this.deleteAll();
         task = new Task();
-        
+
         if (task != null) {
         //    taskView.updateTask(task);
           //  this.updateTask(server.getActualTask());
@@ -381,7 +381,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
         run.setForeground(Color.GRAY);
     }
 
-  
+
   /**
    * This method initializes all of the icons for the mouseover vertex menu
    */
@@ -652,7 +652,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
     //System.out.println("Vertex name: "+vertexName);
     int vertexCount = graph.getVertexes().size();
-    
+
     if (Math.floor(vertexCount / 6) > 0) {
       this.newVertex(v, 100 + vertexCount % 6 * 125, height - (int) (v.paintNoneHeight * 2 * (Math.floor(vertexCount / 6) + 1)));
       //System.out.println(vertexCount);
@@ -760,7 +760,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @param selectedVertex is the vertex
    */
   public void paintMenu(Graphics g, Vertex v) {
-    
+
     Point pos = v.getPosition();
     int x = pos.x;
     int y = pos.y;
@@ -769,7 +769,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
     if (server.getActualTask().getPhaseTask() == Task.CHALLENGE) {
       paintMenuIfTestProblem(g, v);
     } else {
-      // The below else if statment has been introduced as apart of the new system of feedback after running the model. 
+      // The below else if statment has been introduced as apart of the new system of feedback after running the model.
       // It reads: if the model has been run and either the inputs panel or the calculations panel have been changed then the logic happens.
       if (v.getInputsPanelChanged() || v.getCalculationsPanelChanged()) {
 
@@ -1052,9 +1052,9 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
           cover.getMenuBar().getNewNodeButton().setEnabled(true);
         }
       } else {
-        if (task.listOfVertexes == null || task.listOfVertexes.size() != listOfVertexes.size()) 
+        if (task.listOfVertexes == null || task.listOfVertexes.size() != listOfVertexes.size())
           cover.getMenuBar().getNewNodeButton().setEnabled(false);
-        else 
+        else
           cover.getMenuBar().getNewNodeButton().setEnabled(true);
       }
 
@@ -1184,6 +1184,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   }
 
   public void runModelFromDebug() {
+   
     try {
       System.out.println("CURT: type is debug");
       graph.run(TaskFactory.getInstance(), this);
@@ -1488,7 +1489,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       // The below for statement goes through the amount of vertex's on the graph
       // and one at a time takes them and makes sure that the selectedVertex is not colliding with them
       for (int counter = 0; counter < graph.getVertexes().size(); counter++) {
-        Vertex stationaryVertex = (Vertex) graph.getVertexes().get(counter); // 
+        Vertex stationaryVertex = (Vertex) graph.getVertexes().get(counter); //
 
         if (selectedVertex == stationaryVertex) { // if the vertex that wants to move and the vertex being checked are the same
           // do nothing
@@ -1509,9 +1510,9 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
            * label at the bottom and a little buffer room and 160 is the perfect
            * number
            */
-          if (((stationaryVertex.getPositionX() - 60 <= x) 
+          if (((stationaryVertex.getPositionX() - 60 <= x)
                   && (x <= stationaryVertex.getPositionX() + 170))
-                  && ((stationaryVertex.getPositionY() - 50 <= y) 
+                  && ((stationaryVertex.getPositionY() - 50 <= y)
                   && (y <= stationaryVertex.getPositionY() + 110))) { //if it hits another vertex
             vertexCanMove = false; // the vertex wont be able to move
             break; // stop checking, already know it cant move
@@ -2353,7 +2354,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
    * @return true as acknowledge
    */
   public boolean newVertex(Vertex v, int x, int y) {
-    
+
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
     graph.addVertex(v);
@@ -2363,7 +2364,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   }
 
   public boolean newVertex(Vertex v) {
-    
+
     //to have the last drawn vertex selected
     //select(graph.addVertex(new Vertex(x, y, name)));
     graph.addVertex(v);
@@ -2429,7 +2430,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
         openTabs.get(0).setVisible(true);
         MessageDialog.showMessageDialog(null, true, "Please close the current Node Editor.", graph);
       } else if (!hitVertex(x, y).getIsOpen()) {
-        
+
           logs.concatOut(Logger.ACTIVITY, "GraphCanvas.mouseClicked.5", name);
           NodeEditor openWindow = NodeEditor.getInstance(hitVertex(x, y), graph, this, true, false);
 //          try {
@@ -2440,7 +2441,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
           hitVertex(x, y).setIsOpen(true);
           openWindow.setVisible(true);
           openTabs.add(openWindow);
-        
+
       } else {
         for (int i = 0; i < openTabs.size(); i++) {
           if (openTabs.get(i).getCurrentVertex().getNodeName().equals(name)) {
@@ -2453,7 +2454,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
   }
 
- 
+
   @Override
   public Dimension getPreferredSize() {
     if (imageSize.equals(area)) {
@@ -2547,6 +2548,6 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   }
 
   public void mousePressed(MouseEvent me) {
-    
+
   }
 }

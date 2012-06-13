@@ -383,6 +383,11 @@ public class Main extends JFrame implements WindowListener {
 
         menuItemNewTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuItemNewTask.setText("New Task");
+        menuItemNewTask.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemNewTaskActionPerformed(evt);
+            }
+        });
         menuFile.add(menuItemNewTask);
 
         menuItemOpenTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
@@ -529,7 +534,8 @@ public class Main extends JFrame implements WindowListener {
     String fileName1 = "backup.txt";
     HashMap<Integer, String> taskMap = new HashMap<Integer, String>();
     try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+      BufferedReader br = new BufferedReader(new InputStreamReader(
+              new FileInputStream(fileName)));
       String line = null;
       while ((line = br.readLine()) != null) {
         int tabIndex = line.indexOf('\t');
@@ -552,7 +558,8 @@ public class Main extends JFrame implements WindowListener {
           String name = t.getTitle();
           if (!taskMap.containsKey(id) || !name.equals(taskMap.get(id))) {
 
-            graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(evt.getActionCommand()));
+            graphCanvasScroll.getGraphCanvas().loadLevel(Integer.parseInt(
+                    evt.getActionCommand()));
             //loadScreenTask(Integer.parseInt(evt.getActionCommand()));
             tabPane.setSelectedIndex(0);
           }
@@ -625,8 +632,8 @@ public class Main extends JFrame implements WindowListener {
       File savedFile = fc.getSelectedFile();
       newFile = new File(savedFile.getAbsolutePath() + extension);
 
-      SolutionManager.getSolutionManager().saveIntermediateSolution(savedFile.getAbsolutePath() + extension, graph, null, situationView);      
-      
+      SolutionManager.getSolutionManager().saveIntermediateSolution(savedFile.getAbsolutePath() + extension, graph, null, situationView);
+
     }
   }//GEN-LAST:event_menuItemSaveTaskActionPerformed
 
@@ -638,72 +645,16 @@ public class Main extends JFrame implements WindowListener {
    */
   private void menuItemOpenTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenTaskActionPerformed
 
-    JFileChooser fc = new JFileChooser();
-    File newFile = null;
-    fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
-    int rc = fc.showOpenDialog(this);
-    fc.setDialogTitle("Open File");
-    if (rc == JFileChooser.APPROVE_OPTION) {
-      
-      File openFile = fc.getSelectedFile();
-      
-      SolutionManager.getSolutionManager().loadSavedSolutioin(openFile.getAbsolutePath(), graph, null, situationView);
-      
-      /*
-      try {
-        // Implement Loading of SituationPanel
-
-
-        //Implement Loading of Model Panel
-
-
-        graphCanvasScroll.getGraphCanvas().deleteAll();
-        //    graph.load(openFile);
-        graphCanvasScroll.getGraphCanvas().setModelChanged(true);
-        LinkedList l = graph.getVertexes();
-        LinkedList<String> list = new LinkedList<String>();
-        for (int i = 0; i < l.size(); i++) {
-          list.add(((Vertex) l.toArray()[i]).getNodeName());
-        }
-        LinkedList e = graph.getEdges();
-        graphCanvasScroll.getGraphCanvas().deleteAll();
-        for (int i = 0; i < l.size(); i++) {
-          graphCanvasScroll.getGraphCanvas().newVertex(((Vertex) l.toArray()[i]));
-        }
-        for (int i = 0; i < e.size(); i++) {
-          graphCanvasScroll.getGraphCanvas().newEdge(((Edge) e.toArray()[i]));
-        }
-        //FY database.setActualTask(database.searchTask(graph.taskID));
-        // FY taskView.updateTask(database.getActualTask());
-
-        taskFactory.setActualTask(taskFactory.searchTask(graph.getTaskID()));
-        //  taskView.updateTask(taskFactory.getActualTask());
-//        try {
-//          //taskView.updateTask(database.getTasks(graph.taskID));
-//          //instructionView.updateInstruction(database.getTasks(graph.taskID));
-//         // taskView.updateTask(taskFactory.getTasks(graph.getTaskID()));
-//          // instructionView.updateInstruction(taskFactory.getTasks(graph.taskID));
-//        } catch (DataException de) {
-//        }
-
-        //FYgraphCanvasScroll.getGraphCanvas().updateTask(database.getActualTask());
-        //FYif (database.getActualTask().getTitle() == null) {
-        graphCanvasScroll.getGraphCanvas().updateTask(taskFactory.getActualTask());
-        if (taskFactory.getActualTask().getTitle() == null) {
-
-          this.setFont(graphCanvasScroll.getGraphCanvas().normal);
-          this.setTitle("Affective Meta Tutor");
-        } else {
-          this.setFont(graphCanvasScroll.getGraphCanvas().normal);
-          //FY this.setTitle("Affective Meta Tutor - " + database.getActualTask().getTitle());
-          this.setTitle("Affective Meta Tutor - " + taskFactory.getActualTask().getTitle());
-        }
-        String key = "Student opened " + fc.getSelectedFile().getName();
-        logger.out(Logger.ACTIVITY, key);
-      } catch (Exception ex) {
-        MessageDialog.showMessageDialog(this, true, "The file you are intent to open does not have the correct format", graph);
-        //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-      }*/
+    if (graphCanvasScroll.getGraphCanvas().getGraph().getVertexes().size() > 0) {
+      int choice = JOptionPane.showConfirmDialog(this,
+              "All the unsaved work will be lost, so you want to continue ?",
+              "Confirm Open Task",
+              JOptionPane.YES_NO_OPTION);
+      if (choice == 0) {
+        openNewTask();
+      }
+    } else {
+      openNewTask();
     }
   }//GEN-LAST:event_menuItemOpenTaskActionPerformed
 
@@ -730,7 +681,8 @@ public class Main extends JFrame implements WindowListener {
         }
       }
     } else {
-      ErrorDialog err = new ErrorDialog(this, true, "Solution Generation Error", "Please run the model before generating solution.");
+      ErrorDialog err = new ErrorDialog(this, true, "Solution Generation Error",
+              "Please run the model before generating solution.");
       err.setVisible(true);
     }
   }//GEN-LAST:event_menuItemGenerateSolutionActionPerformed
@@ -743,8 +695,10 @@ public class Main extends JFrame implements WindowListener {
   private void menuItemTakeQuizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTakeQuizActionPerformed
     // STEP 0. If there is not a Task selected and a Model already runned do not allow to take the quiz
     // STEP 1. We need to indentify which task we are doing in order to open that quiz
-    if (graphCanvasScroll.getGraphCanvas().getModelChanged() == true || menuItemTakeQuiz.getForeground() == Color.GRAY) {
-      MessageDialog.showMessageDialog(this, true, "The model needs to be run before the quiz can be taken", graph);
+    if (graphCanvasScroll.getGraphCanvas().getModelChanged() == true ||
+            menuItemTakeQuiz.getForeground() == Color.GRAY) {
+      MessageDialog.showMessageDialog(this, true, "The model needs to be run "
+              + "before the quiz can be taken", graph);
     } else {
       logger.out(Logger.ACTIVITY, "Main.menuItemTakeQuizActionPerformed.1");
       // FY int id = database.getActualTask().getId();
@@ -752,7 +706,7 @@ public class Main extends JFrame implements WindowListener {
 
       // STEP 2. PUT QUIZ IN QUIZ DIALOG
 
-      //FY int[] currentLevelList = tasksPerLevel.get(Integer.parseInt(database.getActualTask().getLevel()));
+
       int[] currentLevelList = taskFactory.getTasksPerLevel().get(taskFactory.getActualTask().getLevel());
       // FY if (database.getActualTask().getId() == currentLevelList[currentLevelList.length - 1]) {
 
@@ -784,6 +738,37 @@ public class Main extends JFrame implements WindowListener {
     GraphRangeEditor rangeEditor = new GraphRangeEditor(this, true);
     rangeEditor.setVisible(true);
   }//GEN-LAST:event_menuItemEditTimeRangeActionPerformed
+
+  private void menuItemNewTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNewTaskActionPerformed
+    // TODO add your handling code here:
+    if (graphCanvasScroll.getGraphCanvas().getGraph().getVertexes().size() > 0) {
+      int choice = JOptionPane.showConfirmDialog(this,
+              "All the unsaved work will be lost, so you want to continue ?",
+              "Confirm Open Task",
+              JOptionPane.YES_NO_OPTION);
+      if (choice == 0) {
+       graphCanvasScroll.getGraphCanvas().deleteAll();
+      }
+    } else {
+       graphCanvasScroll.getGraphCanvas().deleteAll();
+    }
+  }//GEN-LAST:event_menuItemNewTaskActionPerformed
+
+  private void openNewTask() {
+    JFileChooser fc = new JFileChooser();
+    File newFile = null;
+    fc.setFont(graphCanvasScroll.getGraphCanvas().normal);
+    int rc = fc.showOpenDialog(this);
+    fc.setDialogTitle("Open File");
+    if (rc == JFileChooser.APPROVE_OPTION) {
+      File openFile = fc.getSelectedFile();
+      
+      // Remove all the existing nodes
+      graphCanvasScroll.getGraphCanvas().deleteAll();
+
+      SolutionManager.getSolutionManager().loadSavedSolutioin(openFile.getAbsolutePath(), graphCanvasScroll.getGraphCanvas(), situationView);
+    }
+  }
 
   public static boolean windowIsClosing() {
     return windowIsClosing;

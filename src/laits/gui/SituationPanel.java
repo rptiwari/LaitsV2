@@ -17,21 +17,13 @@ import laits.comm.ImageFilter;
  */
 public class SituationPanel extends javax.swing.JPanel implements java.beans.Customizer, ActionListener {
 
-  private Dimension imageSize = new Dimension(0, 0);
-  private static Logger logger = Logger.getLogger();
-  private Image image = null;
-  private Dimension sizeOfImage = new Dimension(0, 0);
-  private Cover cover = null;
-  public Desktop desktop = null;
-  JFileChooser fc;
-
   /**
    * Constructor Initializes the File Choose and hides preview label
    */
   public SituationPanel() {
     super();
     initComponents();
-    //this.setPreferredSize(new Dimension((int) (this.getToolkit().getScreenSize().getWidth() / 2) + 200 , 140));    
+    //this.setPreferredSize(new Dimension((int) (this.getToolkit().getScreenSize().getWidth() / 2) + 200 , 140));
 
     fc = new JFileChooser();
     fc.setAcceptAllFileFilterUsed(false);
@@ -102,6 +94,8 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
         descriptionScroll = new javax.swing.JScrollPane();
         descriptionTextArea = new javax.swing.JTextArea();
         labelFileUrl = new javax.swing.JLabel();
+        textFieldWebURL = new javax.swing.JTextField();
+        checkBoxSelectURLFromWeb = new javax.swing.JCheckBox();
         previewPanel = new javax.swing.JPanel();
         labelPreview = new javax.swing.JLabel();
 
@@ -142,6 +136,27 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
 
         labelFileUrl.setText("No File Selected.");
 
+        textFieldWebURL.setText("Enter the Image URL here, starting from http://");
+        textFieldWebURL.setToolTipText("Enter the Image URL here");
+        textFieldWebURL.setEnabled(false);
+        textFieldWebURL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFieldWebURLActionPerformed(evt);
+            }
+        });
+        textFieldWebURL.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                textFieldWebURLFocusGained(evt);
+            }
+        });
+
+        checkBoxSelectURLFromWeb.setText("Select File From Web");
+        checkBoxSelectURLFromWeb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkBoxSelectURLFromWebActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout descPanelLayout = new org.jdesktop.layout.GroupLayout(descPanel);
         descPanel.setLayout(descPanelLayout);
         descPanelLayout.setHorizontalGroup(
@@ -158,7 +173,12 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
                         .add(26, 26, 26)
                         .add(labelFileUrl, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .add(descPanelLayout.createSequentialGroup()
-                        .add(descriptionScroll, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 623, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(descPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(descriptionScroll, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 623, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(descPanelLayout.createSequentialGroup()
+                                .add(textFieldWebURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 426, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(18, 18, 18)
+                                .add(checkBoxSelectURLFromWeb)))
                         .add(0, 8, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -176,7 +196,11 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
                     .add(imageLabel)
                     .add(labelFileUrl, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(buttonFileOpen))
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 39, Short.MAX_VALUE)
+                .add(descPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(textFieldWebURL, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(checkBoxSelectURLFromWeb))
+                .addContainerGap())
         );
 
         previewPanel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.highlight"));
@@ -205,12 +229,14 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(87, 87, 87)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(descPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(layout.createSequentialGroup()
-                        .add(256, 256, 256)
+                        .add(87, 87, 87)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(descPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(layout.createSequentialGroup()
+                        .add(340, 340, 340)
                         .add(buttonEditMode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(18, 18, 18)
                         .add(buttonPreviewMode, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -221,18 +247,18 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
             .add(layout.createSequentialGroup()
                 .add(81, 81, 81)
                 .add(previewPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(27, 27, 27)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(descPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(46, 46, 46)
+                .add(47, 47, 47)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(buttonEditMode)
                     .add(buttonPreviewMode))
-                .addContainerGap(83, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
   private void buttonEditModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditModeActionPerformed
-    // Handling Edit Mode      
+    // Handling Edit Mode
     buttonPreviewMode.setEnabled(true);
     buttonEditMode.setEnabled(false);
 
@@ -248,11 +274,12 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
       JOptionPane.showMessageDialog(this, "Please Enter the Problem Description.", "LAITS Error...", JOptionPane.ERROR_MESSAGE);
       return;
     }
-    if (labelFileUrl.getText().compareTo("No File Selected.") == 0) {
+    if (labelFileUrl.getText().compareTo("No File Selected.") == 0
+            && "Enter the Image URL here, starting from http://".compareTo(textFieldWebURL.getText()) == 0) {
       JOptionPane.showMessageDialog(this, "Please select the Problem Image. Default Image will be used if no image is selected.", "LAITS Warning...", JOptionPane.WARNING_MESSAGE);
     }
 
-
+    // Construct the Preview for user display
     String problemDetails = constructPreviewText(descriptionTextArea.getText());
 
     labelPreview.setText(problemDetails);
@@ -282,28 +309,74 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     } else if (evt.getSource() == buttonPreviewMode) {
     }
   }//GEN-LAST:event_buttonFileOpenActionPerformed
-  // Helper Methods 
 
+  private void checkBoxSelectURLFromWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxSelectURLFromWebActionPerformed
+    // TODO add your handling code here:
+    if (checkBoxSelectURLFromWeb.isSelected()) {
+      System.out.println("true selected");
+      textFieldWebURL.setEnabled(true);
+      textFieldWebURL.setText("Enter the Image URL here, starting from http://");
+
+      // Disable the select buttton
+      buttonFileOpen.setEnabled(false);
+    } else {
+      buttonFileOpen.setEnabled(true);
+      textFieldWebURL.setText("Enter the Image URL here, starting from http://");
+      textFieldWebURL.setEnabled(false);
+    }
+  }//GEN-LAST:event_checkBoxSelectURLFromWebActionPerformed
+
+  private void textFieldWebURLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldWebURLActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_textFieldWebURLActionPerformed
+
+  private void textFieldWebURLFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldWebURLFocusGained
+    // TODO add your handling code here:
+    if ("Enter the Image URL here, starting from http://".compareTo(textFieldWebURL.getText()) == 0) {
+      textFieldWebURL.setText("");
+    }
+  }//GEN-LAST:event_textFieldWebURLFocusGained
+
+  // Helper Methods
   private String constructPreviewText(String rawText) {
-    File file = new File("src/amt/images/asu.jpg");
-    String imageUrl = "file:" + File.separator + File.separator + file.getAbsolutePath();
+    String imageUrl = null;
 
+    // Set the problem description
     if (rawText == null || rawText.isEmpty()) {
       rawText = "No problem description provided";
     }
 
+    // Set the Image URL
     if (labelFileUrl.getText().compareTo("No File Selected.") != 0) {
-      // Set default URL to ASU Image URL
-      imageUrl = "file:" + File.separator + File.separator + labelFileUrl.getText();
-    }
+      // Set  URL to the select local file
+      if (amt.util.OSValidator.isWindows()) {
+        imageUrl = "file:" + File.separator + File.separator + File.separator + labelFileUrl.getText();
+      } else {
+        imageUrl = "file:" + File.separator + File.separator + labelFileUrl.getText();
+      }
 
+    } else {
+      // Set the URL to Web URL
+      if ("Enter the Image URL here, starting from http://".compareTo(textFieldWebURL.getText()) != 0) {
+        imageUrl = textFieldWebURL.getText();
+      } else {
+        // Set default URL to ASU Image URL
+        File file = new File("src/amt/images/asu.jpg");
+        if (amt.util.OSValidator.isWindows()) {
+          imageUrl = "file:" + File.separator + File.separator + File.separator + file.getAbsolutePath();
+        } else {
+          imageUrl = "file:" + File.separator + File.separator + file.getAbsolutePath();
+        }
+      }
+    }
     // Replacing '\n' with <br/>
     rawText = rawText.replace("\n", "<br/>");
 
     String htmlText = "<html>"
             + "<table width='800'><tr><td width=25%>" + "<img src='" + imageUrl + "' height='240' width='240' alt='Problem Image Not Selected.'/>" + "</td>"
             + "<td style='margin-left:30px;' valign='top' width='75%'>" + rawText + "</td>"
-            + "</tr></table>";;
+            + "</tr></table>";
+    //System.out.println("Final output = " + htmlText);
     return htmlText;
   }
 
@@ -323,7 +396,11 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     if (labelFileUrl.getText().compareTo("No File Selected.") != 0) {
       return labelFileUrl.getText();
     } else {
-      return "";
+      if ("Enter the Image URL here, starting from http://".compareTo(textFieldWebURL.getText()) != 0) {
+        return textFieldWebURL.getText();
+      } else {
+        return "";
+      }
     }
   }
 
@@ -332,13 +409,28 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
   }
 
   public void setImageURL(String inputURL) {
-    labelFileUrl.setText(inputURL);
+    if (inputURL.startsWith("http://")) {
+      textFieldWebURL.setText(inputURL);
+      checkBoxSelectURLFromWeb.setSelected(true);
+    } else {
+      labelFileUrl.setText(inputURL);
+    }
   }
 
-  public void setPreviewMode(){
+  public void setPreviewMode() {
+    if (labelFileUrl.getText().compareTo("No File Selected.") != 0) {
+      buttonFileOpen.setEnabled(true);
+      textFieldWebURL.setText("");
+      textFieldWebURL.setEnabled(false);
+      checkBoxSelectURLFromWeb.setSelected(false);
+    } else {
+      buttonFileOpen.setEnabled(false);
+      textFieldWebURL.setEnabled(true);
+      checkBoxSelectURLFromWeb.setSelected(true);
+    }
     buttonPreviewModeActionPerformed(null);
   }
-  
+
   /**
    * This method sets the Cover
    *
@@ -351,6 +443,7 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     private javax.swing.JButton buttonEditMode;
     private javax.swing.JButton buttonFileOpen;
     private javax.swing.JButton buttonPreviewMode;
+    private javax.swing.JCheckBox checkBoxSelectURLFromWeb;
     private javax.swing.JPanel descPanel;
     private javax.swing.JLabel descriptionLabel;
     private javax.swing.JScrollPane descriptionScroll;
@@ -359,6 +452,7 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
     private javax.swing.JLabel labelFileUrl;
     private javax.swing.JLabel labelPreview;
     private javax.swing.JPanel previewPanel;
+    private javax.swing.JTextField textFieldWebURL;
     // End of variables declaration//GEN-END:variables
 
   /**
@@ -374,4 +468,14 @@ public class SituationPanel extends javax.swing.JPanel implements java.beans.Cus
    *
    * @param ae
    */
+  /**
+   * Constants and Variable declaration
+   */
+  private Dimension imageSize = new Dimension(0, 0);
+  private static Logger logger = Logger.getLogger();
+  private Image image = null;
+  private Dimension sizeOfImage = new Dimension(0, 0);
+  private Cover cover = null;
+  public Desktop desktop = null;
+  JFileChooser fc;
 }

@@ -63,11 +63,17 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     undoStack.setSize(1);
     currentInputPanel.setLayout(new GridLayout(g.getVertexes().size(), 1));
     initValues();
-    
+
     updateDescription();
     initInputCheckBoxes();
     initInitialState();
     initializing = false;
+
+    checkButton.setVisible(false);
+    giveUpButton.setVisible(false);
+    okButton.setVisible(false);
+    closeButton.setVisible(false);
+    deleteButton.setVisible(false);
 
   }
 
@@ -77,7 +83,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     currentInputPanel.setLayout(new GridLayout(g.getVertexes().size(), 1));
     // fills out the checkbox with all vertexes created yet, with the exception of the current one
     for (int i = 0; i < g.getVertexes().size(); i++) {
-      
+
       Vertex vertex = (Vertex) (g.getVertexes().get(i));
       if (!vertex.getNodeName().equalsIgnoreCase("") && !vertex.getNodeName().equalsIgnoreCase(currentVertex.getNodeName())) {
         JCheckBox checkbox = new JCheckBox();
@@ -88,7 +94,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       }
     }
 
-   
+
     currentInputPanel.repaint(0);
     this.repaint(0);
     parent.repaint(0);
@@ -272,7 +278,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
 
     if (initializing == false) {
       //change the input and graph status so that the (i), and (g) (possibly the (c)) circles
-      //on the vertex turns white      
+      //on the vertex turns white
 
       currentVertex.setInputsButtonStatus(currentVertex.NOSTATUS);
 
@@ -290,7 +296,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       if (!skip) {
         resetGraphStatus();
         parent.getCalculationsPanel().resetColors(TYPE_CHANGE);
-        parent.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);       
+        parent.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
         parent.getCalculationsPanel().initButtonOnTask();
       }
 
@@ -312,7 +318,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
         for (int i = 0; i < boxList.size(); i++) {
 
             if (e.getSource() == boxList.get(i)) {
-              
+
               //Find the vertex associated with the check box
                 Vertex v = null;
                 for (int n = 0; n < g.getVertexes().size(); n++) {
@@ -778,7 +784,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
       parent.getCalculationsPanel().initButtonOnTask();
     }//GEN-LAST:event_inputsButtonActionPerformed
 
-  
+
   /**
    * This function checks for any syntax errors in the inputsTab, and returns
    * true if there are
@@ -944,9 +950,9 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     gc.paintVertex(v);
     gc.setInputsPanelChanged(true, currentVertex);
 
-    // if this line was not here, then the NodeEditor window would be in front of the new 
+    // if this line was not here, then the NodeEditor window would be in front of the new
     // window that gets popped up. This is not good because of the fact that the NodeEditor window
-    // will be locked. The lifespan of the NodeEditor window, at this point, should be short enough 
+    // will be locked. The lifespan of the NodeEditor window, at this point, should be short enough
     // that this will not be a problem. Also, next time the NodeEditor window is allocated, it will
     // be set to true and regular behavior will occur.
     this.parent.setAlwaysOnTop(false);
@@ -970,7 +976,7 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
   private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
 
     java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor 
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor
 
   }//GEN-LAST:event_closeButtonActionPerformed
 
@@ -979,19 +985,19 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
     logger.concatOut(Logger.ACTIVITY, "No message", "Student deleted the node.");
     this.currentVertex.setNodeName(""); // sets the node to a state where it will be deleted by NodeEditor.java when closed
     java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor  
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor
   }//GEN-LAST:event_deleteButtonActionPerformed
 
   private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
     // This button will read the value of name and description and store then in current vertex
-    
+
     //System.out.println("Node Type: "+currentVertex.typeNodeToString());
     currentVertex.setInputsButtonStatus(Vertex.CORRECT);
     gc.setInputsPanelChanged(false, currentVertex);
     java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
     this.parent.windowClosing(e); // call the window closing method on NodeEditor
-    
-    
+
+
   }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;

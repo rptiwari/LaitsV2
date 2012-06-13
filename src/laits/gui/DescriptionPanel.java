@@ -77,17 +77,6 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
 
     quantityDescriptionTextField.setText(currentVertex.getSelectedDescription());
 
-    closeButton.setEnabled(false);
-    closeButton.setVisible(false);
-    closeButton.setOpaque(true);
-
-    if (getSelectedTreeNode() == null) {
-      treeSelected = false;
-      checkButton.setEnabled(treeSelected);
-    }
-
-    deleteButton.setText("Cancel Node");
-
 
   }
 
@@ -120,18 +109,10 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
     initTreeSelectionListener();
     quantityDescriptionTextField.setText(currentVertex.getSelectedDescription());
 
-    if (getSelectedTreeNode() == null) {
-      treeSelected = false;
-      checkButton.setEnabled(treeSelected);
-    }
 
 
-    if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
-    {
-      deleteButton.setText("Delete Node"); // the cancel button should say delete
-    } else {
-      deleteButton.setText("Cancel Node"); // else, it says cancel
-    }
+
+
   }
 
   public DefaultMutableTreeNode getSelectedTreeNode() {
@@ -157,9 +138,7 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
   }
 
   public void initButtonOnTask() {
-    // Always Disable Check and Giveup Buttons
-    checkButton.setEnabled(false);
-    giveUpButton.setEnabled(false);
+
   }
 
   public void initTreeSelectionListener() {
@@ -183,7 +162,7 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
         if (node.isLeaf()) {
           // check button should only be enabled if the node is a leaf
           treeSelected = true;
-          checkButton.setEnabled(treeSelected);
+
           //zpwn: to get & update vertex decision tree path.
           treePaths.add(decisionTree.getSelectionPath());
           if (currentVertex.getTreePath() == null) {
@@ -226,12 +205,12 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
           }
         } else {
           treeSelected = false;
-          checkButton.setEnabled(treeSelected);
+
         }
       } else {
         // check button should be disabled if the node is not a leaf
         treeSelected = false;
-        checkButton.setEnabled(treeSelected);
+
       }
     } catch (ClassCastException cce) {
     }
@@ -242,8 +221,6 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
     quantityDescriptionTextField.setBackground(Selectable.COLOR_CORRECT);
     nodeNameTextField.setBackground(Selectable.COLOR_CORRECT);
     decisionTree.setEnabled(false);
-    checkButton.setEnabled(treeSelected);
-    giveUpButton.setEnabled(false);
     currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
     if (this.parent != null) {
       parent.setTitle(currentVertex.getNodeName().replaceAll("_", " "));
@@ -268,11 +245,6 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
         referencesLabel = new javax.swing.JLabel();
         nodeNameTextField = new javax.swing.JTextField();
         NodeNameLabel = new javax.swing.JLabel();
-        giveUpButton = new javax.swing.JButton();
-        checkButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        closeButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
 
         decisionTree.setFont(new java.awt.Font("Lucida Grande", 0, 18)); // NOI18N
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
@@ -346,41 +318,6 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
 
         NodeNameLabel.setText("Node Name:");
 
-        giveUpButton.setText("Give Up");
-        giveUpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                giveUpButtonActionPerformed(evt);
-            }
-        });
-
-        checkButton.setText("Check");
-        checkButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkButtonActionPerformed(evt);
-            }
-        });
-
-        deleteButton.setText("Cancel Node");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
-
-        closeButton.setText("Close Node");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeButtonActionPerformed(evt);
-            }
-        });
-
-        okButton.setText("Ok");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
         contentPanel.setLayout(contentPanelLayout);
         contentPanelLayout.setHorizontalGroup(
@@ -396,27 +333,15 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
                         .addGap(53, 53, 53))
                     .addGroup(contentPanelLayout.createSequentialGroup()
                         .addComponent(evenMorePreciseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addContainerGap(242, Short.MAX_VALUE))
                     .addGroup(contentPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane2)
                         .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
+                    .addGroup(contentPanelLayout.createSequentialGroup()
                         .addComponent(NodeNameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(contentPanelLayout.createSequentialGroup()
-                        .addComponent(checkButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(giveUpButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(closeButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(deleteButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))))
+                        .addContainerGap())))
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,18 +354,11 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
                 .addComponent(referencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(30, 30, 30)
                 .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(NodeNameLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
-                .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(NodeNameLabel)
+                    .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -453,7 +371,7 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -461,36 +379,21 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
       currentVertex.setNodeName(nodeNameTextField.getText());
     }//GEN-LAST:event_nodeNameTextFieldActionPerformed
 
-  /**
-   * &author curt
-   *
-   * @param evt
-   */
-    private void checkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkButtonActionPerformed
-    }//GEN-LAST:event_checkButtonActionPerformed
-
   // returns the value held by triedDuplicate
   public boolean getTriedDuplicate() {
     return triedDuplicate;
   }
 
   public boolean duplicatedNode(String nodeName) {
-    boolean duplicate = false;
     for (int z = 0; z < gc.getGraph().getVertexes().size(); z++) {
-      if (((Vertex) gc.getGraph().getVertexes().get(z)).getNodeName().equals(nodeName) && ((Vertex) gc.getGraph().getVertexes().get(z)) != currentVertex) {
-        duplicate = true;
-        break;
+      if(((Vertex) gc.getGraph().getVertexes().get(z)).getNodeName().equals(nodeName)
+              &&
+              gc.getGraph().getVertexes().get(z)!=currentVertex){
+        return true;
       }
     }
-    return duplicate;
+    return false;
   }
-
-  /**
-   * @author curt
-   * @param evt
-   */
-    private void giveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_giveUpButtonActionPerformed
-    }//GEN-LAST:event_giveUpButtonActionPerformed
 
   private TreePath[] getPaths(JTree tree, boolean expanded) {
     TreeNode root = (TreeNode) tree.getModel().getRoot();
@@ -525,69 +428,7 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
     decisionTree.scrollPathToVisible(treepath);
     decisionTree.setSelectionPath(treepath);
   }
-  // the following method handles the logic for the cancel/delete button
-  // it sets the node name to nothing, and then creates a fake window event as if the user closed the node editor
-  // this allows the code in windowClosing() in NodeEditor to take over and delete the node.
-  private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-
-    logger.concatOut(Logger.ACTIVITY, "No message", "Student deleted the node.");
-    this.currentVertex.setNodeName(""); // sets the node to a state where it will be deleted by NodeEditor.java when closed
-    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor  
-  }//GEN-LAST:event_deleteButtonActionPerformed
-
-  private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-    if (parentNode != null) {
-      parentNode.getNewNodeFrame().dispose();
-    } else {
-      java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-      this.parent.windowClosing(e); // call the window closing method on NodeEditor 
-    }
-  }//GEN-LAST:event_closeButtonActionPerformed
-
-  // LAITS Code - Ram
-  private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-    // This button will read the value of name and description and store then in current vertex
-
-    // Validating Input
-    if (nodeNameTextField.getText().isEmpty()) {
-      laits.gui.MessageDialog.showMessageDialog(null, true, "Node name can not be empty", graph);
-      return;
-    }
-    if (quantityDescriptionTextField.getText().isEmpty()) {
-      laits.gui.MessageDialog.showMessageDialog(null, true, "Quantity Description can not be empty", graph);
-      return;
-    }
-
-    if (duplicatedNode(currentVertex.getNodeName())) {
-      laits.gui.MessageDialog.showMessageDialog(null, true, "A node with name " + currentVertex.getNodeName() + "already exists in the graph", graph);
-      nodeNameTextField.setText("");
-      return;
-    }
-
-    currentVertex.setNodeName(nodeNameTextField.getText());
-    currentVertex.setSelectedDescription(quantityDescriptionTextField.getText());
-    if (this.parent != null) {
-      parent.getInputsPanel().updateDescription();
-      parent.getGraphsPanel().updateDescription();
-//      parentNode.updateInputPanel();
-    }
-
-    if (parentNode != null) {
-      parentNode.getNewNodeFrame().dispose();
-    } else {
-      currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
-      java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-      this.parent.windowClosing(e); // call the window closing method on NodeEditor 
-    }
-    
-
-    // Printing whole decision tree
-//    dTree.getAll();
-
-    //parent.processOkAction();
-  }//GEN-LAST:event_okButtonActionPerformed
-  protected static ImageIcon createImageIcon(String path) {
+ protected static ImageIcon createImageIcon(String path) {
     java.net.URL imgURL = DescriptionPanel.class.getResource(path);
     if (imgURL != null) {
       return new ImageIcon(imgURL);
@@ -597,7 +438,7 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
     }
   }
 
-  private void initTree() {    
+  private void initTree() {
     savedDecisionTree = DecisionTree.getDecisionTree();
     dTree = DecisionTree.getDecisionTree();
     root = dTree.getRoot();
@@ -628,19 +469,57 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
     tree.expandPath(parent);
     // tree.collapsePath(parent);
   }
+
+  public boolean processSubmitAction(){
+
+    // Validating Input
+    if (nodeNameTextField.getText().isEmpty()) {
+      laits.gui.MessageDialog.showMessageDialog(null, true, "Node name can not be empty", graph);
+      return false;
+    }
+    if (quantityDescriptionTextField.getText().isEmpty()) {
+      laits.gui.MessageDialog.showMessageDialog(null, true, "Quantity Description can not be empty", graph);
+      return false;
+    }
+
+    if (duplicatedNode(nodeNameTextField.getText())) {
+      laits.gui.MessageDialog.showMessageDialog(null, true, "A node with name " + currentVertex.getNodeName() + "already exists in the graph", graph);
+      nodeNameTextField.setText("");
+      return false;
+    }
+
+    currentVertex.setNodeName(nodeNameTextField.getText());
+    currentVertex.setSelectedDescription(quantityDescriptionTextField.getText());
+    // Moves the Label below the node
+    currentVertex.defaultLabel();
+
+    return true;
+  }
+
+  public void processDeleteAction(){
+    logger.concatOut(Logger.ACTIVITY, "No message", "Student deleted the node.");
+    this.currentVertex.setNodeName(""); // sets the node to a state where it will be deleted by NodeEditor.java when closed
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+    this.parent.windowClosing(e); // call the window closing method on NodeEditor
+  }
+
+  public void processCloseAction(){
+    if (parentNode != null) {
+      parentNode.getNewNodeFrame().dispose();
+    } else {
+      java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
+      this.parent.windowClosing(e); // call the window closing method on NodeEditor
+    }
+  }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel NodeNameLabel;
-    private javax.swing.JButton checkButton;
-    private javax.swing.JButton closeButton;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JTree decisionTree;
-    private javax.swing.JButton deleteButton;
     private javax.swing.JLabel evenMorePreciseLabel;
-    private javax.swing.JButton giveUpButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nodeNameTextField;
-    private javax.swing.JButton okButton;
     private javax.swing.JTextArea quantityDescriptionTextField;
     private javax.swing.JLabel referencesLabel;
     // End of variables declaration//GEN-END:variables
