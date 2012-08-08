@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task type="Intro">
+    
+  <TaskDescription>An oil tanker is a ship that carries oil from one port to another.  This particular oil tanker is small, so it only has two tanks.  One tank is in the front of the ship, and the other is in the rear.  The front tank holds 100,000 gallons of oil when completely full and the rear tank also holds 100,000 gallons of oil when full.  This ship had a problem with its rear tank, which has just been fixed.  While it was being fixed, the front tank was being filled.  At this time, the front tank has 45,000 gallons in it and the rear tank has 500. Thus, the ship has much more weight in the front than the rear, and it is not riding with an "even keel", that is, its front is pointing slightly downwards.  This makes sense, because the ratio of the rear tanks' content to the front tank's content is 500/45,000, which is 0.01.  It should be 1.0, so that the ship rides at an even keel.  After a quick calculation, the dock master orders to the dockworkers to add 5,000 gallons an hour to the front tank and 15,000 gallons an hour to the rear tank.  He figures that this will bring the weight distribution to equality in a few hours, and then the ship will ride at an even keel. Graph the ratio of the rear tank's content to the front tank's content over a 6 hour period</TaskDescription>    
+  
+  <ImageUrl>/images/test.jpg</ImageUrl>
+  
+  <NodeCount>7</NodeCount>
+  
+  <ProblemSeekng>ratio of rear to front tank</ProblemSeeking>
+  
+  <Nodes>
+    <Node type="constant" name="added to rear tank hourly" extra="no">
+      <Inputs></Inputs>
+      <Outputs>
+        <Node type="flowlink" name="rear tank" ></Node>
+      </Outputs>
+      <InitialValue>15000</InitialValue>
+      <Equation>added_to_rear_tank_hourly</Equation>
+      <CorrectDescription>The amount of oil in gallons added to the rear tank each hour and it remains the same from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="constant" name="capacity of front tank" extra="yes">
+      <Inputs></Inputs>
+      <Outputs></Outputs>
+      <InitialValue>100000</InitialValue>
+      <Equation>capacity_of_front_tank</Equation>
+      <CorrectDescription>The amount of oil in gallons that the front tank can hold when completely full and it remains the same from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="constant" name="capacity of rear tank" extra="yes">
+      <Inputs></Inputs>
+      <Outputs></Outputs>
+      <InitialValue>100000</InitialValue>
+      <Equation>capacity_of_rear_tank</Equation>
+      <CorrectDescription>The amount of oil in gallons that the rear tank can hold when completely full and it remains the same from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="stock" name="rear tank" extra="no">
+      <Inputs>        
+        <Node type="flowlink" name="added to rear tank hourly"></Node>
+      </Inputs>
+      <Outputs>
+        <Node type="regularlink" name="ratio of rear to front tank"></Node>
+      </Outputs>
+      <InitialValue>500</InitialValue>
+      <Equation>rear_tank</Equation>
+      <CorrectDescription>The amount of oil in gallons that is in the rear tank each hour and it changes from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="stock" name="front tank" extra="no">     
+      <Inputs>        
+        <Node type="flowlink" name="added to front tank hourly"></Node>
+      </Inputs>
+      <Outputs>
+        <Node type="regularlink" name="ratio of rear to front tank"></Node>
+      </Outputs>
+      <InitialValue>45000</InitialValue>
+      <Equation>front_tank</Equation>
+      <CorrectDescription>The amount of oil in gallons that is in the front tank each hour and it changes from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="flow" name="ratio of rear to front tank" extra="no">
+      <Inputs>        
+        <Node type="regularlink" name="front tank"></Node>
+        <Node type="regularlink" name="rear tank"></Node>
+      </Inputs>
+      <Outputs>
+        <Node type="regularlink" name="ratio of rear to front tank"></Node>
+      </Outputs>
+      <InitialValue></InitialValue>
+      <Equation>rear_tank/front_tank</Equation>
+      <CorrectDescription>The ratio of the amount of oil in the rear tank to the amount of oil in front tank on the oil tanker each hour and it changes from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+    <Node type="constant" name="added to front tank hourly" extra="no">
+      <Inputs></Inputs>
+      <Outputs>
+        <Node type="flowlink" name="front tank"></Node>
+      </Outputs>
+      <Equation>added_to_front_tank_houly</Equation>
+      <InitialValue>5000</InitialValue>
+      <CorrectDescription>The amount of oil in gallons added to the front tank each hour and it remains the same from hour to hour</CorrectDescription>
+      <Plan>said to an increase</Plan>
+    </Node>
+    
+  </Nodes>
+  
+     
+  <DescriptionTree>
+    <Node level="root">
+      <Description>The amount of oil in gallons</Description>      
+      <Node level="intermediate">
+        <Description>that the front tank can hold when completely full and</Description>       
+        <Node level="leaf">
+          <Description>it remains the same from hour to hour</Description>
+          <NodeName>capacity of front tank</NodeName>
+        </Node>  
+        <Node level="leaf">
+          <Description>it changes from hour to hour</Description>
+          <NodeName>capacity of front tank</NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that the front tank can hold when halfway full and</Description>            
+        <Node level="leaf">
+          <Description>it remains the same from hour to hour</Description>
+          <NodeName>capacity of front tank</NodeName>
+        </Node>
+        <Node level="leaf">
+          <Description>it changes from hour to hour</Description>
+          <NodeName>capacity of front tank</NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that is in the front tank each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that could be put into both tanks each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>added to the front tank each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that the rear tank can hold when completely full and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>added to the rear tank each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that is in the rear tank each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+      <Node level="intermediate">
+        <Description>that is in the both tanks each hour and</Description>            
+        <Node level="leaf">
+          <Description></Description>
+          <NodeName></NodeName>
+        </Node>
+      </Node>
+    </Node>
+    
+    <Node level="root">
+        <Description>The ratio of the amount of oil</Description>
+    <Node>          
+  </DescriptionTree>
+   
+</Task>

@@ -1,0 +1,373 @@
+package metatutor
+
+rule "guide to create the initial target node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==false)
+		//eval($pm.getOnlineNodeByName($pm.initTNName).getCurStatus()==NodeStatus.NotCreated)
+	then
+		DialogMap.hintOnInitTargetNode($pm.underline);
+end
+
+rule "let student choose the new target node"
+  when
+    $a : Action( status ==Action.AfterDoing, type==Action.CloseANode )
+    $pm : ProblemMemory( phase==Phase.Constructing, targetVarPending==true )
+  then
+    Dialog.genChooseTNDialog($pm.getCandidates());
+end
+
+rule "student chose the new target node"
+  when
+    $d : Dialog( status==Dialog.IsShowing, type==Dialog.ChooseTN )
+    $a : Action( status ==Action.AfterDoing, type==Action.SubmitAns )
+    $pm : ProblemMemory()
+  then
+    $pm.setTargetNode($pm.getCandidates().get(Integer.parseInt($a.getParam())-1));
+    $d.setStatus(Dialog.IsNotShowing);
+end
+
+rule "popup when student is gaming the check button"
+  when
+    $gs : RepeatCheckDetect( status==RepeatCheckDetect.Gaming )
+    Action (status ==Action.AfterDoing, type==Action.ClickCheck, param=="wrong")
+  then
+    DialogMap.showDialogMessageOnly("Guessing so quickly wastes the opportunity to learn.");
+end
+
+rule "plan explanation to fixed number"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==1) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Yep.  That node's value is fixed (doesn't change over time) and it is given "
++"in the problem statement. So select \"Value is fixed, so no inputs\" on the Inputs tab, then enter the given value "
++"on the Calculations tab.@@plan1 explanation pops up");
+end
+
+rule "plan explanation to proportional change"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==2) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Good job!  This node is an input to an accumulator, and moreover, its value is "
++"proportional to the accumulator's value.  On the Inputs tab, you'll need two inputs.  Select the accumulator node "
++"as one input.  For the other input find or create a node that represents the proportion.  Now on the Calculation tab,"
++" check the button that makes this node a function, then enter into the calculation box the product of the "
++"accumulator node and the node that represents the proportion.@@plan2 explanation pops up");
+end
+
+rule "plan explanation to accumulator with only the increase"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==3) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Yes, this node's value increases over time, and the situation specifies the "
++"amount of the increase.  So on the Inputs tab, find or create a node that represents how much of an increase occurs"
++" each time tick, and make it be the input for this node.  On the Calculation tab, make this node be an accumulator "
++"and then enter into the calculation box just the node that represents the increase.@@plan3 explanation pops up");
+end
+
+rule "plan explanation to accumulator with only the decrease"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==4) from $pm.workingNode
+	then
+    DialogMap.showDialogMessageOnly("That's right.  The node's value decreases over time by an amount specified in "
++"the Situation.   Thus, only one input is needed on the Inputs tab, and it represents the amount of "
++"decrease per time tick.   You may have to create such a node if it doesn't exist already.  On the Calculations tab, "
++"select \" accumulator\" and then put into the calculation box a minus sign followed by the node that represents "
++"the decrease.@@plan4 explanation pops up");
+end
+
+rule "plan explanation to accumulator with both of the increase and decrease"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Excellent!  The Situation mentions two influences on this node's value: an "
++"increase and a decrease.  So on the Inputs tab, you'll need to find or create nodes for both the increase and the "
++"decrease.  Then on the Calculation tab, make this node an accumulator then put \"increase\"-\"decrease\" in "
++"the calculation box, where \"increase\" is the name of the node that represents how much this node’s value "
++"increases with each time tick, and \"decrease\" is the other input node.@@plan5 explanation pops up");
+end
+
+rule "plan explanation to the difference of two quantities"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Nice work.  This node is indeed the difference of two quantities.  "
++"So you'll need to find or create nodes for both, and then select them on the Inputs tab for this node.  "
++"On the Calculation tab, you should make this node a function and then fill in the calculation box with  "
++"\"input1\" - \"input2\" where those \"..\" stand for the nodes you selected as inputs.@@plan6 explanation pops up");
+end
+
+rule "plan explanation to ratio of two quantities"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck, param=="correct" )
+		$pm : ProblemMemory(curtab==Context.PlanTab)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Well done!  Because this node is a ratio of two quantities, so you'll need "
++"two nodes as inputs on the Inputs tab.  You'll need to find or create those two nodes.  Then on the Calculation tab, "
++"they appear again in the calculation box.  The \"function\" checkbox should also be checked on the Calculations tab.@@plan7 explanation pops up");
+end
+
+rule "prompt inputs for proportional change node"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==2) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Because the target node, "+$pm.getTargetNodeName()+", represents the change in an "
++"accumulator's value, and it is a proportion of the accumulator's value, it will need two inputs that get multiplied "
++"together: the accumulator, which you have already created, an a new node (which you should create next) that represents the proportion.  For instance, "
++"if the accumulator's value increases by 5% with each time tick, then the new node's value would be 0.05.@@input creation for plan2");
+end
+
+rule "prompt inputs for accumulator that increases"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==3) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Because the Situation describes how your target node, "+$pm.getTargetNodeName()
++", is increasing, you need to create a node to represent that increase.  "
++"The new node will represent the same kind of thing as the target node.  For example, if the target node represents "
++"the number of *people* in Tempe, then the new node represents the number of *people* ADDED to Tempe's population.@@input creation for plan3");
+end
+
+rule "prompt inputs for accumulator that decreases"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==4) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("The Situation talks about how \""+$pm.getTargetNodeName()
++"\" decreases, so you should create the node to represent the decrease.  "
++"The new node is the same kind of measure as the target node.  For example, if the target node measures "
++"amount of *water* in a pond, then this new node measures the amount of *water* SUBTRACTED from the pond.@@input creation for plan4" );
+end
+
+rule "prompt both inputs to an accumulator with two"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==false && $pm.workingNode.isDecreaseCreated()==false)
+	then
+		DialogMap.showDialogMessageOnly("You decided that your target node, \""+$pm.getTargetNodeName()+"\", accumulates both"
++" an increase and a decrease, so you need to create nodes for both.  It doesn't"
++" matter whether the first node you create is for the increase or for the"
++" decrease.  However, it is important that it represent the same kind of quantity as the target node.  "
++"For example, if the target node counts gallons of oil, then both these nodes should also count gallons of oil.@@input creation for plan5,first one");
+end
+
+rule "prompt creating the decrease to an accumulator with both increase and decrease"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==true && $pm.workingNode.isDecreaseCreated()==false)
+	then
+		DialogMap.showDialogMessageOnly(" Next you need to create the node to represent the decrease in \""
++$pm.getTargetNodeName()+"\". since you have already created the node representing the increase.@@input creation for plan5,second one");
+end
+
+rule "prompt creating the increase to an accumulator with both increase and decrease"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5) from $pm.workingNode
+    eval($pm.workingNode.isIncreaseCreated()==false && $pm.workingNode.isDecreaseCreated()==true)
+	then
+		DialogMap.showDialogMessageOnly("Next you need to create the node to represent the increase in \""
++$pm.getTargetNodeName()+"\". since you have already created the node representing the decrease.@@input creation for plan5,second one");
+end
+
+rule "prompt creating both inputs of a difference function"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==0)
+	then
+		DialogMap.showDialogMessageOnly("Because your target node, "+$pm.getTargetNodeName()+", is the difference of two quantities, "
++ "you need to create nodes for both of them. It doesn't matter which one you create first.@@input creation for plan6,first one");
+end
+
+rule "prompt second input of  difference function"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==6) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==1)
+	then
+		DialogMap.showDialogMessageOnly("Since \""+$pm.getTargetNodeName()+"\" is the difference of two quantities, "
++ "and you just successfully created one of them, it's time to create a node for the other quantity.@@input creation for plan6,second one" );
+end
+
+rule "prompt creating both inputs to the function node-ratio"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==0)
+	then
+		DialogMap.showDialogMessageOnly("Because \""+$pm.getTargetNodeName()+"\" represents a ratio of two quantities, "
++ "you'll need two inputs: one for the numerator and one for the denominator."
++ "It doesn't matter which you create first.@@input creation for plan7,first one");
+end
+
+rule "Prompt creating other input to the function node-ratio"
+	when
+		Action(status ==Action.AfterDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==7) from $pm.workingNode
+    eval($pm.workingNode.numOfCreatedInputs()==1)
+	then
+		DialogMap.showDialogMessageOnly("You just successfully created one of the quantities involved in the ratio,  "
++ "so next you need to create the other quantity.@@input creation for plan7,second one");
+end
+
+rule "remind students to specify the fixed value in the calculation tab"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==1, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("The next step in the plan for this node is just to enter its value, "
++"which is specified in the Situation.@@calculation remind for plan1");
+end
+
+rule "remind students to put the multiple for the propotional change"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==2, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Nice job on the Input tab.  It makes sense that there are two inputs, "
++"since you decided this node's value is proportional to the value of an accumulator, so one input is the "
++"accumulator and the other is represents the proportion.  Now for the Calculation tab, this node should be "
++"a function whose calculation box has the product of the two inputs.@@calculation remind for plan2");
+end
+
+rule "remind to add the increase to the accumulator"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==3, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Now that you've got the Inputs tab right, remember that this node's value is "
++"increasing by some specified amount.  Thus, it is accumulating each of these increases per time tick, "
++"so you need the Calculations tab to have \"accumulator\" selected.  Moreover, the calculation box should contain "
++"just the input  node.   Also, you'll need to enter the initial value for this node, which is mentioned somewhere "
++"in the Situation.@@calculation remind for plan3");
+end
+
+rule "remind to add the decrease to the accumulator"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==4, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Yep, that's the only input you need.  And recall that it represents how much "
++"this node's value decreases with each time tick.  That is, it accumulates those decreases with each time tick and "
++"its value gets smaller and smaller.  So on the Calculation tab, click \"accumulator\" then enter into the calculation "
++"box a minus sign and the input node.  And don't forget to enter the initial value for the node, which is specified "+
+"on the Situation tab.@@calculation remind for plan4");
+end
+
+rule "remind to add both of the increase and decrease to the accumulator"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==5, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Yes, there are two inputs, because the Situation mentions both an increase and "
++"a decrease in this node's value.  So now on the Calculation tab, make this node an accumulator, then move both "
++"inputs into the calculation box, being careful to put a minus sign on the one that represents a decrease in the "
++"accumulator's value.   Lastly, in order to enter the initial value of this node, consult the Situation tab.@@calculation remind for plan5");
+end
+
+rule "remind to add the two quantities for a difference"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==6, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("Of course there were two inputs, because you correctly decided that this node "
++"represented a difference in two quantities.  Therefore, your Calculation tab should indicate that is node is a "
++"function and the calculation box should contain exactly that difference.@@calculation remind for plan6");
+end
+
+rule "remind to add the two quantities for a ratio"
+	when
+		Action(status ==Action.AfterDoing, type==Action.ToCalculation)
+		$pm : ProblemMemory( initCreated==true)
+    OnlineNode(correctPlan==7, status==NodeStatus.InputFinished) from $pm.workingNode
+	then
+		DialogMap.showDialogMessageOnly("You decided this node represented a ratio of two quantities, "
++"so you have correctly selected two input nodes.  Now on the Calculation tab, you should move them both into the "
++"calculation box, being careful to about which one is the numerator and which one is the denominator.  Also, this "
++"node should be a function.@@calculation remind for plan7");
+end
+
+rule "Notify student the current target node when the editor is closing"
+  when
+    Action(status==Action.AfterDoing, type==Action.CloseANode, param!="popup")
+    $pm : ProblemMemory( phase==Phase.Constructing, targetVarPending==false,targetNodeName!="" )
+  then
+    DialogMap.showDialogMessageOnly("Since only the node \""+$pm.getTargetNodeName()+"\" lacks the blue boarder, it is now your target node.");
+end
+
+rule "Guide students to click on run model button"
+  when
+    Action(status==Action.AfterDoing, type==Action.CloseANode)
+    $pm : ProblemMemory( phase==Phase.Constructing, targetVarPending==false,targetNodeName=="", initCreated==true, alreadyRun==false )
+  then
+    DialogMap.showDialogMessageOnly("Since all the nodes now have blue boarders, you are done constructing the model. Click on the \"Run Model\" button to test it.");
+end
+
+rule "Let student choose the starting node for debugging"
+  when
+    Action( status==Action.AfterDoing, type==Action.ToModelTab || type==Action.CloseANode)
+    $pm : ProblemMemory( phase==Phase.Debugging, targetVarPending==true)
+  then
+    Dialog.genChooseStartingForDebug($pm.possibleStarting);
+end
+
+rule "student chose the starting node"
+  when
+    $d : Dialog( status==Dialog.IsShowing, type==Dialog.ChooseStarting )
+    $a : Action( status ==Action.AfterDoing, type==Action.SubmitAns )
+    $pm : ProblemMemory()
+  then
+    $pm.setTargetNode($pm.possibleStarting.get(Integer.parseInt($a.getParam())-1));
+    $d.setStatus(Dialog.IsNotShowing);
+end
+
+rule "In debugging, notify student the current target node when the editor is closing"
+  when
+    Action(status==Action.AfterDoing, type==Action.CloseANode, param!="popup")
+    $pm : ProblemMemory( phase==Phase.Debugging, targetVarPending==false,targetNodeName!="" )
+  then
+    DialogMap.showDialogMessageOnly("Since only the node \""+$pm.getTargetNodeName()+"\" contains red indicator(s) or lacks blue boarder, it is now your target node.");
+end
+
+rule "Guide students to click on run model button in debug"
+  when
+    Action(status==Action.AfterDoing, type==Action.CloseANode)
+    $pm : ProblemMemory( phase==Phase.Debugging, targetVarPending==false,targetNodeName=="", initCreated==true )
+    eval($pm.possibleStarting.size()==0)
+  then
+    DialogMap.showDialogMessageOnly("Since all the nodes now have the blue boarder and contain no red indicator, you are done with the model. "
++"Use \"Run Model\" button to run the model.");
+end

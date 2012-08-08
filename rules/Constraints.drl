@@ -1,0 +1,112 @@
+package metatutor
+
+rule "description is correct but is not right for TNS and this is the first node"
+	when
+		$d : Decision()
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateANode )
+		$pm : ProblemMemory( initCreated == false )
+    eval(!$pm.soughtSetConstains($a.getParam()))
+	then
+		$d.setDecisionInStr("deny:Your description is correct, but according to the target node strategy, you should start with what the problem is seeking.");
+end
+
+rule "description is correct but is not right for TNS and this is not the first node"
+	when
+		$d : Decision()
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateANode )
+		$pm : ProblemMemory( initCreated == true )
+    eval(!$pm.soughtSetConstains($a.getParam()))
+	then
+		$d.setDecisionInStr("deny:Your description is correct, but according to the target node strategy, "
++"you should create an input to \"--\" and yet your selection is not such an input.", $pm.getTargetNodeName());
+end
+
+rule "don't let student use create a node button in canvass after the initial node is created"
+	when
+    $d : Decision()
+		Action(status ==Action.BeforeDoing, type==Action.CreateNewNode)
+		$pm : ProblemMemory( initCreated==true, curtab==Context.ModelTab, targetNodeName!="")
+	then
+		$d.setDecisionInStr("deny:Focus on your target node \"--\". If you need to create a node as the input for "
++"your target node, use \"create new node\" button on the input tab.", $pm.getTargetNodeName());
+end
+
+rule "go to input tab before finishing plan tab"
+	when
+		$d : Decision()
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.BeforeDoing, type==Action.ToInput )
+    eval($pm.workingNode.getStatus()==NodeStatus.Created)
+	then
+		$d.setDecisionInStr("deny:Please select a plan, if you have not done so already, and Check it.");
+end
+
+rule "go to calculation tab before finishing plan tab"
+	when
+		$d : Decision()
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.BeforeDoing, type==Action.ToCalculation )
+    eval($pm.workingNode.getStatus()==NodeStatus.Created)
+	then
+		$d.setDecisionInStr("deny:Please select a plan, if you have not done so already, and Check it.");
+end
+
+rule "go to calculation tab before finishing input tab"
+	when
+		$d : Decision()
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.BeforeDoing, type==Action.ToCalculation )
+    eval($pm.workingNode.getStatus()==NodeStatus.PlanFinished)
+	then
+		$d.setDecisionInStr("deny:Please fill out the input tab and confirm it by clicking on the Check button before going to the calculation tab.");
+end
+
+rule "open the node that is not target node"
+	when
+		$a : Action( status ==Action.BeforeDoing, type==Action.OpenANode )
+		$pm : ProblemMemory( targetNodeName!="" )
+		$d : Decision()
+    eval(!$pm.getTargetNodeName().toLowerCase().equals($a.getParam().toLowerCase()))
+	then
+		$d.setDecisionInStr("deny:Focus on your target node \"--\"", $pm.getTargetNodeName());
+end
+
+rule "all the inputs for the current target node have been created, student shouldn't create any new nodes"
+  when
+    $d : Decision()
+    $pm : ProblemMemory(targetNodeName!="")
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateNewNode )
+    eval($pm.getToBeCreated().size()==0)
+  then
+    $d.setDecisionInStr("deny: You have created all the inputs you need for the current target node, so no need to create any more now.");
+end
+
+rule "try to create new node after the model is done"
+  when
+    $d : Decision()
+    $pm : ProblemMemory(targetNodeName=="")
+    $a : Action( status ==Action.BeforeDoing, type==Action.CreateNewNode )
+    eval($pm.getToBeCreated().size()==0)
+  then
+        $d.setDecisionInStr("deny: Since all the nodes now have the blue boarder. you are done with the model. "
++"Use \"Run Model\" button to run the model.");
+end
+
+rule "Don't let student close the node editor if the node is not finished yet"
+  when
+    $d : Decision()
+    Action( status == Action.BeforeDoing, type == Action.CloseANode )
+    $pm : ProblemMemory()
+    OnlineNode(status!=NodeStatus.CalculationFinished) from $pm.workingNode
+  then
+    $d.setDecisionInStr("deny:Finish the current target node \"--\" before leaving the editor",$pm.getTargetNodeName());
+end
+
+rule "Student gives up in the description tab"
+  when
+    $d : Decision()
+    Action (status==Action.BeforeDoing, type==Action.ClickGiveup)
+    $pm : ProblemMemory( curtab==Context.Description )
+  then
+    $d.setDecisionInStr("allow:"+$pm.getToBeCreated().get(0));
+end

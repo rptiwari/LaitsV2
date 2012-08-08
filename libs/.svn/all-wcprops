@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/repos/AMT/!svn/ver/1367/libs
+END
+antlr-runtime-3.3.jar
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repos/AMT/!svn/ver/1367/libs/antlr-runtime-3.3.jar
+END
+ecj-3.5.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/repos/AMT/!svn/ver/1367/libs/ecj-3.5.1.jar
+END
+drools-compiler-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/AMT/!svn/ver/1367/libs/drools-compiler-5.3.0.Final.jar
+END
+drools-clips-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/AMT/!svn/ver/1367/libs/drools-clips-5.3.0.Final.jar
+END
+drools-verifier-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/AMT/!svn/ver/1367/libs/drools-verifier-5.3.0.Final.jar
+END
+drools-jsr94-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/AMT/!svn/ver/1367/libs/drools-jsr94-5.3.0.Final.jar
+END
+jfreechart-1.0.13-swt.jar
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/AMT/!svn/ver/1363/libs/jfreechart-1.0.13-swt.jar
+END
+mvel2-2.1.0.drools4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/repos/AMT/!svn/ver/1367/libs/mvel2-2.1.0.drools4.jar
+END
+dom4j-1.6.1.jar
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/AMT/!svn/ver/1363/libs/dom4j-1.6.1.jar
+END
+knowledge-api-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1367/libs/knowledge-api-5.3.0.Final.jar
+END
+drools-decisiontables-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/AMT/!svn/ver/1367/libs/drools-decisiontables-5.3.0.Final.jar
+END
+drools-core-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/AMT/!svn/ver/1367/libs/drools-core-5.3.0.Final.jar
+END
+jcommon-1.0.16.jar
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/repos/AMT/!svn/ver/1363/libs/jcommon-1.0.16.jar
+END
+drools-persistence-jpa-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/repos/AMT/!svn/ver/1367/libs/drools-persistence-jpa-5.3.0.Final.jar
+END
+jfreechart-1.0.13-experimental.jar
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/repos/AMT/!svn/ver/1363/libs/jfreechart-1.0.13-experimental.jar
+END
+drools-templates-5.3.0.Final.jar
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/AMT/!svn/ver/1367/libs/drools-templates-5.3.0.Final.jar
+END
+vecmath.jar
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/repos/AMT/!svn/ver/1363/libs/vecmath.jar
+END
+jfreechart-1.0.13.jar
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/repos/AMT/!svn/ver/1363/libs/jfreechart-1.0.13.jar
+END
+swing-layout-1.0.4.jar
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/repos/AMT/!svn/ver/1363/libs/swing-layout-1.0.4.jar
+END

@@ -1,0 +1,147 @@
+package metatutor
+
+rule "Update correctness of first check on the inputs tab when correct"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="correct")
+		$pm : ProblemMemory( curtab==Context.InputTab )
+    eval($pm.workingNode.correctnessOfFirstInputCheck==-1)
+	then
+		$pm.workingNode.correctnessOfFirstInputCheck=1;
+end
+
+rule "Update correctness of first check on the inputs tab when incorrect"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="wrong" || type==Action.ClickGiveup )
+		$pm : ProblemMemory( curtab==Context.InputTab )
+    eval($pm.workingNode.correctnessOfFirstInputCheck==-1)
+	then
+		$pm.workingNode.correctnessOfFirstInputCheck=0;
+end
+
+rule "Update correctness of first check on the calculations tab when correct"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="correct")
+		$pm : ProblemMemory( curtab==Context.CalculationTab )
+    eval($pm.workingNode.correctnessOfFirstCalCheck==-1)
+	then
+		$pm.workingNode.correctnessOfFirstCalCheck=1;
+end
+
+rule "Update correctness of first check on the calculations tab when incorrect"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="wrong" || type==Action.ClickGiveup )
+		$pm : ProblemMemory( curtab==Context.CalculationTab )
+    eval($pm.workingNode.correctnessOfFirstCalCheck==-1)
+	then
+		$pm.workingNode.correctnessOfFirstCalCheck=0;
+end
+
+rule "count wrong check"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickCheck && param=="wrong")
+    $pm : ProblemMemory()
+	then
+		$pm.wrongCheck++;
+end
+
+rule "count give up"
+	when
+		Action( status ==Action.AfterDoing, type==Action.ClickGiveup)
+    $pm : ProblemMemory()
+	then
+		$pm.giveups+=1;
+end
+
+rule "Receive the I indicator information when node"
+  when
+    $a:Action(status==Action.AfterDoing, type==Action.IndicatorIChanged)
+    $pm : ProblemMemory()
+    eval($pm.getOnlineNodeByName($a.getParam().split(":")[0]).getStatus()!=NodeStatus.NotCreated)
+  then
+    $pm.getOnlineNodeByName($a.getParam().split(":")[0]).setInputColor($a.getParam().split(":")[1]);
+end
+
+rule "Receive the G indicator information"
+  when
+    $a:Action(status==Action.AfterDoing, type==Action.IndicatorGChanged)
+    $pm : ProblemMemory()
+  then
+    $pm.getOnlineNodeByName($a.getParam().split(":")[0]).setCalColor($a.getParam().split(":")[1]);
+end
+
+rule "Calculate correctness of the first model"
+  when
+    Action( status ==Action.AfterDoing, type==Action.SentModel )
+    $pm : ProblemMemory(firstModel==true)
+  then
+    $pm.modelCorrectPercentage();
+    $pm.setFirstModel(false);
+end
+
+rule "test whether create the 'right' node"
+	when
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.AfterDoing, type==Action.CreateANode )
+		eval($pm.matchTNSAction( $a.getParam(),Context.Description )==1)
+	then
+		$pm.TNSCount++;
+    $pm.TNSDenomitor++;
+end
+
+rule "test whether create the 'wrong' node"
+	when
+		$pm : ProblemMemory()
+		$a : Action( status ==Action.AfterDoing, type==Action.CreateANode )
+		eval($pm.matchTNSAction( $a.getParam(),Context.Description )==-1)
+	then
+    $pm.TNSDenomitor++;
+end
+
+rule "change to inputs tab, consider student being editing the tab, consistent with TNS"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToInput )
+    eval($pm.matchTNSAction($pm.workingNode.getName(), Context.InputTab)==1)
+	then
+		$pm.TNSCount++;
+    $pm.TNSDenomitor++;
+    $pm.updateExpTNSAct();
+end
+
+rule "change to inputs tab, consider student being editing the tab, inconsistent with TNS"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToInput )
+    eval($pm.matchTNSAction($pm.workingNode.getName(), Context.InputTab)==-1)
+	then
+    $pm.TNSDenomitor++;
+end
+
+rule "change to calculations tab, consider student being editing the tab, consisent with TNS"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToCalculation )
+    eval($pm.matchTNSAction($pm.workingNode.getName(), Context.CalculationTab)==1);
+	then
+    $pm.TNSCount++;
+    $pm.TNSDenomitor++;	
+    $pm.updateExpTNSAct();
+end
+
+rule "change to calculations tab, consider student being editing the tab, inconsisent with TNS"
+	when
+		$pm : ProblemMemory()
+		Action( status ==Action.AfterDoing, type==Action.ToCalculation )
+    eval($pm.matchTNSAction($pm.workingNode.getName(), Context.CalculationTab)==-1);
+	then
+    $pm.TNSDenomitor++;	
+end
+
+rule "set end time for intro"
+	when
+		$a : Action(status ==Action.AfterDoing, type==Action.ChangeToTask, param=="74" )
+		$pm : ProblemMemory()
+    eval($pm.endTimeOfIntro==null)
+	then
+		$pm.endTimeOfIntro=$a.getTS();;
+end

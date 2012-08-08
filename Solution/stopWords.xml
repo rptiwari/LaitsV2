@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<stopwords>
+      
+    <value>the</value>      
+    <value>a</value>
+    <value>an</value>
+    <value>in the</value>      
+    <value>that the</value>
+    <value>and it</value>
+      
+</stopwords>

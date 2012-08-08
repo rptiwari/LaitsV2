@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/repos/AMT/!svn/ver/1437/src/amt/gui/dialog
+END
+HelpDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/HelpDialog.form
+END
+AboutDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/AboutDialog.java
+END
+CongratulationsDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/CongratulationsDialog.java
+END
+PlotDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1402/src/amt/gui/dialog/PlotDialog.java
+END
+SendTicketDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/SendTicketDialog.form
+END
+ScoresDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/ScoresDialog.form
+END
+ClosingDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/AMT/!svn/ver/1407/src/amt/gui/dialog/ClosingDialog.form
+END
+MessageDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/AMT/!svn/ver/1374/src/amt/gui/dialog/MessageDialog.java
+END
+HelpDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/HelpDialog.java
+END
+ExitDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1407/src/amt/gui/dialog/ExitDialog.form
+END
+AboutDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/AboutDialog.form
+END
+SendTicketDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/SendTicketDialog.java
+END
+ScoresDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/ScoresDialog.java
+END
+CongratulationsDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/CongratulationsDialog.form
+END
+ClosingDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/AMT/!svn/ver/1437/src/amt/gui/dialog/ClosingDialog.java
+END
+PlotDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/PlotDialog.form
+END
+MessageDialog.form
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/AMT/!svn/ver/1363/src/amt/gui/dialog/MessageDialog.form
+END
+ExitDialog.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/AMT/!svn/ver/1437/src/amt/gui/dialog/ExitDialog.java
+END
