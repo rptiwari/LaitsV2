@@ -114,6 +114,7 @@
                 <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
                   <TreeModel code="A count of&#xa; rabbits in the population&#xa;  at the beginning of the year&#xa;   and it is constant from year to year&#xa;   and it varies from year to year&#xa;  totaled up across all years&#xa;  averaged across all years&#xa; rabbits born into the population&#xa;  during a year&#xa;   and it is constant from year to year&#xa;   and it varies from year to year&#xa;  across all years&#xa;  per year on average&#xa;A ratio of&#xa; the number of rabbits in the population at the beginning of the year, divided by&#xa;  the number of rabbits added to the population during that same year&#xa;  the total number of rabbits added up across all years&#xa;  the average number of rabbits across all years&#xa; the number of rabbits added to the population during the year, divided by&#xa;  the number of rabbits in the population at the beginning of that same year&#xa;  the total number of rabbits added to the population across all years&#xa;  the average number of rabbits added to the population each year"/>
                 </Property>
+                <Property name="editable" type="boolean" value="true"/>
                 <Property name="rowHeight" type="int" value="23"/>
               </Properties>
             </Component>
@@ -163,9 +164,6 @@
               <Color blue="66" green="66" red="66" type="rgb"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeNameTextFieldActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="NodeNameLabel">
           <Properties>
@@ -187,9 +185,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="InCorrect"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioInCorrectActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="buttonAddDesc">
           <Properties>

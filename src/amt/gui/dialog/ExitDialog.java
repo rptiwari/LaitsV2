@@ -143,7 +143,9 @@ public class ExitDialog extends JDialog {
        java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
      }
 
-     closing();
+     // closing();
+     this.dispose();
+     System.exit(0);
 
    }//GEN-LAST:event_yesButtonActionPerformed
 

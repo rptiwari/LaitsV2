@@ -431,6 +431,11 @@ public class Graph extends Selectable {
       return n;
   }
 
+  /**
+   * Method to get a Vertex from the Graph using Vertex Name
+   * @param vertexName: name of the vertex to find
+   * @return: Vertex with provided name (if found), Null otherwise 
+   */
   public Vertex getVertexByName(String vertexName){
     for(Vertex currentVer:vertexes){
       if(currentVer.getNodeName().compareTo(vertexName)==0){

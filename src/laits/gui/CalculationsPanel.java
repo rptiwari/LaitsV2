@@ -22,8 +22,8 @@ import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.text.DefaultFormatter;
-import laits.gui.helper.CalculationPanelException;
-import laits.gui.helper.CalculationPanelHelper;
+import laits.gui.controllers.CalculationPanelException;
+import laits.gui.controllers.CalculationPanelHelper;
 import org.apache.log4j.Logger;
 
 

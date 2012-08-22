@@ -1,7 +1,9 @@
 package amt.comm;
 
+import amt.ApplicationUser;
 import amt.Main;
 import amt.data.Task;
+import amt.gui.dialog.UserRegistration;
 import amt.log.Logger;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -14,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import javax.swing.JOptionPane;
 import java.util.*;
+import laits.graph.Graph;
 
 /**
  * This class make the connection with the online database using an HTTP port.
@@ -34,7 +37,7 @@ public final class Database {
    * Private in order to implement as a Singleton
    */
   private Database() throws CommException{
-    try {
+    /*try {
       setUser(readLicense());   // read the license file
     } catch (IOException ioe) {
       setUser(askForLicense()); // ask for user data and creates the file
@@ -43,7 +46,14 @@ public final class Database {
       } catch (IOException ioex) {
         throw new CommException("Database.Database.1");
       }
-    }
+    }*/
+    
+    String userName = ApplicationUser.getUserFirstName()+"  "+
+            ApplicationUser.getUserLastName();
+    
+    logs.trace("Application User : "+userName);
+    setUser(userName);
+    
   }
 
   /**
@@ -421,5 +431,8 @@ public final class Database {
   public LinkedList<String> getLogList() {
         return logList;
     }
-
+  
+  
+  /** Logger **/
+  private static org.apache.log4j.Logger logs = org.apache.log4j.Logger.getLogger(Database.class);
 }

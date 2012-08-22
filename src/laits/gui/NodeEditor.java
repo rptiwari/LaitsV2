@@ -28,7 +28,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import laits.gui.helper.CalculationPanelException;
+import laits.gui.controllers.CalculationPanelException;
 import org.apache.log4j.Logger;
 
 /**
@@ -93,7 +93,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
   }
 
   public void initTabs(Vertex v, Graph g, GraphCanvas gc) {
-    dPanel = new DescriptionPanel(this, v, g, gc);
+    dPanel = new DescriptionPanelView(this, v, g, gc);
     descriptionPanel.setLayout(new java.awt.GridLayout(1, 1));
     descriptionPanel.add(dPanel);
 
@@ -226,7 +226,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     return cPanel;
   }
 
-  public DescriptionPanel getDescriptionPanel() {
+  public DescriptionPanelView getDescriptionPanel() {
     return dPanel;
   }
 
@@ -609,7 +609,7 @@ public void windowClosing(WindowEvent e) {
 
   private static NodeEditor NodeEditor;
 
-  private DescriptionPanel dPanel;
+  private DescriptionPanelView dPanel;
   private Plan pPanel;
   private InputsPanel iPanel;
   private CalculationsPanel cPanel;

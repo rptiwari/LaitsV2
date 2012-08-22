@@ -32,6 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import amt.alc.DepthDetector;
 import amt.alc.PromptDialog;
 import amt.comm.Database;
+import amt.gui.dialog.UserRegistration;
 import laits.ApplicationEnvironment;
 import laits.ModeSelector;
 
@@ -99,7 +100,7 @@ public class Main extends JFrame implements WindowListener {
         if (ApplicationEnvironment.applicationMode == 1) {
             // Mode 1 is for Student
           // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
-          setMetaTutor();
+          //setMetaTutor();
         }
 
     java.awt.EventQueue.invokeLater(new Runnable() {
@@ -107,15 +108,20 @@ public class Main extends JFrame implements WindowListener {
       @Override
       public void run() {
          if (ApplicationEnvironment.applicationMode == 1) {
+           UserRegistration reg = new UserRegistration(null, true);
+           
+           if(ApplicationUser.isUserValid()){
             Main principal = new Main();
             principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
             principal.setVisible(true);
             principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+           }
+           
          }else{
-            laits.Main principal = new laits.Main();
-            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
-            principal.setVisible(true);
-            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+           laits.Main principal = new laits.Main();
+           principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+           principal.setVisible(true);
+           principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
          }
       }
     });
@@ -127,6 +133,13 @@ public class Main extends JFrame implements WindowListener {
    */
   public Main() {
     try {
+      //UserRegistration reg = new UserRegistration(this, true);
+     
+      
+      if(!ApplicationUser.isUserValid()){
+        this.dispose();
+        System.exit(-1);
+      }
       //creates the connection to the database to update the tasks
       taskFactory = TaskFactory.getInstance();
       // gets the filename and general elements needed for each task, in taskFactory.task, and orders them for the experiment
@@ -409,7 +422,7 @@ public class Main extends JFrame implements WindowListener {
             public void actionPerformed(ActionEvent evt) {
               //Ask for a pwd in order to be able to change to a different task
               Task currentTask = taskFactory.getActualTask();
-              if (!debuggingModeOn) {
+              /*if (!debuggingModeOn) {
                 JPasswordField password = new JPasswordField();
                 final JComponent[] inputs = new JComponent[]{
                   new JLabel("Password"),
@@ -430,7 +443,7 @@ public class Main extends JFrame implements WindowListener {
                   }
                   return;
                 }
-              }
+              } */
 
               if (currentTask.getTitle() != null)
               {

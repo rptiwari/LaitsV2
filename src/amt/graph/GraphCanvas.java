@@ -13,7 +13,7 @@ import amt.data.TaskFactory;
 import amt.gui.dialog.CongratulationsDialog;
 import amt.gui.dialog.MessageDialog;
 import amt.log.Logger;
-//import amt.parser.EquationEditor;
+
 import amt.gui.InstructionPanel;
 import amt.gui.NodeEditor;
 import java.awt.*;

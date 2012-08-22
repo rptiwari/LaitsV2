@@ -50,7 +50,7 @@ public final class Task implements Product {
 
   /**
    * Clears all of the information relating to version2 when the task is
-   * considered the currenttask.
+   * considered the current task.
    */
   public void ClearTaskFromActual() {
     tree = null;
@@ -193,7 +193,8 @@ public final class Task implements Product {
     } else if (newphaseTask.equalsIgnoreCase("none")) {
       this.phaseTask = NO_PHASE_TASK;
     } else {
-      System.out.println("Wrong definition of the phase tasks " + this.getTitle() + "belongs to");
+      System.out.println("Wrong definition of the phase tasks " + this.getTitle() 
+              + "belongs to");
       System.exit(-1);
     }
   }
@@ -259,7 +260,8 @@ public final class Task implements Product {
     } else if (type.equalsIgnoreCase("none")) {
       this.typeTask = NO_TYPE_TASK;
     } else {
-      System.out.println("Wrong definition of the type of tasks for " + this.getTitle());
+      System.out.println("Wrong definition of the type of tasks for " + 
+              this.getTitle());
       System.exit(-1);
     }
   }
@@ -282,7 +284,8 @@ public final class Task implements Product {
       case NO_TYPE_TASK:
         return "None";
       default:
-        System.out.println("Wrong definition of the type of tasks for " + this.getTitle());
+        System.out.println("Wrong definition of the type of tasks for " + 
+                this.getTitle());
         System.exit(-1);
         return "";
     }
@@ -324,8 +327,10 @@ public final class Task implements Product {
    *
    * @param newproblemSeekingCorrespondingSentence
    */
-  public void setproblemSeekingCorrespondingSentence(String newproblemSeekingCorrespondingSentence) {
-    this.problemSeekingCorrespondingSentence = newproblemSeekingCorrespondingSentence;
+  public void setproblemSeekingCorrespondingSentence(
+          String newproblemSeekingCorrespondingSentence) {
+    this.problemSeekingCorrespondingSentence = 
+            newproblemSeekingCorrespondingSentence;
   }
 
   /**
@@ -476,7 +481,9 @@ public final class Task implements Product {
       String userDesc = v.getSelectedDescription();
       String correctDesc = listOfVertexes.get(i).getSelectedDescription();
 
-      if (correctNodeName.equalsIgnoreCase(userNodeName) && (correctDesc.equalsIgnoreCase(userDesc)) ) { // if the current vertex's nodename equals the nodeName variable
+      // if the current vertex's nodename equals the nodeName variable
+      if (correctNodeName.equalsIgnoreCase(userNodeName) 
+              && (correctDesc.equalsIgnoreCase(userDesc)) ) { 
         return listOfVertexes.get(i); // return it
       }
     }
@@ -491,17 +498,22 @@ public final class Task implements Product {
 
       Vertex v1 = f.get(i);
       boolean foundInput = false;
+      
+      LinkedList<String> operandsList = new LinkedList<String>(); 
+      LinkedList<Vertex> operands = new LinkedList<Vertex>();
 
-      LinkedList<String> operandsList = new LinkedList<String>(); // for the operands in string form
-      LinkedList<Vertex> operands = new LinkedList<Vertex>(); // for the operands in vertex form
-
-      String inputs[] = v1.FormulaToString().replaceAll(" ", "").split("[*/+-]"); // splits the eq into different sections that represent the inputs
-
+      // splits the eq into different sections that represent the inputs
+      String inputs[] = v1.FormulaToString()
+                          .replaceAll(" ", "")
+                          .split("[*/+-]"); 
+      // adds the inputs to the operands list and takes away any '_' that may be 
+      //from the eq
       for (int m = 0; m < inputs.length; m++) {
-        operandsList.add(inputs[m]); // adds the inputs to the operands list and takes away any '_' that may be from the eq
+        operandsList.add(inputs[m]); 
       }
 
-      // the below nested for loop goes through each of the correct vertexes and operands and adds the vertex's they represent to the operands linked list
+      // the below nested for loop goes through each of the correct vertexes and 
+      //operands and adds the vertex's they represent to the operands linked list
       for (int m = 0; m < operandsList.size(); m++) {
         for (int n = 0; n < f.size(); n++) {
           if (operandsList.get(m).equals(f.get(n).getNodeName())) {
@@ -535,7 +547,8 @@ public final class Task implements Product {
   }
 
   private LinkedList<Character> getOperatorsList(String formula){
-      LinkedList<Character> operatorsList = new LinkedList<Character>(); // for the operators
+    // for the operators
+      LinkedList<Character> operatorsList = new LinkedList<Character>(); 
 
       for (int m = 0; m < formula.length(); m++) {
         switch (formula.charAt(m)) {
@@ -556,7 +569,7 @@ public final class Task implements Product {
       return operatorsList;
   }
 
-  private Vertex searchVertex(LinkedList<Vertex> vertexes,String nodeName){
+  private Vertex searchVertexByName(LinkedList<Vertex> vertexes,String nodeName){
     for(Vertex v:vertexes){
       if(v.getNodeName().equals(nodeName))
         return v;
@@ -565,142 +578,84 @@ public final class Task implements Product {
   }
 
   /**
-   * This method calculates the correct values for the nodes that are sent to it via a linked list containing Vertexs.
+   * This method calculates the correct values for the nodes that are sent to it 
+   * via a linked list containing Vertices.
    * @param vertexList
    */
   public boolean calculateVertexValues(LinkedList<Vertex> vertexList) {
+    int numberOfPoints = endTime - startTime;
+    //numberOfPoints = 10;
+    int numConstants = rearrangeVertexList(vertexList);
 
-    int numberOfPoints = endTime - startTime; // the number of values that will be needed
-    logs.trace("Number of Points "+numberOfPoints);
-
-    LinkedList<Vertex> constantList = new LinkedList<Vertex>();
-    LinkedList<Vertex> stockList = new LinkedList<Vertex>();
-    LinkedList<Vertex> flowList = new LinkedList<Vertex>();
-
-    for (int i = 0; i < vertexList.size(); i++) {
-
-      vertexList.get(i).correctValues.clear();
-
-      if (vertexList.get(i).getType() == Vertex.CONSTANT) {
-        constantList.add(vertexList.get(i));
-      } else if (vertexList.get(i).getType() == Vertex.STOCK) {
-        stockList.add(vertexList.get(i));
-      } else if (vertexList.get(i).getType() == Vertex.FLOW) {
-        flowList.add(vertexList.get(i));
-      }
-    }
-
-    String traceMsg = String.format("Constants: %s, Accumulators: %s, "
-            + "Functions: %s", constantList.size(), stockList.size(),
-            flowList.size());
-    logs.trace(traceMsg);
-
-    // Make Vertex List empty and store all the verties in arranged order
-    vertexList.clear();
-
-    // Add all the Constant Vertices
-    if (!constantList.isEmpty()) {
-      for (int i = 0; i < constantList.size(); i++) {
-        vertexList.add(constantList.get(i));
-      }
-    }
-
-    // Add all the Accumulators
-    if (!stockList.isEmpty()) {
-      for (int i = 0; i < stockList.size(); i++) {
-        vertexList.add(stockList.get(i));
-      }
-    }
-
-    // Add all the functions
-    if (!flowList.isEmpty()) {
-      flowList = rearrageFlows(flowList);
-
-      for (int i = 0; i < flowList.size(); i++) {
-        vertexList.add(flowList.get(i));
-      }
-    }
-
-    // Calulation Initial Values for Constants and Accumulators
-     for (int j = 0; j < vertexList.size(); j++) {
-
-      //initialize the initial value for accumulator and set all the values for constant
-      Vertex currentVertex = vertexList.get(j);
-
-      if(currentVertex.correctValues == null)
-         currentVertex.correctValues = new LinkedList<Double>();
-
-      if (currentVertex.correctValues.isEmpty()) {
-
-        if (currentVertex.getType() == currentVertex.CONSTANT) {
-          // if it is constant, calculate all the values right now
-          for (int i = 0; i < numberOfPoints; i++) {
-            currentVertex.correctValues.add(currentVertex.getInitialValue());
-          }
-
-        }
-        else if (currentVertex.getType() == currentVertex.STOCK) {
-          // if it is stock, only calculate the first value
-          if (currentVertex.correctValues.isEmpty()) {
-            currentVertex.correctValues.add(currentVertex.getInitialValue());
-          }
-        }
-      }
-    }
-
-     // Calculate Correct Values for all the Points in Graph
+   // Calculate Correct Values for all the Points in Graph
     for (int pointNumber = 0; pointNumber < numberOfPoints; pointNumber++) {
+      
+      for (int vertexNum = numConstants; vertexNum < vertexList.size(); 
+              vertexNum++) {
+        
+        Vertex currentVertex = vertexList.get(vertexNum);
+        
+        if (currentVertex.getType() == currentVertex.STOCK && pointNumber > 0) {
 
-      for (int vertexNumber = 0; vertexNumber < vertexList.size(); vertexNumber++) {
-        Vertex currentVertex = vertexList.get(vertexNumber);
+          double currentValue = currentVertex.correctValues
+                    .get(pointNumber - 1); // get the previous value
+            
+          String formula = currentVertex.FormulaToString();
+          formula = formula.trim();
 
-        if (currentVertex.getType() == currentVertex.STOCK) {
-
-          if (pointNumber > 0)
-          {
-            double currentValue = currentVertex.correctValues.get(pointNumber - 1); // get the previous value
-            String formula = currentVertex.FormulaToString();
-            formula=formula.trim();
-            if (!formula.startsWith("+") && !formula.startsWith("-")) {
-              formula = "+" + formula;
-            }
-
-            //calculate the new value for the stock
-            LinkedList<Character> operatorsList=this.getOperatorsList(formula);
-            String[] items=formula.split("[*/+-]");
-            int index=1;
-            Vertex operAnd;
-            for(char operator : operatorsList)
-            {
-              operAnd=this.searchVertex(vertexList,items[index++].trim());
-              switch(operator){
-                case '+':
-                  currentValue+=operAnd.correctValues.get(pointNumber-1);
-                  break;
-                case '-':
-                  currentValue-=operAnd.correctValues.get(pointNumber-1);
-                  break;
-                default:
-                  JOptionPane.showMessageDialog(null,"inllegal operator in stock");
-                  return false;
-              }
-            }
-            currentVertex.correctValues.add(currentValue);
-            logs.trace("Vertex "+currentVertex.getNodeName()+" Value: "+currentValue);
+          // Prepare Default Formula - perform Addition by default
+          if (!formula.startsWith("+") && !formula.startsWith("-")) {
+            formula = "+" + formula;
           }
-        } else if (currentVertex.getType() == amt.graph.Vertex.FLOW) {
+
+            
+          //calculate the new value for the stock
+          LinkedList<Character> operatorsList = getOperatorsList(formula);
+          String[] items = formula.split("[*/+-]");
+          int index=1;
+          Vertex operandVertex;
+            
+          for(char operator : operatorsList)
+          {
+            operandVertex = searchVertexByName(vertexList,items[index++].trim());
+              
+            switch(operator){
+              case '+':
+                currentValue += operandVertex.correctValues.get(pointNumber-1);
+                break;
+                  
+              case '-':
+                currentValue -= operandVertex.correctValues.get(pointNumber-1);
+                break;
+                  
+              default:
+                JOptionPane.showMessageDialog(null,
+                        "illegal operator in stock");
+                return false;
+            }
+          }
+            
+          currentVertex.correctValues.add(currentValue);
+          logs.trace("Vertex "+currentVertex.getNodeName()+
+                  " Value: "+currentValue);
+          
+        } else if (currentVertex.getType() == Vertex.FLOW) {
+          
             String formulaString = currentVertex.FormulaToString();
+            
             // finds the operators in the eq and adds them to the operators list
-            LinkedList<Character> operatorsList=this.getOperatorsList(formulaString);
-            String[] items=formulaString.split("[*/+-]");
-            LinkedList<Double> values=new LinkedList<Double>();
+            LinkedList<Character> operatorsList = getOperatorsList(formulaString);
+            String[] items = formulaString.split("[*/+-]");
+            LinkedList<Double> values = new LinkedList<Double>();
             Vertex operAnd;
+            
             for(String item : items){
               double inputValue;
-              operAnd=this.searchVertex(vertexList,item.trim());
+              operAnd=this.searchVertexByName(vertexList,item.trim());
               if(operAnd==null)
                 inputValue=0;
-              else if(operAnd.correctValues.size()<pointNumber+1)//the input node doesn't have value yet.
+              //the input node doesn't have value yet.
+              else if(operAnd.correctValues.size()<pointNumber+1)
                 inputValue=0;
               else
                 inputValue=operAnd.correctValues.get(pointNumber);
@@ -727,7 +682,8 @@ public final class Task implements Product {
                   caledValue=value1/value2;
                   break;
                 default:
-                  JOptionPane.showMessageDialog(null,"inllegal operator in funtion *./ ");
+                  JOptionPane.showMessageDialog(null,
+                          "illegal operator in function");
                   return false;
               }
               values.add(i, caledValue);
@@ -752,21 +708,23 @@ public final class Task implements Product {
                   caledValue=value1-value2;
                   break;
                 default:
-                  JOptionPane.showMessageDialog(null,"inllegal operator in funtion *./ ");
+                  JOptionPane.showMessageDialog(null,
+                          "illegal operator in function");
                   return false;
               }
               values.add(i, caledValue);
             }
             if(values.size()!=1)
             {
-              JOptionPane.showMessageDialog(null, "calculation error in funtion cal");
+              JOptionPane.showMessageDialog(null, 
+                      "calculation error in function call");
               return false;
             }
             currentVertex.correctValues.add(values.get(0));
-            logs.trace("Vertex "+currentVertex.getNodeName()+" Value: "+values.get(0));
+            
           }
-
-      }
+        }
+      
     }
     return true;
   }
@@ -795,6 +753,77 @@ public final class Task implements Product {
 
     return s;
   }
+
+  /**
+   * This method rearranges the Vertices in the order - Constants, Stock and
+   * Flow. It also calculates the Initial values of Constants and Stock Vertices
+   * 
+   * @param vertexList - List of all the vertices in the Graph
+   * @return - Number of Constant Vertices
+   */
+  private int rearrangeVertexList(LinkedList<Vertex> vertexList){
+      int numberOfPoints = endTime - startTime; 
+      logs.trace("Number of Points "+numberOfPoints);
+
+      LinkedList<Vertex> constantList = new LinkedList<Vertex>();
+      LinkedList<Vertex> stockList = new LinkedList<Vertex>();
+      LinkedList<Vertex> flowList = new LinkedList<Vertex>();
+
+
+      for (int i = 0; i < vertexList.size(); i++) {
+        Vertex currentVertex = vertexList.get(i);
+        currentVertex.correctValues.clear();
+
+        if (vertexList.get(i).getType() == Vertex.CONSTANT) {
+          for (int ii = 0; ii < numberOfPoints; ii++) {
+              currentVertex.correctValues.add(currentVertex.getInitialValue());
+          }
+          constantList.add(vertexList.get(i));
+        }
+        else if (vertexList.get(i).getType() == Vertex.STOCK) {
+          if (currentVertex.correctValues.isEmpty()) {
+              currentVertex.correctValues.add(currentVertex.getInitialValue());
+          }
+          stockList.add(vertexList.get(i));
+        }
+        else if (vertexList.get(i).getType() == Vertex.FLOW) {
+          flowList.add(vertexList.get(i));
+        }
+      }
+
+      String traceMsg = String.format("Constants: %s, Accumulators: %s, "
+              + "Functions: %s", constantList.size(), stockList.size(),
+              flowList.size());
+      logs.trace(traceMsg);
+
+      // Make Vertex List empty and store all the verties in arranged order
+      vertexList.clear();
+
+      // Add all the Constant Vertices
+      if (!constantList.isEmpty()) {
+        for (int i = 0; i < constantList.size(); i++) {
+          vertexList.add(constantList.get(i));
+        }
+      }
+
+      // Add all the Accumulators
+      if (!stockList.isEmpty()) {
+        for (int i = 0; i < stockList.size(); i++) {
+          vertexList.add(stockList.get(i));
+        }
+      }
+
+      // Add all the functions
+      if (!flowList.isEmpty()) {
+        flowList = rearrageFlows(flowList);
+
+        for (int i = 0; i < flowList.size(); i++) {
+          vertexList.add(flowList.get(i));
+        }
+      }
+
+      return constantList.size();
+}
 
   private int id;
   private String title;

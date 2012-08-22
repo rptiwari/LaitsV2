@@ -2,7 +2,6 @@ package laits.graph;
 
 import java.awt.*;
 import java.util.LinkedList;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
@@ -70,6 +69,7 @@ public class Vertex extends Selectable {
   // Inforamtion of the equation used in flow and stock nodes
   // private String formula = null;
   private Formula formula;
+  
   /*
    * booleans that describe the current state of the node: what is selected, and
    * correct
@@ -1566,8 +1566,8 @@ public class Vertex extends Selectable {
         return false;
     }
   }
-
-
+  
+  
   /** Logger **/
 
   private static Logger logs = Logger.getLogger(Vertex.class);

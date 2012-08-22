@@ -45,15 +45,15 @@ public class DecisionTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     protected boolean isCorrectLeave(Object value) {
-        DecisionTreeNode nodeInfo =
-                (DecisionTreeNode)(value);
+        DescriptionTreeNode nodeInfo =
+                (DescriptionTreeNode)(value);
         
         return nodeInfo.isCorrect;
     }
     
     protected boolean isFirst(Object value) {
-        DecisionTreeNode nodeInfo =
-                (DecisionTreeNode)(value);
+        DescriptionTreeNode nodeInfo =
+                (DescriptionTreeNode)(value);
         if(nodeInfo.getUserObject().toString().compareTo("Node")==0)
             return true;
         else
