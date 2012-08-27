@@ -122,7 +122,10 @@
         </Container>
         <Component class="javax.swing.JLabel" name="evenMorePreciseLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Choose the more precise description for the quantity:"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Grande" size="13" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Description Tree of the Problem"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -155,6 +158,9 @@
         </Container>
         <Component class="javax.swing.JLabel" name="referencesLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Grande" size="13" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Precise description of the quantity:"/>
           </Properties>
         </Component>
@@ -167,6 +173,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="NodeNameLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Grande" size="13" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Node Name:"/>
           </Properties>
         </Component>

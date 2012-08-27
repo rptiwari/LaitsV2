@@ -94,20 +94,20 @@ public class Main extends JFrame implements WindowListener {
   public static void main(String args[]) {
 
      // Switches between Student and Author Mode
-        ModeSelector m = new ModeSelector();
-        m.showModeSelector();
+       // ModeSelector m = new ModeSelector();
+        //m.showModeSelector();
         // ApplicationEnvironment class contains all the appplication wide properties in static form
-        if (ApplicationEnvironment.applicationMode == 1) {
+        //if (ApplicationEnvironment.applicationMode == 1) {
             // Mode 1 is for Student
           // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
           //setMetaTutor();
-        }
+        //}
 
     java.awt.EventQueue.invokeLater(new Runnable() {
 
       @Override
       public void run() {
-         if (ApplicationEnvironment.applicationMode == 1) {
+         /*if (ApplicationEnvironment.applicationMode == 1) {
            UserRegistration reg = new UserRegistration(null, true);
            
            if(ApplicationUser.isUserValid()){
@@ -117,12 +117,12 @@ public class Main extends JFrame implements WindowListener {
             principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
            }
            
-         }else{
+         }else{*/
            laits.Main principal = new laits.Main();
            principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
            principal.setVisible(true);
            principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-         }
+        // }
       }
     });
   }
@@ -422,7 +422,7 @@ public class Main extends JFrame implements WindowListener {
             public void actionPerformed(ActionEvent evt) {
               //Ask for a pwd in order to be able to change to a different task
               Task currentTask = taskFactory.getActualTask();
-              /*if (!debuggingModeOn) {
+              if (!debuggingModeOn) {
                 JPasswordField password = new JPasswordField();
                 final JComponent[] inputs = new JComponent[]{
                   new JLabel("Password"),
@@ -443,7 +443,7 @@ public class Main extends JFrame implements WindowListener {
                   }
                   return;
                 }
-              } */
+              } 
 
               if (currentTask.getTitle() != null)
               {

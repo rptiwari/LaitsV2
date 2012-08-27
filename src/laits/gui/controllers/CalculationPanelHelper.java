@@ -7,7 +7,7 @@ package laits.gui.controllers;
 import laits.graph.Graph;
 import laits.graph.GraphCanvas;
 import laits.graph.Vertex;
-import laits.gui.CalculationsPanel;
+import laits.gui.CalculationsPanelView;
 import laits.gui.NodeEditor;
 
 /**
@@ -19,7 +19,7 @@ public class CalculationPanelHelper {
                                 GraphCanvas modelCanvas,
                                 Vertex currentVertex,
                                 NodeEditor nodeEditor,
-                                CalculationsPanel calcPanel){
+                                CalculationsPanelView calcPanel){
     this.modelGraph = modelGraph;
     this.modelCanvas = modelCanvas;
     this.currentVertex = currentVertex;
@@ -74,27 +74,27 @@ public class CalculationPanelHelper {
       throw new CalculationPanelException("Initial Value Not Provided.");
     }
 
-    for (int i = 0; i < currentVertex.inedges.size(); i++) {
-        currentVertex.inedges.get(i).showInListModel = false;
-    }
+    //for (int i = 0; i < currentVertex.inedges.size(); i++) {
+      //  currentVertex.inedges.get(i).showInListModel = false;
+    //}
 
     if(!currentVertex.checkForCorrectSyntax()){
       throw new CalculationPanelException("Incorrect Formula.");
     }
 
-    calculationPanel.getFormulaInputArea().setText(currentVertex.FormulaToString());
+    calculationPanel.getFormulaInputArea().setText(currentVertex.getNodeEquationAsString());
   }
 
   private void processFlowVertex() throws CalculationPanelException{
-    for (int i = 0; i < currentVertex.inedges.size(); i++) {
-        currentVertex.inedges.get(i).showInListModel = false;
-    }
+    //for (int i = 0; i < currentVertex.inedges.size(); i++) {
+      //  currentVertex.inedges.get(i).showInListModel = false;
+    //}
 
     if(!currentVertex.checkForCorrectSyntax()){
       throw new CalculationPanelException("Incorrect Formula.");
     }
 
-    calculationPanel.getFormulaInputArea().setText(currentVertex.FormulaToString());
+    calculationPanel.getFormulaInputArea().setText(currentVertex.getNodeEquationAsString());
   }
 
   // Memeber Variables
@@ -102,5 +102,5 @@ public class CalculationPanelHelper {
   GraphCanvas modelCanvas;
   Vertex currentVertex;
   NodeEditor nodeEditor ;
-  CalculationsPanel calculationPanel;
+  CalculationsPanelView calculationPanel;
 }

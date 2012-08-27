@@ -2,6 +2,7 @@ package laits.graph;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
@@ -68,7 +69,8 @@ public class Vertex extends Selectable {
   public final static double NOTFILLED = Double.NEGATIVE_INFINITY;
   // Inforamtion of the equation used in flow and stock nodes
   // private String formula = null;
-  private Formula formula;
+  //private Formula formula;
+  private NodeEquation nodeEquation;
   
   /*
    * booleans that describe the current state of the node: what is selected, and
@@ -95,7 +97,7 @@ public class Vertex extends Selectable {
   private boolean isDebug = false; // if the node is a debug node this is true
   private boolean isExtraNode = false; // if the node is an extra node this is true
   private boolean hasBlueBorder = false;
-  private boolean didUseAllInputs = false;
+  private boolean isUsingAllAvailableInputs = false;
 
 
 
@@ -129,7 +131,8 @@ public class Vertex extends Selectable {
     this.setNodeName(nodeName);
     this.editorOpen = false;
     this.initialValue = NOTFILLED;
-    this.formula = new Formula();
+    //this.formula = new Formula();
+    this.nodeEquation = new NodeEquation();
     this.typeNode = NOTYPE;
     this.init_currentStatePanel(Selectable.NOSTATUS);
     defaultLabel();
@@ -512,7 +515,7 @@ public class Vertex extends Selectable {
    * Setter method to change whether the formula given is correct
    * @param newIsFormulaCorrect whether the formula given is correct
    */
-  public void setIsFormulaCorrect(boolean newIsFormulaCorrect) {
+  public void setNodeEquationIsCorrect(boolean newIsFormulaCorrect) {
     this.isFormulaCorrect = newIsFormulaCorrect;
   }
 
@@ -792,8 +795,8 @@ public class Vertex extends Selectable {
   }
 
   public boolean isFormulaComplete(){
-    if(!this.formula.isFormulaEmpty()){
-      String formulaStr=formula.FormulaToString().trim();
+    if(!this.nodeEquation.isEmpty()){
+      String formulaStr = nodeEquation.toString().trim();
       if(formulaStr.endsWith("+") || formulaStr.endsWith("-") || formulaStr.endsWith("*") || formulaStr.endsWith("/"))
         return false;
     }
@@ -814,8 +817,8 @@ public class Vertex extends Selectable {
      }
    }
    else if (this.getType() == Vertex.FLOW) {
-     if (!this.EmptyFormula()) {
-       if (didUseAllInputs) {
+     if (!this.isNodeEquationEmpty()) {
+       if (isUsingAllAvailableInputs) {
          correct = true;
        }
        else {
@@ -829,8 +832,8 @@ public class Vertex extends Selectable {
    else if (this.getType() == Vertex.STOCK) {
 
      if (this.getInitialValue() != Vertex.NOTFILLED) {
-       if (!this.EmptyFormula()) {
-         if (didUseAllInputs) {
+       if (!this.isNodeEquationEmpty()) {
+         if (isUsingAllAvailableInputs) {
            correct = true;
          } else {
            correct = false;
@@ -851,12 +854,12 @@ public class Vertex extends Selectable {
    return correct;
   }
 
-  public boolean isDidUseAllInputs() {
-    return didUseAllInputs;
+  public boolean isUsingAllAvaliableInputs() {
+    return isUsingAllAvailableInputs;
   }
 
-  public void setDidUseAllInputs(boolean didUseAllInputs) {
-    this.didUseAllInputs = didUseAllInputs;
+  public void setIsUsingAllAvailableInputs(boolean didUseAllInputs) {
+    this.isUsingAllAvailableInputs = didUseAllInputs;
   }
 
 
@@ -1353,7 +1356,7 @@ public class Vertex extends Selectable {
     if (this.typeNode!=CONSTANT) {
       s += "listInputs........'" + listInputs.toString() + "'\n";
       s += "listOutputs.......'" + listOutputs.toString() + "'\n";
-      s += "formula..............'" + getFormula() + "'\n";
+      s += "formula..............'" + nodeEquation.toString() + "'\n";
     }
 
     if (!isDebug) {
@@ -1376,15 +1379,9 @@ public class Vertex extends Selectable {
 
     return s;
   }
-
-
-    public void clearFormula() {
-    this.isFormulaCorrect=false;
-    try {
-        formula.clearFormula();
-    } catch (SyntaxErrorException ex) {
-        logs.debug("Syntax Error in VertexFormula");
-    }
+  
+  public void clearFormula() {
+    nodeEquation.clear()  ;
   }
 
 
@@ -1402,43 +1399,54 @@ public class Vertex extends Selectable {
    * @param operator : the operator entered by the user
    * @return
    */
-  public boolean operatorInFormula(char operator)
+  public boolean containsOperatorInNodeEquation(char operator)
   {
     //return formula.contains(operator+"");
-    return formula.operatorInFormula(operator);
+    try{
+    return nodeEquation.containsOperator(operator);
+    }catch(InvalidOperatorException ex){
+      logs.trace("Invalid Operator Provided");
+      return false;
+    }  
+  }
+  
+  public boolean containsOperandInNodeEquation(String operand)
+  {
+    //return formula.contains(operator+"");
+    try{
+      return nodeEquation.containsOperand(operand);
+    }catch(InvalidOperandException ex){
+      logs.trace("Invalid Operator Provided");
+      return false;
+    }  
   }
 
   /**
    * clears the previous formula and copies the content of the correct formula in the structure
    * @param correctFormula
    */
-  public void copyFormula(Formula correctFormula)
+  public void copyNodeEquation(NodeEquation inputNodeEquation)
   {
-    try {
-      formula.copyFormula(correctFormula);
-
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Failed to copy the formula from the correct formula");
-    }
+    // TODO
   }
 
   /**
    *
    * @return
    */
-  public Formula getFormula() {
-    return formula;
+  public NodeEquation getEquation() {
+    return nodeEquation;
   }
 
   /**
    * THIS IS PRIVATE AND SHOULD NOT BE CHANGED. TO MODIFY FORMULA FROM ANOTHER CLASS, USE ADDTOFORMULA or REMOVEFROMFORMULA or COPY, no set defined.
    * @param formula
    */
-  private void setFormula(String formula) {
+  private void setNodeEquation(String equation) {
     try {
-      this.formula.createFormulaFromString(formula);
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Failed to set the formula");
+      nodeEquation.setNodeEquation(equation);
+    } catch (InvalidEquationException ex) {
+      logs.debug("Invalid NodeEquation : "+ex.getMessage());
     }
   }
 
@@ -1450,44 +1458,41 @@ public class Vertex extends Selectable {
    *
    * @param toAdd
    */
-  public void addToFormula(char op)
+  public void addToNodeEquation(char op)
   {
-    try {
-      // setFormula(this.formula + op);
-    formula.addToFormula(op);
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Failed to add a char to the formula");
-    }
+    try{
+      nodeEquation.add(op);      
+    } catch (InvalidEquationException ex) {
+      logs.debug("Invalid Operator. "+ex.getMessage());
+    }  
   }
 
 
-  public void checkFormulaCorrect(Formula correctFormula)
+  public void isNodeEquationCorrect()
   {
-
-    this.setIsFormulaCorrect(formula.checkFormulaCorrect(correctFormula));
-
+    setNodeEquationIsCorrect(nodeEquation.isCorrect());
   }
 
-  public boolean EmptyFormula()
+  public boolean isNodeEquationEmpty()
   {
-    return formula.isFormulaEmpty();
+    return nodeEquation.isEmpty();
   }
 
-  public String FormulaToString()
+  public String getNodeEquationAsString()
   {
-    return formula.FormulaToString();
+    return nodeEquation.toString();
   }
 
   /**
    * this method returns whether the element removed is an operator or an input:
    * @return true if it is an operator, false otherwise
    */
-  public boolean removeFromFormula()
+  public boolean removeLastElementFromNodeEquation()
   {
     try {
-      return formula.removeFromFormula();
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Syntax error with Vertex Formula "+ex.getMessage());
+      return nodeEquation.removeLastComponent();
+    } catch (NoSuchElementException ex) {
+      logs.debug("No Element in the Formula "+ex.getMessage());
     }
     return false;
   }
@@ -1499,12 +1504,12 @@ public class Vertex extends Selectable {
    *
    * @param toAdd
    */
-  public void addToFormula(String toAdd)
+  public void addToNodeEquation(String toAdd)
   {
     try {
-      formula.addToFormula(toAdd);
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Failed to add a string to the formula");
+      nodeEquation.add(toAdd);
+    } catch (InvalidEquationException ex) {
+      logs.debug("Error in Adding Operand to Node Equation "+ex.getMessage());
     }
   }
 
@@ -1516,11 +1521,11 @@ public class Vertex extends Selectable {
    *
    * @param initialFormula
    */
-  public void createFormulaFromString(String initialFormula) {
+  public void buildNodeEquationFromString(String initialFormula) {
     try {
-      formula = new Formula(initialFormula);
-    } catch (SyntaxErrorException ex) {
-      logs.debug("Failed to create a formula from string");
+      nodeEquation = new NodeEquation(initialFormula);
+    } catch (InvalidEquationException ex) {
+      logs.debug("Invalid String used to build Node Equation "+ex.getMessage());
     }
   }
 
@@ -1559,7 +1564,7 @@ public class Vertex extends Selectable {
         if(this.initialValue!=correct.getInitialValue())
           return false;
       case Vertex.FLOW:
-        checkFormulaCorrect(correct.getFormula());
+        isNodeEquationCorrect();
         return(getIsFormulaCorrect());
       default:
         JOptionPane.showMessageDialog(null, "Unexpected node type");

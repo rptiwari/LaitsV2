@@ -7,8 +7,6 @@
 package laits.gui;
 
 import laits.Main;
-import laits.comm.CommException;
-import laits.data.TaskFactory;
 import laits.graph.Graph;
 import laits.graph.GraphCanvas;
 import laits.graph.Selectable;
@@ -97,21 +95,20 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     descriptionPanel.setLayout(new java.awt.GridLayout(1, 1));
     descriptionPanel.add(dPanel);
 
-    pPanel = new Plan(this, v, g, gc);
-    pPanel.initializePlan();
+    pPanel = new PlanPanelView(this, v, g, gc);
     planPanel.setLayout(new java.awt.GridLayout(1, 1));
     planPanel.add(pPanel);
 
-    cPanel = new CalculationsPanel(this, v, g, gc);
+    cPanel = new CalculationsPanelView(this, v, g, gc);
     calculationPanel.setLayout(new java.awt.GridLayout(1, 1));
     calculationPanel.add(cPanel);
 
-    iPanel = new InputsPanel(this, v, g, gc);
+    iPanel = new InputsPanelView(this, v, g, gc);
     inputsPanel.setLayout(new java.awt.GridLayout(1, 1));
     inputsPanel.add(iPanel);
 
     if (v.getNodeName() != null) {
-      gPanel = new GraphsPanel(this, v, g, gc);
+      gPanel = new GraphsPanelView(this, v, g, gc);
       graphsPanel.setLayout(new java.awt.GridLayout(1, 1));
       graphsPanel.add(gPanel);
     }
@@ -147,7 +144,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
           }
           break;
         case Vertex.FLOW:
-          if (v.EmptyFormula()) {
+          if (v.isNodeEquationEmpty()) {
             allHaveEquations = false;
             v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
             v.setHasBlueBorder(false);
@@ -159,7 +156,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
             v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
             v.setHasBlueBorder(false);
           }
-          if (v.EmptyFormula()) {
+          if (v.isNodeEquationEmpty()) {
             allHaveEquations = false;
             v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
             v.setHasBlueBorder(false);
@@ -222,7 +219,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     return modelGraph;
   }
 
-  public CalculationsPanel getCalculationsPanel() {
+  public CalculationsPanelView getCalculationsPanel() {
     return cPanel;
   }
 
@@ -230,11 +227,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     return dPanel;
   }
 
-  public InputsPanel getInputsPanel() {
+  public InputsPanelView getInputsPanel() {
     return iPanel;
   }
 
-  public GraphsPanel getGraphsPanel() {
+  public GraphsPanelView getGraphsPanel() {
     return gPanel;
   }
 
@@ -545,7 +542,7 @@ public void windowClosing(WindowEvent e) {
 
     // Process DESCRIPTION Tab
     if (doDescriptionSubmit()) {
-        getInputsPanel().updateDescription();
+        getInputsPanel().updateNodeDescription();
         getGraphsPanel().updateDescription();
         currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
       }else{
@@ -553,7 +550,7 @@ public void windowClosing(WindowEvent e) {
     }
 
     // Process PLAN Tab
-
+    currentVertex.setNodePlan(pPanel.getSelectedPlan());
 
     // Process INPUT Tab
     if(!iPanel.hasInputError()){
@@ -610,10 +607,10 @@ public void windowClosing(WindowEvent e) {
   private static NodeEditor NodeEditor;
 
   private DescriptionPanelView dPanel;
-  private Plan pPanel;
-  private InputsPanel iPanel;
-  private CalculationsPanel cPanel;
-  private GraphsPanel gPanel;
+  private PlanPanelView pPanel;
+  private InputsPanelView iPanel;
+  private CalculationsPanelView cPanel;
+  private GraphsPanelView gPanel;
   private static Graph modelGraph;
   private static Vertex currentVertex;
   private static GraphCanvas modelCanvas;

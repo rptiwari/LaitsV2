@@ -503,7 +503,7 @@ public final class Task implements Product {
       LinkedList<Vertex> operands = new LinkedList<Vertex>();
 
       // splits the eq into different sections that represent the inputs
-      String inputs[] = v1.FormulaToString()
+      String inputs[] = v1.getNodeEquationAsString()
                           .replaceAll(" ", "")
                           .split("[*/+-]"); 
       // adds the inputs to the operands list and takes away any '_' that may be 
@@ -600,7 +600,7 @@ public final class Task implements Product {
           double currentValue = currentVertex.correctValues
                     .get(pointNumber - 1); // get the previous value
             
-          String formula = currentVertex.FormulaToString();
+          String formula = currentVertex.getNodeEquationAsString();
           formula = formula.trim();
 
           // Prepare Default Formula - perform Addition by default
@@ -641,7 +641,7 @@ public final class Task implements Product {
           
         } else if (currentVertex.getType() == Vertex.FLOW) {
           
-            String formulaString = currentVertex.FormulaToString();
+            String formulaString = currentVertex.getNodeEquationAsString();
             
             // finds the operators in the eq and adds them to the operators list
             LinkedList<Character> operatorsList = getOperatorsList(formulaString);

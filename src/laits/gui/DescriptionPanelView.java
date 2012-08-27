@@ -142,7 +142,8 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     decisionTree.setRowHeight(23);
     jScrollPane2.setViewportView(decisionTree);
 
-    evenMorePreciseLabel.setText("Choose the more precise description for the quantity:");
+    evenMorePreciseLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+    evenMorePreciseLabel.setText("Description Tree of the Problem");
 
     quantityDescriptionTextField.setWrapStyleWord(true);
     quantityDescriptionTextField.setColumns(20);
@@ -153,10 +154,12 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     quantityDescriptionTextField.setMargin(new java.awt.Insets(2, 3, 2, 3));
     jScrollPane1.setViewportView(quantityDescriptionTextField);
 
+    referencesLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
     referencesLabel.setText("Precise description of the quantity:");
 
     nodeNameTextField.setDisabledTextColor(new java.awt.Color(102, 102, 102));
 
+    NodeNameLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
     NodeNameLabel.setText("Node Name:");
 
     buttonGroup1.add(jRadioCorrect);
@@ -510,7 +513,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
           quantityDescriptionTextField.setText(description);
           currentVertex.setSelectedDescription(description);
           if (this.parent != null) {
-            parent.getInputsPanel().updateDescription();
+            parent.getInputsPanel().updateNodeDescription();
             parent.getGraphsPanel().updateDescription();
           }
 
@@ -557,7 +560,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
   TreePath[] decisionTreePaths;
   private boolean undoFlag = false;
   private NodeEditor parent = null;
-  private InputsPanel parentNode = null;
+  private InputsPanelView parentNode = null;
 
   private boolean initializing = false;
   private boolean treeSelected = true;

@@ -597,12 +597,13 @@ public class MenuBar {
             InstructionPanel.setLastActionPerformed(SlideObject.STOP_DONE);
          }
          
-        if (InstructionPanel.stopIntroductionActive && !InstructionPanel.goBackwardsSlides) {
+        // Disabling Promot Dialog - Ram
+        /*if (InstructionPanel.stopIntroductionActive && !InstructionPanel.goBackwardsSlides) {
           PromptDialog promptDialog = new PromptDialog(gc.getFrame(), true);
           promptDialog.popup();
           promptDialog.setGC(gc);
           //promptDialog.setLocationRelativeTo(gc);
-        }
+        }*/
         
         int num1 = currentTask.getLevel();
      

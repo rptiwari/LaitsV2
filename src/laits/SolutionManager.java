@@ -20,7 +20,8 @@ import org.jdom2.output.XMLOutputter;
 
 /**
  *
- * @author Ram SolutionManger is responsible for Loading and Saving of
+ * @author Ram 
+ * SolutionManger is responsible for Loading and Saving of
  * Intermediate Solution and finally generating the final solution
  */
 public class SolutionManager {
@@ -149,16 +150,20 @@ public class SolutionManager {
 
         Element vertexType = new Element("Type");
         Element initialValue = new Element("InitialValue");
-        Element formula  = new Element("Formula");
+        Element nodeEquation  = new Element("NodeEquation");
+        
+        // Selected Plan
+        Element selectedPlan = new Element("Plan");
 
         name.setText(currentVertex.getNodeName());
         correctDescription.setText(currentVertex.getSelectedDescription());
         posX.setText(String.valueOf(currentVertex.getPositionX()));
         posY.setText(String.valueOf(currentVertex.getPositionY()));
-
+        selectedPlan.setText(String.valueOf(currentVertex.getNodePlan()));
+        
         vertexType.setText(String.valueOf(currentVertex.getType()));
         initialValue.setText(String.valueOf(currentVertex.getInitialValue()));
-        formula.setText(currentVertex.getFormula().FormulaToString());
+        nodeEquation.setText(currentVertex.getNodeEquationAsString());
 
         vertex.addContent(name);
         vertex.addContent(correctDescription);
@@ -166,8 +171,9 @@ public class SolutionManager {
         vertex.addContent(posY);
         vertex.addContent(vertexType);
         vertex.addContent(initialValue);
-        vertex.addContent(formula);
-
+        vertex.addContent(nodeEquation);
+        vertex.addContent(selectedPlan);
+        
         vertices.addContent(vertex);
     }
 
@@ -184,17 +190,17 @@ public class SolutionManager {
       Element sourceVertex = new Element("Start");
       Element targetVertex = new Element("End");
       Element edgeType = new Element("EdgeType");
-      Element show = new Element("ShowInListModel");
+      //Element show = new Element("ShowInListModel");
 
       sourceVertex.setText(currentEdge.getStartVertex().getNodeName());
       targetVertex.setText(currentEdge.getEndVertex().getNodeName());
       edgeType.setText(currentEdge.getEdgeType());
-      show.addContent(String.valueOf(currentEdge.getShowInListModel()));
+      //show.addContent(String.valueOf(currentEdge.getShowInListModel()));
 
       edge.addContent(sourceVertex);
       edge.addContent(targetVertex);
       edge.addContent(edgeType);
-      edge.addContent(show);
+      //edge.addContent(show);
 
       edges.addContent(edge);
     }
@@ -219,15 +225,14 @@ public class SolutionManager {
         int posy = Integer.parseInt(el.getChildText("PosY"));
 
         Vertex newVertex = new Vertex(posx, posy, el.getChildText("Name"));
-        //newVertex.setNodeName(el.getChildText("Name"));
-
+        
         newVertex.setSelectedDescription(el.getChildText("CorrectDescription"));
         newVertex.setType(Integer.valueOf(el.getChildText("Type")));
         newVertex.setInitialValue(Double.valueOf(el.getChildText("InitialValue")));
         newVertex.setDescriptionButtonStatus(1);
-        //newVertex.setFormula(el.getChildText("Formula"));
-        newVertex.addToFormula(el.getChildText("Formula"));
-
+        newVertex.addToNodeEquation(el.getChildText("NodeEquation"));
+        newVertex.setNodePlan(Integer.parseInt(el.getChildText("Plan")));
+        
         // Add New Vertex to GraphCanvas
         authorCanvas.newVertex(newVertex, posx, posy);
 
@@ -243,7 +248,7 @@ public class SolutionManager {
         Vertex endVertex = newGraph.getVertexByName(el.getChildText("End"));
         Edge newEdge = new Edge(startVertex, endVertex,newGraph.getEdges());
         newEdge.setEdgeType(el.getChildText("EdgeType"));
-        newEdge.setShowInListModel(Boolean.parseBoolean(el.getChildText("ShowInListModel")));
+        //newEdge.setShowInListModel(Boolean.parseBoolean(el.getChildText("ShowInListModel")));
 
 
         startVertex.addOutEdge(newEdge);

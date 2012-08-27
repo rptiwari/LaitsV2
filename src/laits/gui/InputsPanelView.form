@@ -31,7 +31,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="contentPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="58" max="32767" attributes="0"/>
+              <EmptySpace pref="52" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -45,15 +45,20 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="checkBoxScrollPane" min="-2" pref="327" max="-2" attributes="1"/>
+                      <Group type="102" attributes="0">
+                          <Component id="checkBoxScrollPane" min="-2" pref="327" max="-2" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="nodeDescriptionLabel" min="-2" pref="433" max="-2" attributes="0"/>
+                              <Component id="nodeDescriptionHeading" min="-2" pref="237" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           <Component id="radioPanel" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="currentVertexDescriptionLabel" min="-2" pref="263" max="-2" attributes="0"/>
-                  <EmptySpace pref="24" max="32767" attributes="0"/>
+                  <EmptySpace pref="37" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -62,11 +67,16 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                   <Component id="radioPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="36" max="32767" attributes="0"/>
+                  <EmptySpace pref="42" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="currentVertexDescriptionLabel" min="-2" pref="252" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="nodeDescriptionHeading" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="nodeDescriptionLabel" min="-2" pref="213" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="checkBoxScrollPane" min="-2" pref="235" max="-2" attributes="1"/>
                   </Group>
+                  <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -151,10 +161,17 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="currentVertexDescriptionLabel">
+        <Component class="javax.swing.JLabel" name="nodeDescriptionLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Description"/>
             <Property name="verticalAlignment" type="int" value="1"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="nodeDescriptionHeading">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Lucida Grande" size="13" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Description"/>
           </Properties>
         </Component>
       </SubComponents>

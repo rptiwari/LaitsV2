@@ -20,7 +20,7 @@ public class Edge extends Selectable {
 
   public String edgetype = ""; // Can be either a flowlink or a regularlink
   public boolean set = true; // If set is true, use middle point of the two vertices as control point.
-  public boolean showInListModel = true;
+  //public boolean showInListModel = true;
   private LinkedList allEdges;   // All edges in the graph, reference from graph.getEdges()
   private int width  = 10 * size;
   private int height = 5 * size;
@@ -732,11 +732,4 @@ public class Edge extends Selectable {
     return p2y;
   }
 
-  public boolean getShowInListModel(){
-    return showInListModel;
-  }
-
-  public void setShowInListModel(boolean input){
-    this.showInListModel = input;
-  }
 }

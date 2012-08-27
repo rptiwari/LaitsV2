@@ -223,7 +223,7 @@ public class Selectable {
       color="red";
     else if (status==GAVEUP)
       color="yellow";
-    logs.trace("The i indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
+    //logs.trace("The i indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
   }
 
   /**
@@ -247,7 +247,7 @@ public class Selectable {
       color="red";
     else if (status==GAVEUP)
       color="yellow";
-    logs.trace("The g indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
+    //logs.trace("The g indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
   }
 
   /**
