@@ -1,8 +1,10 @@
-/*
- * DescriptionPanel.java
- *
- * Edited on Aug 21, 2012, 07:10:38 AM
+/**
+ * LAITS Project
+ * Arizona State University
+ * 
+ * Updated by rptiwari on Aug 24, 2012
  */
+
 package laits.gui;
 
 import laits.data.DecisionTreeNode;
@@ -31,16 +33,58 @@ import org.apache.log4j.Logger;
  */
 public class DescriptionPanelView extends JPanel implements TreeSelectionListener {
 
+  Vertex currentVertex;
+  GraphCanvas modelCanvas;
+  Graph modelGraph;
+  private String undoName = "";
+  private LinkedList<TreePath> treePaths = new LinkedList<TreePath>();
+  TreePath[] decisionTreePaths;
+  private boolean undoFlag = false;
+  //private NodeEditor parent = null;
+  private InputsPanelView parentNode = null;
+
+  private boolean initializing = false;
+  private boolean treeSelected = true;
+  DefaultMutableTreeNode root = null;
+  DefaultTreeModel model = null;
+  DescriptionTree dTree, savedDecisionTree;
+  String prevNodeName;
+  
+  private boolean triedDuplicate = false;
+  private static DescriptionPanelView descView;
+  private static Logger logs = Logger.getLogger(DescriptionPanelView.class);
+  
+  
   /**
-   * Creates new form DescriptionPanel
+   * Implementing Singleton pattern for Description Panel
+   * @param v: Vertex for which this panel is to be created
+   * @param gc: GraphCanvas of the LAITS application
+   * @return 
    */
-  public DescriptionPanelView(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    initComponents();
-    this.currentVertex = v;
-    this.parent = parent;
-    this.authorGraph = g;
-    this.graphCanvas = gc;
+  public static DescriptionPanelView getInstance(){
+    if(descView == null){
+      logs.info("Instantiating Description Panel.");
+      descView = new DescriptionPanelView();
+    }
     
+    return descView;
+  }
+  
+  private DescriptionPanelView(){
+    initComponents();
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();   
+  }
+  
+  /**
+   * Initialize Description Panel for a particular Vertex
+   * @param inputVertex 
+   */
+  public void initPanel(Vertex inputVertex){
+    logs.trace("Initializing Description Panel for Vertex "+inputVertex.getNodeName());
+    resetDescriptionPanel();
+    
+    currentVertex = inputVertex;
     nodeNameTextField.setText(currentVertex.getNodeName());
     
     initTree();
@@ -53,9 +97,12 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
 
     initTreeSelectionListener();
     quantityDescriptionTextField.setText(currentVertex.getSelectedDescription());
-
   }
-
+  
+  private void resetDescriptionPanel(){
+    nodeNameTextField.setText("");
+    quantityDescriptionTextField.setText("");   
+  }
   
   public void setquantityDescriptionTextField(String desc) {
     this.quantityDescriptionTextField.setText(desc);
@@ -63,9 +110,12 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     nodeNameTextField.setBackground(Selectable.COLOR_CORRECT);
     decisionTree.setEnabled(false);
     currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
-    if (this.parent != null) {
-      parent.setTitle(currentVertex.getNodeName().replaceAll("_", " "));
-    }
+    
+    if(currentVertex.getNodeName() == "")
+      NodeEditor.getInstance().setTitle("New Node");
+    else
+      NodeEditor.getInstance().setTitle(currentVertex.getNodeName().replaceAll("_", " "));
+    
   }
 
   /**
@@ -253,7 +303,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     // Check if user has provided the description
     if(nodeDescription == null || nodeDescription.isEmpty()){
       MessageDialog.showMessageDialog(null, true, "Please Provide Desciption", 
-              authorGraph);
+              modelGraph);
       return;
     }  
     
@@ -269,7 +319,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
       logs.trace("Adding Correct Description");
       if (dTree.add(nodeDescription, nodeName, true) == 1) {
         MessageDialog.showMessageDialog(null, true, 
-                "Node already has a correct description.", authorGraph);
+                "Node already has a correct description.", modelGraph);
       }
       
     } else if (jRadioInCorrect.isSelected()) {
@@ -277,7 +327,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
         dTree.add(nodeDescription, nodeName, false);
     } else {
         MessageDialog.showMessageDialog(null, true, 
-              "Please Select Description Type", authorGraph);
+              "Please Select Description Type", modelGraph);
     }
 
     model.reload();
@@ -297,7 +347,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
       return false;
     }
     
-    if(authorGraph.getVertexByName(nodeName) == null)
+    if(modelGraph.getVertexByName(nodeName) == null)
       return false;
     else
       return true;
@@ -392,12 +442,12 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     // Validating Input
     if (inputNodeName.isEmpty()) {
       MessageDialog.showMessageDialog(null, true, "Node name can not be empty", 
-              authorGraph);
+              modelGraph);
       return false;
     }
     if (inputDescription.isEmpty()) {
       MessageDialog.showMessageDialog(null, true, 
-              "Quantity Description can not be empty", authorGraph);
+              "Quantity Description can not be empty", modelGraph);
       return false;
     }
 
@@ -406,7 +456,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
       String message = String.format("A node with name %s already exists in the"
               + " Graph", inputNodeName);
       logs.debug(message);
-      MessageDialog.showMessageDialog(null, true, message, authorGraph);
+      MessageDialog.showMessageDialog(null, true, message, modelGraph);
       nodeNameTextField.setText("");
       return false;
     }
@@ -437,16 +487,16 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
   public void processDeleteAction(){
     logs.trace(  "Author deleted the node.");
     this.currentVertex.setNodeName(""); // sets the node to a state where it will be deleted by NodeEditor.java when closed
-    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(NodeEditor.getInstance(), 201); // create a window event that simulates the close button being pressed
+    NodeEditor.getInstance().windowClosing(e); // call the window closing method on NodeEditor
   }
 
   public void processCloseAction(){
     // Undo the decision tree changes
     DescriptionTree.undoDescriptionTreeChanges();
     
-    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(parent, 201); // create a window event that simulates the close button being pressed
-    this.parent.windowClosing(e); // call the window closing method on NodeEditor
+    java.awt.event.WindowEvent e = new java.awt.event.WindowEvent(NodeEditor.getInstance(), 201); // create a window event that simulates the close button being pressed
+    NodeEditor.getInstance().windowClosing(e); // call the window closing method on NodeEditor
 
   }
   
@@ -512,10 +562,10 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
           }
           quantityDescriptionTextField.setText(description);
           currentVertex.setSelectedDescription(description);
-          if (this.parent != null) {
-            parent.getInputsPanel().updateNodeDescription();
-            parent.getGraphsPanel().updateDescription();
-          }
+          
+          NodeEditor.getInstance().getInputsPanel().updateNodeDescription();
+          NodeEditor.getInstance().getGraphsPanel().updateDescription();
+          
 
           if (currentVertex.getSelectedDescription().trim().equals(description)) {
             logs.trace( "DescriptionPanel.valueChanged.1 "+ "legal_" + currentVertex.getNodeName());
@@ -552,25 +602,6 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
   // End of variables declaration//GEN-END:variables
 
     
-  Vertex currentVertex;
-  GraphCanvas graphCanvas;
-  Graph authorGraph;
-  private String undoName = "";
-  private LinkedList<TreePath> treePaths = new LinkedList<TreePath>();
-  TreePath[] decisionTreePaths;
-  private boolean undoFlag = false;
-  private NodeEditor parent = null;
-  private InputsPanelView parentNode = null;
-
-  private boolean initializing = false;
-  private boolean treeSelected = true;
-  DefaultMutableTreeNode root = null;
-  DefaultTreeModel model = null;
-  DescriptionTree dTree, savedDecisionTree;
-  String prevNodeName;
-  // this boolean is used to detect whether the user has tried to create a duplicate node
-  private boolean triedDuplicate = false;
   
-  private static Logger logs = Logger.getLogger(DescriptionPanelView.class);
 }
 

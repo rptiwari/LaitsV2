@@ -15,15 +15,19 @@ import laits.gui.NodeEditor;
  * @author ramayant
  */
 public class CalculationPanelHelper {
-  public CalculationPanelHelper(Graph modelGraph,
-                                GraphCanvas modelCanvas,
+  
+  Graph modelGraph;
+  GraphCanvas modelCanvas;
+  Vertex currentVertex;
+  CalculationsPanelView calculationPanel;
+  
+  public CalculationPanelHelper(GraphCanvas modelCanvas,
                                 Vertex currentVertex,
-                                NodeEditor nodeEditor,
                                 CalculationsPanelView calcPanel){
-    this.modelGraph = modelGraph;
+    
     this.modelCanvas = modelCanvas;
+    this.modelGraph = modelCanvas.getGraph();
     this.currentVertex = currentVertex;
-    this.nodeEditor = nodeEditor;
     this.calculationPanel = calcPanel;
   }
 
@@ -97,10 +101,5 @@ public class CalculationPanelHelper {
     calculationPanel.getFormulaInputArea().setText(currentVertex.getNodeEquationAsString());
   }
 
-  // Memeber Variables
-  Graph modelGraph;
-  GraphCanvas modelCanvas;
-  Vertex currentVertex;
-  NodeEditor nodeEditor ;
-  CalculationsPanelView calculationPanel;
+  
 }

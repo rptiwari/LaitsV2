@@ -31,11 +31,11 @@ public class SideBar {
    * @param n
    * @param frame
    */
-  public SideBar(GraphCanvas gc, Graph graph, Font n, Frame frame) {
-    this.graphCanvas = gc;
-    this.graph = graph;
-    this.font = n;
-    this.parent = frame;
+  public SideBar() {
+    this.modelCanvas = GraphCanvas.getInstance();
+    this.mmodelGraph = GraphCanvas.getInstance().getGraph();
+    this.font = new Font("Normal", Font.PLAIN, 20);
+    this.parent = modelCanvas.getFrame();
 
     initSidebarButtons();
 
@@ -53,6 +53,16 @@ public class SideBar {
     GridLayout buttonLayout = new GridLayout(7, 1);
     buttonPanel.setLayout(buttonLayout);
 
+    addSpacerButtons();
+    
+    // Add button panel to right of Graph Canvas
+    FlowLayout f = new FlowLayout(FlowLayout.RIGHT, 18, startPosition);
+    modelCanvas.setLayout(f);
+    buttonPanel.setOpaque(false);
+    modelCanvas.add(buttonPanel);
+  }
+
+  private void addSpacerButtons(){
     // Hidden Buttons to make space between the visible buttons
     JButton button1 = new JButton("");
     JButton button2 = new JButton("");
@@ -70,14 +80,7 @@ public class SideBar {
     buttonPanel.add(button3);
     buttonPanel.add(runModelButton);
     buttonPanel.add(button4);
-
-    // Add button panel to right of Graph Canvas
-    FlowLayout f = new FlowLayout(FlowLayout.RIGHT, 18, startPosition);
-    graphCanvas.setLayout(f);
-    buttonPanel.setOpaque(false);
-    graphCanvas.add(buttonPanel);
   }
-
   /**
    * Initializes Create Node button and associates an action with it
    */
@@ -92,86 +95,66 @@ public class SideBar {
 
     // Implementing the action performed by Create Node button
     newNodeButton.addActionListener(new java.awt.event.ActionListener() {
-
       boolean flag = false;
       LinkedList<String> listOfVertexes = null;
       int[] indices = null;
 
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-        if (Main.dialogIsShowing) {
-          logs.debug("MenuBar.java - NewNode button - dialog is showing.");
-          return;
-        }
-
-        if (graphCanvas.openTabs.size() > 0) {
-          graphCanvas.openTabs.get(0).setVisible(true);
-          MessageDialog.showMessageDialog(null, true, "You are currently creating or editing a node. If you want to create a new node, please close this node editor.", graph);
-          return;
-        }
-        newNodeButtonActionPerformed(evt, graphCanvas);
-      }
-
-      private void newNodeButtonActionPerformed(ActionEvent evt, GraphCanvas gc) {
-        logs.trace("MenuBar - newNodeButtonActionPerformed - Start");
-
-        // Create a new Vertex and set its name to ""
-        Vertex v = new Vertex();
-        v.setNodeName(EMPTY_NODE_NAME);
-
-        gc.paintVertex(v);
-
-        NodeEditor openWindow = NodeEditor.getInstance(v, graph, gc, true, false);
-        openWindow.setVisible(true);
-
-        gc.getOpenTabs().add(openWindow);
-        if (gc.modelHasBeenRun == true) {
-          gc.modelHasBeenRun = false;
-        }
-        if (gc.modelHasBeenRanAtLeastOnce == true) // if the model has been run at least once
-        {
-          gc.modelHasBeenRanAtLeastOnce = false; // reset it for the new problem
-        }
-
+        createNewNodeActionPerformed(evt);
       }
     });
   }
 
+  /**
+   * Method to Handle Create Node button
+   *
+   * @param evt
+   */
+  private void createNewNodeActionPerformed(java.awt.event.ActionEvent evt) {
+    // Check if any other window is not showing at the Editor
+    if (Main.dialogIsShowing) {
+      logs.error("Other Editor Window is Opened currently.");
+      return;
+    }
+
+    // Why this has to be done - either the above or this method should only be used
+    if (modelCanvas.openTabs.size() > 0) {
+      logs.error("Another Node Editor Window is currently opened.");
+      modelCanvas.openTabs.get(0).setVisible(true);
+      MessageDialog.showMessageDialog(null, true, "You are currently creating or"
+              + " editing a node. If you want to create a new node, "
+              + "please close this node editor.", mmodelGraph);
+      return;
+    }
+
+    // Create a new Vertex and set its name to ""
+    logs.debug("Creating a new Vertex");
+    Vertex newVertex = new Vertex();
+    newVertex.setNodeName(EMPTY_NODE_NAME);
+    modelCanvas.paintVertex(newVertex);
+    
+    NodeEditor nodeEditor = NodeEditor.getInstance();    
+    nodeEditor.initNodeEditor(newVertex);
+    
+    modelCanvas.getOpenTabs().add(nodeEditor);
+    resetRunModel();
+  }
+  
+  private void resetRunModel(){
+    if (modelCanvas.modelHasBeenRun == true) {
+      modelCanvas.modelHasBeenRun = false;
+    }
+    if (modelCanvas.modelHasBeenRanAtLeastOnce == true) // if the model has been run at least once
+    {
+      modelCanvas.modelHasBeenRanAtLeastOnce = false; // reset it for the new problem
+    }
+  }
+  
   public void resetRunBtnClickCount() {
     runBtnClickCount = 0;
   }
 
-  public boolean isMissingNode() {
-    boolean isMissingNode = true;
-    int actualSize = graphCanvas.listOfVertexes.size() - graphCanvas.extraNodes.size();
-    System.out.println("actualSize " + actualSize);
-    System.out.println("#vertexNodes " + graph.getVertexes().size());
-    int count = 0;
-    if (graph.getVertexes().size() >= actualSize && graphCanvas.extraNodes.size() > 0) {
-      for (int v = 0; v < graph.getVertexes().size(); v++) {
-        for (String s : graphCanvas.extraNodes) {
-          Vertex vertex = (Vertex) graph.getVertexes().get(v);
-          System.out.println(s + " ... . " + vertex.getNodeName());
-          if (!s.equals(vertex.getNodeName())) {
-            count++;
-            System.out.println("count " + count);
-            if (count == actualSize) {
-              isMissingNode = false;
-            }
-            break;
-          }
-
-        }
-      }
-    }
-    if (graphCanvas.extraNodes.size() == 0 && graph.getVertexes().size() == actualSize) {
-      isMissingNode = false;
-    }
-
-    System.out.println("MISSING: " + isMissingNode);
-    return isMissingNode;
-  }
-
+  
   /**
    * Method to Implement Run Model functionality, this method firstly creates
    * Run Model button on the Right sidebar and then attaches action to it.
@@ -188,7 +171,7 @@ public class SideBar {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
 
         try {
-          runModelButtonActionPerformed(evt, graphCanvas);
+          runModelButtonActionPerformed(evt, modelCanvas);
         }
         catch (CommException ex) {
 
@@ -197,11 +180,9 @@ public class SideBar {
       }
 
       private void runModelButtonActionPerformed(ActionEvent evt, GraphCanvas gc) throws CommException {
-        Task currentTask = TaskFactory.getInstance().getActualTask();
-
         // used to replace every changed variable to false because the model is being ran
-        for (int i = 0; i < graph.getVertexes().size(); i++) {
-          Vertex v = (Vertex) graph.getVertexes().get(i);
+        for (int i = 0; i < mmodelGraph.getVertexes().size(); i++) {
+          Vertex v = (Vertex) mmodelGraph.getVertexes().get(i);
           v.setInputsPanelChanged(false);
           v.setCalculationsPanelChanged(false);
         }
@@ -226,7 +207,7 @@ public class SideBar {
         }
 
 
-        boolean aMissingNode = isMissingNode();
+        //boolean aMissingNode = isMissingNode();
         boolean aDuplicateNode = false;
 
 
@@ -234,18 +215,13 @@ public class SideBar {
         runBtnClickCount++;
 
 
-        if (aMissingNode
-                && (currentTask.getTypeTask() == Task.CONSTRUCT
-                || currentTask.getTypeTask() == Task.MODEL)) {
-
-          MessageDialog.showMessageDialog(null, true, "Because this is an early problem, you get a free hint: at least one node is missing from your model.", graph);
-        } else if (gc.canRun()) {
+        if (gc.canRun()) {
 
             // Running the Author Model
-            graph.run(TaskFactory.getInstance(), gc);
+            mmodelGraph.run(TaskFactory.getInstance(), gc);
 
-            for (int i = 0; i < graph.getVertexes().size(); i++) {
-              current = (Vertex) graph.getVertexes().get(i);
+            for (int i = 0; i < mmodelGraph.getVertexes().size(); i++) {
+              current = (Vertex) mmodelGraph.getVertexes().get(i);
               current.setGraphsButtonStatus(current.CORRECT);
               // Because the model was successfully run, this variable gets set to true
               gc.modelHasBeenRanAtLeastOnce = true;
@@ -253,19 +229,19 @@ public class SideBar {
 
             // Display Model Run confirmation message
             MessageDialog.showMessageDialog(null, true, "Model Run Complete.",
-                                            graph);
+                                            mmodelGraph);
 
         } // cannot run due to syntacs error
         else if (aDuplicateNode) {
           String message = "There is a repeated node description somewhere "
                   + "in your graph.";
-          MessageDialog.showMessageDialog(null, true, message, graph);
+          MessageDialog.showMessageDialog(null, true, message, mmodelGraph);
         }
         // There is a wrong descriptions somewhere in the graph
         else {
           String message = "All nodes must have calculations before "
                   + "the model can be run.";
-          MessageDialog.showMessageDialog(null, true, message, graph);
+          MessageDialog.showMessageDialog(null, true, message, mmodelGraph);
 
         }
       }
@@ -309,9 +285,9 @@ public class SideBar {
    * This method draws the box around the help
    */
   public void drawHelpBox(Graphics g, Font f) {
-    int componentWidth = graphCanvas.getParent().getWidth();
+    int componentWidth = modelCanvas.getParent().getWidth();
     int clockBorder = 5;
-    int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    
     g.setColor(Color.BLACK);
     g.setFont(f);
     g.drawRect(componentWidth - clockBorder * 4 - diagramButton.getWidth(), hintLocation - diagramButton.getHeight() * 15 / 2, diagramButton.getWidth() + clockBorder, diagramButton.getHeight() * 11 / 2 + clockBorder);
@@ -324,8 +300,8 @@ public class SideBar {
 
 
   private JPanel buttonPanel;
-  private GraphCanvas graphCanvas;
-  private Graph graph;
+  private GraphCanvas modelCanvas;
+  private Graph mmodelGraph;
   private Font font;
   private int startPosition = 0, hintLocation = 0;
 

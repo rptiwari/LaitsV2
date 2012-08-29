@@ -1,16 +1,12 @@
 package laits.cover;
 
 import laits.Main;
-import laits.comm.CommException;
-import laits.data.TaskFactory;
 import laits.graph.Graph;
 import laits.graph.GraphCanvas;
 import laits.gui.SideBar;
 import laits.graph.Vertex;
 import java.awt.*;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -26,7 +22,6 @@ public class Cover implements Runnable {
 
   private Thread thread;
   private JPanel jpanel;
-  private Font n = new Font("Normal", Font.PLAIN, 20); //font in the speech bubbles
   private GraphCanvas gc;
   private SideBar sideBar;
 
@@ -40,15 +35,15 @@ public class Cover implements Runnable {
    * Constructor
    * @param jpanel
    */
-  public Cover (GraphCanvas jpanel, Graph graph, Frame frame){
-    this.jpanel = jpanel;
-    this.gc = jpanel;
+  public Cover (){
+    this.jpanel = GraphCanvas.getInstance();
+    this.gc = GraphCanvas.getInstance();
     clock = new Clock(gc, "graphCanvas");
     cal = Calendar.getInstance();
     startTime = cal.getTimeInMillis();
 
 
-    sideBar = new SideBar(gc, graph, n, frame);
+    sideBar = new SideBar();
 
     thread = new Thread(this);
     thread.start();
@@ -60,15 +55,6 @@ public class Cover implements Runnable {
   public SideBar getMenuBar()
   {
       return sideBar;
-  }
-
-
-  /**
-   * This method sets the font
-   * @param f
-   */
-  public void setFont(Font f) {
-    n = f;
   }
 
 
@@ -115,20 +101,7 @@ public class Cover implements Runnable {
               }
             }
           }
-
-        if(gc.getGraph().getVertexes().size()-extranodecount == gc.listOfVertexes.size()-extraNodes.size()){
-          boolean allCorrect = true;
-          for (int i = 0; i < gc.getGraph().getVertexes().size(); i++) {
-            Vertex v = (Vertex)gc.getGraph().getVertexes().get(i);
-            if (v.getGraphsButtonStatus() != v.CORRECT && v.getGraphsButtonStatus() != v.GAVEUP) {
-              allCorrect = false;
-            }
-          }
-
-        }
-
-
-
+        
   }
 
   /**

@@ -17,45 +17,39 @@ import org.apache.log4j.Logger;
  */
 public class PlanPanelView extends javax.swing.JPanel {
 
-  public PlanPanelView(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    logs.trace("Initializing Plan Panel");
-    
-    this.nodeEditor = parent;
-    this.authorGraph = g;
-    this.graphCanvas = gc;
-    this.currentVertex = v;
-    initComponents();
-    
-    setSelectedPlan();
-    
-    this.setVisible(true);
-
+  private Vertex currentVertex;
+  private Graph modelGraph;
+  private GraphCanvas modelCanvas;
+  private String selectedPlan;
+  private static PlanPanelView planView;
+  
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(PlanPanelView.class);
+  
+  public static PlanPanelView getInstance(){
+    if(planView == null){
+      logs.info("Instantiating Description Panel.");
+      planView = new PlanPanelView();
+    }
+    return planView;
   }
   
-    
+  private PlanPanelView(){
+    initComponents();
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();
+  }
   
-  public int getSelectedPlan(){
+  public void initPanel(Vertex inputVertex){
     
-    int selectedPlanIndex = Vertex.NOPLAN;
-    
-    if (this.fixedNumberButton.isSelected()) 
-      selectedPlanIndex = Vertex.FIXED_VALUE;
-    else if (this.proportionalValueButton.isSelected())
-      selectedPlanIndex = Vertex.FCT_PROP;
-    else if (this.increaseButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_INC;
-    else if (this.decreaseButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_DEC;
-    else if (this.bothButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_BOTH;
-    else if (this.differenceButton.isSelected())
-      selectedPlanIndex = Vertex.FCT_DIFF;
-    else if (this.ratioTwoQuantitiesButton.isSelected()) 
-      selectedPlanIndex = Vertex.FCT_RATIO;
-    
-    logs.trace("Selected Plan is "+selectedPlanIndex);
-    return selectedPlanIndex;
-    
+    currentVertex = inputVertex;
+    resetPlanPanel();
+    setSelectedPlan();
+    setVisible(true);
+  }
+  
+  private void resetPlanPanel(){
+    buttonGroup1.clearSelection();
   }
   
   /**
@@ -63,7 +57,7 @@ public class PlanPanelView extends javax.swing.JPanel {
    */
   private void setSelectedPlan(){
     int selectedPlanIndex = currentVertex.getNodePlan();
-    
+    logs.debug("Plan for Node "+currentVertex.getNodeName()+" is "+selectedPlanIndex);
     if(selectedPlanIndex == Vertex.NOPLAN)
       return;
     
@@ -100,6 +94,32 @@ public class PlanPanelView extends javax.swing.JPanel {
        logs.debug("Error in Initializing Plan"); 
     }  
   }
+  
+  public int getSelectedPlan(){
+    
+    int selectedPlanIndex = Vertex.NOPLAN;
+    
+    if (this.fixedNumberButton.isSelected()) 
+      selectedPlanIndex = Vertex.FIXED_VALUE;
+    else if (this.proportionalValueButton.isSelected())
+      selectedPlanIndex = Vertex.FCT_PROP;
+    else if (this.increaseButton.isSelected()) 
+      selectedPlanIndex = Vertex.ACC_INC;
+    else if (this.decreaseButton.isSelected()) 
+      selectedPlanIndex = Vertex.ACC_DEC;
+    else if (this.bothButton.isSelected()) 
+      selectedPlanIndex = Vertex.ACC_BOTH;
+    else if (this.differenceButton.isSelected())
+      selectedPlanIndex = Vertex.FCT_DIFF;
+    else if (this.ratioTwoQuantitiesButton.isSelected()) 
+      selectedPlanIndex = Vertex.FCT_RATIO;
+    
+    logs.trace("Selected Plan is "+selectedPlanIndex);
+    return selectedPlanIndex;
+    
+  }
+  
+  
 
   /**
      * This method is called from within the constructor to initialize the form.
@@ -473,13 +493,6 @@ public class PlanPanelView extends javax.swing.JPanel {
   private javax.swing.JPanel ratioTwoQuantitiesPanel;
   // End of variables declaration//GEN-END:variables
 
-private NodeEditor nodeEditor;
-private Vertex currentVertex;
-private Graph authorGraph;
-private GraphCanvas graphCanvas;
-private String selectedPlan;
 
-/** Logger **/
-private static Logger logs = Logger.getLogger(PlanPanelView.class);
 
 }

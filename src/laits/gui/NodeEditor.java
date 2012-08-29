@@ -1,8 +1,10 @@
 
 /*
- * NodeEditor.java
+ * LAITS Project
+ * Arizona State University
  *
- * Created on Nov 21, 2010, 10:22:44 AM
+ * @author rptiwari
+ * Lated Modified on Aug 28, 2012
  */
 package laits.gui;
 
@@ -29,36 +31,64 @@ import javax.swing.event.ChangeListener;
 import laits.gui.controllers.CalculationPanelException;
 import org.apache.log4j.Logger;
 
-/**
- * This method contains a singleton instance of the main window
- *
- * @author Megana
- */
+
 public class NodeEditor extends javax.swing.JFrame implements WindowListener {
 
-  public static NodeEditor getInstance(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) {
-    if (NodeEditor != null) {
-      NodeEditor = null;
+  private static NodeEditor nodeEditor;
+  private DescriptionPanelView dPanel;
+  private PlanPanelView pPanel;
+  private InputsPanelView iPanel;
+  private CalculationsPanelView cPanel;
+  private GraphsPanelView gPanel;
+  private Graph modelGraph;
+  private Vertex currentVertex;
+  private GraphCanvas modelCanvas;
+  public boolean graphCanBeDisplayed = false;
+  String savedNodeName;
+  String savedDescription;
+  
+  private Point initialClick = new Point();
+  //Tab Pane Indexes
+  public static final int DESCRIPTION = 0;
+  public static final int PLAN = 1;
+  public static final int INPUTS = 2;
+  public static final int CALCULATIONS = 3;
+  public static final int GRAPHS = 4;
+  
+  /** Logger */
+  private static Logger logs = Logger.getLogger(NodeEditor.class);
+  
+ /**
+ * This method creates a single object for NodeEditor
+ */
+  public static NodeEditor getInstance() {
+    if (nodeEditor == null) {
+      logs.info("Instantiating Node Editor.");
+      nodeEditor = new NodeEditor();
     }
-    return new NodeEditor(v, g, gc, show, turnOffLogging);
+    
+    return nodeEditor;
   }
-
-  /**
-   * Creates new form NodeEditor
-   */
-  public NodeEditor(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) {
+  
+  
+  private NodeEditor(){
     UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(2, 0, -1, 0));
-
-    modelGraph = g;
-    modelCanvas = gc;
-    currentVertex = v;
-
     initComponents();
-    initTabs(currentVertex, modelGraph, gc);
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();
+  }
+  
+  public void initNodeEditor(Vertex inputVertex){
+    logs.trace("Initializing NodeEditor for vertex "+inputVertex.getNodeName());
+    resetNodeEditor();
+    
+    currentVertex = inputVertex;
+    
+    initTabs(currentVertex);
     setTabListener();
     addWindowListener(this);
 
-    if (currentVertex.getNodeName().isEmpty() || currentVertex.getNodeName().equals("New Node")) {
+    if (currentVertex.getNodeName().isEmpty()) {
       this.setTitle("New Node");
     } else {
       this.setTitle(currentVertex.getNodeName());
@@ -66,11 +96,9 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
 
     this.pack();
 
-    if (show != false) {
-      this.setVisible(true);
-      this.setAlwaysOnTop(true);
-    }
-
+    this.setVisible(true);
+    this.setAlwaysOnTop(true);
+    
     this.setResizable(false);
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     this.requestFocus(true);
@@ -78,9 +106,9 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
 
     canGraphBeDisplayed();
 
-
-
-    this.setBounds(this.getToolkit().getScreenSize().width - 662, 100, this.getPreferredSize().width, this.getPreferredSize().height);
+    this.setBounds(this.getToolkit().getScreenSize().width - 662,
+            100,
+            this.getPreferredSize().width, this.getPreferredSize().height);
 
     if (!currentVertex.getNodeName().isEmpty()) // if the vertex has a name
     {
@@ -88,92 +116,50 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     } else {
       buttonDelete.setEnabled(false);
     }
+    
+    editorMsgLabel.setVisible(false);
+    
+  }
+  
+  private void resetNodeEditor(){
+   tabPane.setSelectedIndex(DESCRIPTION); 
   }
 
-  public void initTabs(Vertex v, Graph g, GraphCanvas gc) {
-    dPanel = new DescriptionPanelView(this, v, g, gc);
+  /**
+   * Method to Initialize all the Tabs of NodeEditor for this vertex
+   * @param v : inputVertex
+   */
+  public void initTabs(Vertex v) {
+    logs.trace("Initializing NodeEditor Tabs for Vertex "+v.getNodeName());
+    
+    dPanel = DescriptionPanelView.getInstance();
+    pPanel = PlanPanelView.getInstance();
+    iPanel = InputsPanelView.getInstance();
+    cPanel = CalculationsPanelView.getInstance();
+    gPanel = GraphsPanelView.getInstance();
+    
+    dPanel.initPanel(currentVertex);
     descriptionPanel.setLayout(new java.awt.GridLayout(1, 1));
     descriptionPanel.add(dPanel);
-
-    pPanel = new PlanPanelView(this, v, g, gc);
+    
+    pPanel.initPanel(currentVertex);
     planPanel.setLayout(new java.awt.GridLayout(1, 1));
     planPanel.add(pPanel);
-
-    cPanel = new CalculationsPanelView(this, v, g, gc);
+    
+    iPanel.initPanel(currentVertex);
+    inputsPanel.setLayout(new java.awt.GridLayout(1, 1));
+    inputsPanel.add(iPanel);
+    
+    cPanel.initPanel(currentVertex);
     calculationPanel.setLayout(new java.awt.GridLayout(1, 1));
     calculationPanel.add(cPanel);
 
-    iPanel = new InputsPanelView(this, v, g, gc);
-    inputsPanel.setLayout(new java.awt.GridLayout(1, 1));
-    inputsPanel.add(iPanel);
-
     if (v.getNodeName() != null) {
-      gPanel = new GraphsPanelView(this, v, g, gc);
+      gPanel.initPanel(currentVertex);
       graphsPanel.setLayout(new java.awt.GridLayout(1, 1));
       graphsPanel.add(gPanel);
     }
 
-  }
-
-  private boolean allVertexesDefined() {
-    boolean allDefined = true;
-    for (int i = 0; i < modelGraph.getVertexes().size(); i++) {
-      Vertex v = (Vertex) modelGraph.getVertexes().get(i);
-      if ((!v.getNodeName().isEmpty() && v.getDescriptionButtonStatus() == v.NOSTATUS)) {
-        allDefined = false;
-        continue;
-      }
-    }
-    return allDefined;
-  }
-
-  private boolean vertexHasName() {
-    return (!currentVertex.getNodeName().isEmpty());
-  }
-
-  private boolean allVertexesHaveEquations() {
-  boolean allHaveEquations = true;
-    for (int i = 0; i < modelGraph.getVertexes().size(); i++) {
-      Vertex v = (Vertex) modelGraph.getVertexes().get(i);
-      switch (v.getType()) {
-        case Vertex.CONSTANT:
-          if (v.getInitialValue() == Vertex.NOTFILLED) {
-            allHaveEquations = false;
-            v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
-            v.setHasBlueBorder(false);
-          }
-          break;
-        case Vertex.FLOW:
-          if (v.isNodeEquationEmpty()) {
-            allHaveEquations = false;
-            v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
-            v.setHasBlueBorder(false);
-          }
-          break;
-        case Vertex.STOCK:
-          if (v.getInitialValue() == Vertex.NOTFILLED) {
-            allHaveEquations = false;
-            v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
-            v.setHasBlueBorder(false);
-          }
-          if (v.isNodeEquationEmpty()) {
-            allHaveEquations = false;
-            v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
-            v.setHasBlueBorder(false);
-          }
-          break;
-        default:
-          allHaveEquations = false;
-          v.currentStatePanel[Selectable.CALC]=Selectable.NOSTATUS;
-          v.setHasBlueBorder(false);
-          break;
-      }
-    }
-    return allHaveEquations;
-  }
-
-  public Vertex getCurrentVertex() {
-    return this.currentVertex;
   }
 
   /*
@@ -207,7 +193,6 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     final JFrame f = this;
     tabPane.addChangeListener(
             new ChangeListener() {
-
               public void stateChanged(ChangeEvent e) {
                 // Set the Tab of Node Editor according to the finished Tabs
               }
@@ -235,7 +220,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     return gPanel;
   }
 
-public void windowClosing(WindowEvent e) {
+  /**
+   * Method to handle closing of Editor
+   * @param e 
+   */
+  public void windowClosing(WindowEvent e) {
     if (currentVertex.getNodeName().isEmpty()
             || (!currentVertex.getNodeName().isEmpty()
             && (currentVertex.getDescriptionButtonStatus() == 1
@@ -243,31 +232,18 @@ public void windowClosing(WindowEvent e) {
             || dPanel.getTriedDuplicate()) {
 
       currentVertex.setIsOpen(false);
-      LinkedList<laits.gui.NodeEditor> openTabs = GraphCanvas.getOpenTabs();
-      for (int i = 0; i < openTabs.size(); i++) {
-        if (NodeEditor.currentVertex.getNodeName().equals(currentVertex.getNodeName())) {
-          openTabs.remove(i);
-        }
-      }
-      logs.trace("NodeEditor.NodeEditor.9");
+      
+      GraphCanvas.getOpenTabs().clear();
+      
       this.setVisible(false);
+     
       if (currentVertex.getNodeName().isEmpty()) {
-        modelGraph.delVertex(currentVertex);
-        if (modelGraph.getVertexes().size() != modelCanvas.listOfVertexes.size()) {
-          modelCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
-        }
+        modelGraph.delVertex(currentVertex);      
       }
-
-      //The "Create node" button in canvass is now disabled when user uses the
-      //"create node" button in inputs tab to get the maximum number of nodes.
-      // if (graph.getVertexes().size() == graphCanvas.listOfVertexes.size())
+  
       modelCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
-
-
-    } else {
-      this.setAlwaysOnTop(true);
-      MessageDialog.showMessageDialog(this, true, "Before leaving this tab, please use the Check button to make sure your description is correct (green).", modelGraph);
-    }
+    } 
+    logs.trace("Closing Node Editor");
   }
 
   public void windowOpened(WindowEvent e) {
@@ -295,197 +271,207 @@ public void windowClosing(WindowEvent e) {
    * regenerated by the Form Editor.
    */
   @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
 
-        tabPane = new javax.swing.JTabbedPane();
-        descriptionPanel = new javax.swing.JPanel();
-        planPanel = new javax.swing.JPanel();
-        inputsPanel = new javax.swing.JPanel();
-        calculationPanel = new javax.swing.JPanel();
-        graphsPanel = new javax.swing.JPanel();
-        checkButton = new javax.swing.JButton();
-        giveUpButton = new javax.swing.JButton();
-        buttonDelete = new javax.swing.JButton();
-        buttonCancel = new javax.swing.JButton();
-        buttonOK = new javax.swing.JButton();
+    tabPane = new javax.swing.JTabbedPane();
+    descriptionPanel = new javax.swing.JPanel();
+    planPanel = new javax.swing.JPanel();
+    inputsPanel = new javax.swing.JPanel();
+    calculationPanel = new javax.swing.JPanel();
+    graphsPanel = new javax.swing.JPanel();
+    checkButton = new javax.swing.JButton();
+    giveUpButton = new javax.swing.JButton();
+    buttonDelete = new javax.swing.JButton();
+    buttonCancel = new javax.swing.JButton();
+    buttonOK = new javax.swing.JButton();
+    editorMsgLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Node Editor");
-        setAlwaysOnTop(true);
-        setResizable(false);
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-        });
-        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
-            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
-                formWindowGainedFocus(evt);
-            }
-            public void windowLostFocus(java.awt.event.WindowEvent evt) {
-            }
-        });
-        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                formMouseDragged(evt);
-            }
-        });
+    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setTitle("Node Editor");
+    setAlwaysOnTop(true);
+    setResizable(false);
+    addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        formMouseClicked(evt);
+      }
+    });
+    addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+      public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+        formWindowGainedFocus(evt);
+      }
+      public void windowLostFocus(java.awt.event.WindowEvent evt) {
+      }
+    });
+    addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+      public void mouseDragged(java.awt.event.MouseEvent evt) {
+        formMouseDragged(evt);
+      }
+    });
 
-        tabPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tabPane.setMinimumSize(new java.awt.Dimension(500, 500));
-        tabPane.setOpaque(true);
-        tabPane.setPreferredSize(new java.awt.Dimension(500, 400));
-        tabPane.setRequestFocusEnabled(false);
-        tabPane.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabPaneMouseClicked(evt);
-            }
-        });
-        tabPane.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                tabPaneMouseDragged(evt);
-            }
-        });
+    tabPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    tabPane.setMinimumSize(new java.awt.Dimension(500, 500));
+    tabPane.setOpaque(true);
+    tabPane.setPreferredSize(new java.awt.Dimension(500, 400));
+    tabPane.setRequestFocusEnabled(false);
+    tabPane.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        tabPaneMouseClicked(evt);
+      }
+    });
+    tabPane.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+      public void mouseDragged(java.awt.event.MouseEvent evt) {
+        tabPaneMouseDragged(evt);
+      }
+    });
 
-        descriptionPanel.setFocusable(false);
+    descriptionPanel.setFocusable(false);
 
-        javax.swing.GroupLayout descriptionPanelLayout = new javax.swing.GroupLayout(descriptionPanel);
-        descriptionPanel.setLayout(descriptionPanelLayout);
-        descriptionPanelLayout.setHorizontalGroup(
-            descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        descriptionPanelLayout.setVerticalGroup(
-            descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
+    javax.swing.GroupLayout descriptionPanelLayout = new javax.swing.GroupLayout(descriptionPanel);
+    descriptionPanel.setLayout(descriptionPanelLayout);
+    descriptionPanelLayout.setHorizontalGroup(
+      descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 601, Short.MAX_VALUE)
+    );
+    descriptionPanelLayout.setVerticalGroup(
+      descriptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 506, Short.MAX_VALUE)
+    );
 
-        tabPane.addTab("Description", descriptionPanel);
+    tabPane.addTab("Description", descriptionPanel);
 
-        javax.swing.GroupLayout planPanelLayout = new javax.swing.GroupLayout(planPanel);
-        planPanel.setLayout(planPanelLayout);
-        planPanelLayout.setHorizontalGroup(
-            planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        planPanelLayout.setVerticalGroup(
-            planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
+    javax.swing.GroupLayout planPanelLayout = new javax.swing.GroupLayout(planPanel);
+    planPanel.setLayout(planPanelLayout);
+    planPanelLayout.setHorizontalGroup(
+      planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 601, Short.MAX_VALUE)
+    );
+    planPanelLayout.setVerticalGroup(
+      planPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 506, Short.MAX_VALUE)
+    );
 
-        tabPane.addTab("Plan", planPanel);
+    tabPane.addTab("Plan", planPanel);
 
-        javax.swing.GroupLayout inputsPanelLayout = new javax.swing.GroupLayout(inputsPanel);
-        inputsPanel.setLayout(inputsPanelLayout);
-        inputsPanelLayout.setHorizontalGroup(
-            inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        inputsPanelLayout.setVerticalGroup(
-            inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
+    javax.swing.GroupLayout inputsPanelLayout = new javax.swing.GroupLayout(inputsPanel);
+    inputsPanel.setLayout(inputsPanelLayout);
+    inputsPanelLayout.setHorizontalGroup(
+      inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 601, Short.MAX_VALUE)
+    );
+    inputsPanelLayout.setVerticalGroup(
+      inputsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 506, Short.MAX_VALUE)
+    );
 
-        tabPane.addTab("Inputs", inputsPanel);
+    tabPane.addTab("Inputs", inputsPanel);
 
-        javax.swing.GroupLayout calculationPanelLayout = new javax.swing.GroupLayout(calculationPanel);
-        calculationPanel.setLayout(calculationPanelLayout);
-        calculationPanelLayout.setHorizontalGroup(
-            calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        calculationPanelLayout.setVerticalGroup(
-            calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
+    javax.swing.GroupLayout calculationPanelLayout = new javax.swing.GroupLayout(calculationPanel);
+    calculationPanel.setLayout(calculationPanelLayout);
+    calculationPanelLayout.setHorizontalGroup(
+      calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 601, Short.MAX_VALUE)
+    );
+    calculationPanelLayout.setVerticalGroup(
+      calculationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 506, Short.MAX_VALUE)
+    );
 
-        tabPane.addTab("Calculations", calculationPanel);
+    tabPane.addTab("Calculations", calculationPanel);
 
-        javax.swing.GroupLayout graphsPanelLayout = new javax.swing.GroupLayout(graphsPanel);
-        graphsPanel.setLayout(graphsPanelLayout);
-        graphsPanelLayout.setHorizontalGroup(
-            graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        graphsPanelLayout.setVerticalGroup(
-            graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
+    javax.swing.GroupLayout graphsPanelLayout = new javax.swing.GroupLayout(graphsPanel);
+    graphsPanel.setLayout(graphsPanelLayout);
+    graphsPanelLayout.setHorizontalGroup(
+      graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 601, Short.MAX_VALUE)
+    );
+    graphsPanelLayout.setVerticalGroup(
+      graphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 506, Short.MAX_VALUE)
+    );
 
-        tabPane.addTab("Graphs", graphsPanel);
+    tabPane.addTab("Graphs", graphsPanel);
 
-        checkButton.setText("Check");
-        checkButton.setEnabled(false);
-        checkButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkButtonActionPerformed(evt);
-            }
-        });
+    checkButton.setText("Check");
+    checkButton.setEnabled(false);
+    checkButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        checkButtonActionPerformed(evt);
+      }
+    });
 
-        giveUpButton.setText("Give Up");
-        giveUpButton.setEnabled(false);
-        giveUpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                giveUpButtonActionPerformed(evt);
-            }
-        });
+    giveUpButton.setText("Give Up");
+    giveUpButton.setEnabled(false);
+    giveUpButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        giveUpButtonActionPerformed(evt);
+      }
+    });
 
-        buttonDelete.setText("Delete Node");
-        buttonDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonDeleteActionPerformed(evt);
-            }
-        });
+    buttonDelete.setText("Delete Node");
+    buttonDelete.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonDeleteActionPerformed(evt);
+      }
+    });
 
-        buttonCancel.setText("Cancel");
-        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCancelActionPerformed(evt);
-            }
-        });
+    buttonCancel.setText("Cancel");
+    buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonCancelActionPerformed(evt);
+      }
+    });
 
-        buttonOK.setText("Ok");
-        buttonOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonOKActionPerformed(evt);
-            }
-        });
+    buttonOK.setText("Ok");
+    buttonOK.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonOKActionPerformed(evt);
+      }
+    });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addComponent(tabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(tabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+    editorMsgLabel.setText("jLabel1");
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(tabPane, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+          .addGroup(layout.createSequentialGroup()
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(editorMsgLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+            .addGap(24, 24, 24)
+            .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(buttonDelete)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(buttonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addContainerGap())
+    );
+    layout.setVerticalGroup(
+      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(layout.createSequentialGroup()
+        .addComponent(tabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(editorMsgLabel)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(checkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(giveUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(buttonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(buttonOK, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addContainerGap())
+    );
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
 
   private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
     if (Main.dialogIsShowing) {
@@ -537,15 +523,19 @@ public void windowClosing(WindowEvent e) {
     processCancelAction();
   }//GEN-LAST:event_buttonCancelActionPerformed
 
+  /**
+   * Method to process the Node after filling all the details in NodeEditor
+   * @param evt 
+   */
   private void buttonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOKActionPerformed
     // Process OK Action for all the Tabs  - OK button is common for all the Tabs
 
     // Process DESCRIPTION Tab
     if (doDescriptionSubmit()) {
-        getInputsPanel().updateNodeDescription();
-        getGraphsPanel().updateDescription();
-        currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
-      }else{
+      getInputsPanel().updateNodeDescription();
+      getGraphsPanel().updateDescription();
+      currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
+    } else {
       return;
     }
 
@@ -553,23 +543,21 @@ public void windowClosing(WindowEvent e) {
     currentVertex.setNodePlan(pPanel.getSelectedPlan());
 
     // Process INPUT Tab
-    if(!iPanel.hasInputError()){
+    if (!iPanel.hasInputError()) {
       currentVertex.setInputsButtonStatus(Vertex.CORRECT);
       modelCanvas.setInputsPanelChanged(true, currentVertex);
     }
 
     // Process CALCULATION Tab
-    try{
+    try {
       cPanel.doSubmit();
 
-      if(cPanel.checkForCorrectCalculations()){
-
+      if (cPanel.checkForCorrectCalculations()) {
       }
 
       this.windowClosing(null);
-    }
-    catch(CalculationPanelException ex){
-      logs.error("Error in the Calculation Panel "+ ex.getMessage());
+    } catch (CalculationPanelException ex) {
+      logs.error("Error in the Calculation Panel " + ex.getMessage());
       MessageDialog.showMessageDialog(null, true, ex.getMessage(), modelGraph);
     }
 
@@ -589,44 +577,19 @@ public void windowClosing(WindowEvent e) {
     currentVertex.setNodeName("");
     this.windowClosing(null);
   }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonCancel;
-    private javax.swing.JButton buttonDelete;
-    private javax.swing.JButton buttonOK;
-    private javax.swing.JPanel calculationPanel;
-    private javax.swing.JButton checkButton;
-    private javax.swing.JPanel descriptionPanel;
-    private javax.swing.JButton giveUpButton;
-    private javax.swing.JPanel graphsPanel;
-    private javax.swing.JPanel inputsPanel;
-    private javax.swing.JPanel planPanel;
-    private javax.swing.JTabbedPane tabPane;
-    // End of variables declaration//GEN-END:variables
-
-
-  private static NodeEditor NodeEditor;
-
-  private DescriptionPanelView dPanel;
-  private PlanPanelView pPanel;
-  private InputsPanelView iPanel;
-  private CalculationsPanelView cPanel;
-  private GraphsPanelView gPanel;
-  private static Graph modelGraph;
-  private static Vertex currentVertex;
-  private static GraphCanvas modelCanvas;
-  public boolean graphCanBeDisplayed = false;
-  String savedNodeName;
-  String savedDescription;
-  // no scope here because it should be a package variable, only accessed by the members of the NodeEditor
-  Vertex correctVertex;
-  private Point initialClick = new Point();
-  //Tab Pane Indexes
-  public static final int DESCRIPTION = 0;
-  public static final int PLAN = 1;
-  public static final int INPUTS = 2;
-  public static final int CALCULATIONS = 3;
-  public static final int GRAPHS = 4;
-
-  /** Logger **/
-  private static Logger logs = Logger.getLogger(NodeEditor.class);
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton buttonCancel;
+  private javax.swing.JButton buttonDelete;
+  private javax.swing.JButton buttonOK;
+  private javax.swing.JPanel calculationPanel;
+  private javax.swing.JButton checkButton;
+  private javax.swing.JPanel descriptionPanel;
+  private javax.swing.JLabel editorMsgLabel;
+  private javax.swing.JButton giveUpButton;
+  private javax.swing.JPanel graphsPanel;
+  private javax.swing.JPanel inputsPanel;
+  private javax.swing.JPanel planPanel;
+  private javax.swing.JTabbedPane tabPane;
+  // End of variables declaration//GEN-END:variables
+  
 }

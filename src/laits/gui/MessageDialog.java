@@ -168,12 +168,6 @@ public class MessageDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
   private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
-    if(yesNo) {
-        g.setN(0);
-    } else {
-      g.setN(-1);
-    }
-
     for (int i = 0; i < GraphCanvas.getOpenTabs().size(); i++) {
       GraphCanvas.getOpenTabs().get(i).setAlwaysOnTop(true);
     }
@@ -182,12 +176,7 @@ public class MessageDialog extends javax.swing.JDialog {
   }//GEN-LAST:event_yesButtonActionPerformed
 
   private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
-    if(yesNo) {
-        g.setN(1);
-    } else {
-      g.setN(-1);
-    }
-
+   
     for (int i = 0; i < GraphCanvas.getOpenTabs().size(); i++) {
       GraphCanvas.getOpenTabs().get(i).setAlwaysOnTop(true);
     }
@@ -200,8 +189,7 @@ public class MessageDialog extends javax.swing.JDialog {
     for (int i = 0; i < GraphCanvas.getOpenTabs().size(); i++) {
       GraphCanvas.getOpenTabs().get(i).setAlwaysOnTop(true);
     }
-    
-    g.setN(-1);
+   
     this.dispose();
   }//GEN-LAST:event_okButtonMouseClicked
 

@@ -60,7 +60,7 @@ public class Vertex extends Selectable {
   public int[] currentStatePanel= new int[4];
 
   // the plan of the node
-  private int nodePlan = this.NOPLAN;
+  private int nodePlan;
   // Each value in 'correctValues' represents a point on the graph
   public LinkedList<Double> correctValues = new LinkedList<Double>();
   // InitialValue for a stock and AllValues for the constant, nothing in case of flow
@@ -128,13 +128,13 @@ public class Vertex extends Selectable {
    */
   public Vertex(int x, int y, String nodeName) {
     position = new Point(x, y);
-    this.setNodeName(nodeName);
-    this.editorOpen = false;
-    this.initialValue = NOTFILLED;
-    //this.formula = new Formula();
-    this.nodeEquation = new NodeEquation();
-    this.typeNode = NOTYPE;
-    this.init_currentStatePanel(Selectable.NOSTATUS);
+    setNodeName(nodeName);
+    editorOpen = false;
+    initialValue = NOTFILLED;
+    nodeEquation = new NodeEquation();
+    typeNode = NOTYPE;
+    nodePlan = NOPLAN;
+    init_currentStatePanel(Selectable.NOSTATUS);
     defaultLabel();
   }
 

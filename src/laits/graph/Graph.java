@@ -12,17 +12,42 @@ import org.apache.log4j.Logger;
  * This class represents the graph of Author while creating new problems.
  * Graph consists of Vertices and Edges. This class mainly holds the structure
  * of the problem while displaying the graph on GUI is performed by GraphCanvas
- * @author Ramayan Tiwari
+ * 
+ * @author rptiwari
  */
 public class Graph extends Selectable {
 
+  private static Graph authorGraph = null;
+  private Selectable selected = null;
+  private LinkedList<Vertex> vertexes;
+  private LinkedList<Edge> edges;
+  private LinkedList<PlotDialog> plots;
+  private int taskID;
+
+  private int dialogueValue;
+  private boolean isCalculated = false;
+
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(Graph.class);
+  
+  
   /**
    * Default Constructor
    */
-  public Graph() {
-    logs.trace("Initializing Author Graph");
+  private Graph() {
+    logs.info("Instantiating Model Graph.");
+    vertexes = new LinkedList<Vertex>();
+    edges = new LinkedList<Edge>();
+    plots = new LinkedList<PlotDialog>();
   }
 
+  public static Graph getGraph(){
+    if(authorGraph == null){
+      authorGraph = new Graph();
+    }  
+    
+    return authorGraph;
+  }
 
   /**
    * Method to set an object as the one currently selected
@@ -416,22 +441,6 @@ public class Graph extends Selectable {
 
 
   /**
-   * This method sets the value for n which is the value from yes/no dialogs
-   */
-  public void setN(int newN)
-  {
-      this.n = newN;
-  }
-
-  /**
-   * This method returns the value for n which is the value from yes/no dialogs
-   */
-  public int getN()
-  {
-      return n;
-  }
-
-  /**
    * Method to get a Vertex from the Graph using Vertex Name
    * @param vertexName: name of the vertex to find
    * @return: Vertex with provided name (if found), Null otherwise 
@@ -445,23 +454,25 @@ public class Graph extends Selectable {
     return null;
   }
 
+  /**
+   * Method to check if the Calculations of this has been generated and are 
+   * valid. 
+   */
+  public boolean isCalculated(){
+    return isCalculated;
+  }  
+  
+  /**
+   * Method to set if the values of all vertices has been calculated.
+   * @param input 
+   */
+  public void setCalculated(boolean input){
+    isCalculated = input;
+  }
 
-  /** Member Variable Declaration **/
-
-  private Selectable selected = null;
-  private LinkedList<Vertex> vertexes = new LinkedList<Vertex>();
-  private LinkedList<Edge> edges = new LinkedList<Edge>();
-
-  private int taskID;
-
-  private LinkedList<PlotDialog> plots = new LinkedList<PlotDialog>();
-
-  private int dialogueValue;
-
-
-  // LAITS Variables Section
-  private int n;
-
-  /** Logger **/
-  private static Logger logs = Logger.getLogger(Graph.class);
+  public void clear(){
+    vertexes.clear();
+    edges.clear();
+    plots.clear();   
+  }
 }

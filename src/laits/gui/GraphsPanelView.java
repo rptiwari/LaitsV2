@@ -1,8 +1,10 @@
 /*
- * GraphsPanel.java
- *
- * Created on Nov 21, 2010, 10:24:20 AM
+ * LAITS Project
+ * Arizona State University
+ * 
+ * @author: rptiwari
  */
+
 package laits.gui;
 
 import laits.comm.CommException;
@@ -24,36 +26,51 @@ public class GraphsPanelView extends javax.swing.JPanel {
 
   JPanel grafica;
   Vertex currentVertex;
-  Graph graph;
-  GraphCanvas gc;
+  Graph modelGraph;
+  GraphCanvas modelCanvas;
   Image correctAnswer = null;
   Task t;
 
   //the width and height of the panel
   int width, height;
-  private Component buttonPanel;
+  
+  private static GraphsPanelView graphView;
+  
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(GraphsPanelView.class);
+  
 
-  /** Creates new form GraphsPanel */
-  public GraphsPanelView(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-
-    this.gc = gc;
-    this.currentVertex = v;
-    this.graph = g;
+  public static GraphsPanelView getInstance(){
+    if(graphView == null){
+      logs.info("Instantiating Description Panel.");
+      graphView = new GraphsPanelView();
+    }
+    
+    return graphView;
+  }
+  
+  private GraphsPanelView(){
     initComponents();
-
-
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();
+  }
+  
+  
+  public void initPanel(Vertex inputVertex){
+    currentVertex = inputVertex;
+    
     if (grafica != null)
       userAnswerPanel.remove(grafica);
 
-    if ((gc.getModelHasBeenRun() == true) && (v.getType() != Vertex.NOTYPE)
-            && ((!v.isNodeEquationEmpty()) || (v.getType() == Vertex.CONSTANT)))
+    if ((modelCanvas.getModelHasBeenRun() == true) && (currentVertex.getType() != Vertex.NOTYPE)
+            && ((!currentVertex.isNodeEquationEmpty()) || (currentVertex.getType() == Vertex.CONSTANT)))
 
       userAnswerPanel = new PlotPanel(this.currentVertex);
 
     this.updateDescription();
     this.testResetLayout();
   }
-
+  
   public void testResetLayout() {
     allGraphsPanel.removeAll();
     allGraphsPanel.setLayout(new GridBagLayout());
@@ -240,6 +257,5 @@ public class GraphsPanelView extends javax.swing.JPanel {
   private javax.swing.JLabel userGraphLabel;
   // End of variables declaration//GEN-END:variables
 
-    /** Logger **/
-    private static Logger logs = Logger.getLogger(GraphsPanelView.class);
+   
 }

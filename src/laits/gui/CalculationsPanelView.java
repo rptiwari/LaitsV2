@@ -34,27 +34,72 @@ import org.apache.log4j.Logger;
 public class CalculationsPanelView extends javax.swing.JPanel 
                                    implements PropertyChangeListener {
 
+  Vertex currentVertex;
   
-  public CalculationsPanelView(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-
-    logs.trace("\nInitializing Calculations Panel");
-    initializing = true;
-    initComponents();
-
-    this.currentVertex = v;
-    this.nodeEditor = parent;
-    this.modelGraph = g;
-    this.modelCanvas = gc;
-
-    initValues();
-
-    addedOperand(false);
-    initializing = false;
-
-    calculationHelper = new CalculationPanelHelper(modelGraph,
-                            modelCanvas, currentVertex, nodeEditor,this);
+  private DefaultListModel availableInputJListModel = new DefaultListModel();
+  private Graph modelGraph;
+  private GraphCanvas modelCanvas;
+  private boolean changed = false;
+  private boolean givenValueButtonPreviouslySelected = false;
+  boolean jListVariablesNotEmpty = false;
+  private LinkedList<String> changes = new LinkedList<String>();
+  private final DecimalFormat inputDecimalFormat = new DecimalFormat("###0.###");
+  private CalculationPanelHelper calculationHelper;
+  private static CalculationsPanelView calcView;
+  
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(CalculationsPanelView.class);
+  
+  
+  
+  /**
+   * Implementing Singleton pattern for Calculations Panel
+   * @param v: Vertex for which this panel is to be created
+   * @param gc: GraphCanvas of the LAITS application
+   * @return 
+   */
+  public static CalculationsPanelView getInstance(){
+    if(calcView == null){
+      logs.info("Instantiating Description Panel.");
+      calcView = new CalculationsPanelView();
+    }
+    
+    return calcView;
   }
-
+  
+  private CalculationsPanelView(){
+    initComponents();
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();   
+  }
+  
+  public void initPanel(Vertex inputVertex){
+    resetCalculationsPanel();
+            
+    currentVertex = inputVertex;
+    initValues();
+    addedOperand(false);
+    
+    calculationHelper = new CalculationPanelHelper(modelCanvas, currentVertex, 
+                                                   calcView);
+  }
+  
+  private void resetCalculationsPanel(){
+    buttonGroup1.clearSelection();
+    
+    fixedValueOptionButton.setEnabled(true);
+    flowValueOptionButton.setEnabled(true);
+    stockValueOptionButton.setEnabled(true);
+    
+    availableInputJListModel.clear();
+    
+    calculatorPanel.setVisible(true);
+    fixedValueLabel.setVisible(true);
+    fixedValueInputBox.setVisible(true);
+    keyPanel.setVisible(true);
+    
+  }
+  
   public void initValues() {
     logs.trace("Intializing calc panel values");
     initializeAvailableInputNodes();
@@ -258,11 +303,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       } else {
         delVertexName = formula;
       }
-      /*for (int i = 0; i < currentVertex.inedges.size(); i++) {
-        if (currentVertex.inedges.get(i).start.getNodeName().equals(delVertexName)) {
-          currentVertex.inedges.get(i).showInListModel = true;
-        }
-      }*/
+      
     }
 
     commitEdit();
@@ -414,7 +455,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       firstIndexOfNoStatus = -1;
       firstNodeWithNoStatus = -1;
 
-      nodeEditor.canGraphBeDisplayed();
+      //CHANGED nodeEditor.canGraphBeDisplayed();
     }
   }
 
@@ -983,87 +1024,60 @@ public class CalculationsPanelView extends javax.swing.JPanel
   }// </editor-fold>//GEN-END:initComponents
 
     private void multiplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_multiplyButtonActionPerformed
-      if (!initializing) {
-        changed = true;
-        modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-        deleteButton.setEnabled(true);
-        resetGraphStatus();
-        //reset background colors
-        resetColors();
-        currentVertex.addToNodeEquation(EditorConstants.OPERATOR_MULTIPLY);
-        commitEdit();
-        addedOperand(false);
-
-      }
+      changed = true;
+      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      deleteButton.setEnabled(true);
+      resetGraphStatus();
+      //reset background colors
+      resetColors();
+      currentVertex.addToNodeEquation(EditorConstants.OPERATOR_MULTIPLY);
+      commitEdit();
+      addedOperand(false);
 }//GEN-LAST:event_multiplyButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-      if (!initializing) {
-        changed = true;
-        modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-        deleteButton.setEnabled(true);
-        resetGraphStatus();
-        //reset background colors
-        resetColors();
-        currentVertex.addToNodeEquation(EditorConstants.OPERATOR_PLUS);
-        commitEdit();
-        addedOperand(false);
-      }
+    
+      changed = true;
+      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      deleteButton.setEnabled(true);
+      resetGraphStatus();
+      //reset background colors
+      resetColors();
+      currentVertex.addToNodeEquation(EditorConstants.OPERATOR_PLUS);
+      commitEdit();
+      addedOperand(false);
+ 
 }//GEN-LAST:event_addButtonActionPerformed
   /**
    * @author curt
    * @param evt
    */
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-      if (!initializing) {
-        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-        resetGraphStatus();
-        formulaInputArea.setBackground(Color.WHITE);
-        availableInputsJList.setBackground(Color.WHITE);
-        deleteLastFormula();
-        if (formulaInputArea.getText().isEmpty()) {
-          deleteButton.setEnabled(false);
-          enableKeyPad();
-          availableInputsJList.setEnabled(true);
-        }
-        modelCanvas.repaint();
-        changed = true;
-        modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+     
+      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      resetGraphStatus();
+      formulaInputArea.setBackground(Color.WHITE);
+      availableInputsJList.setBackground(Color.WHITE);
+      deleteLastFormula();
+      if (formulaInputArea.getText().isEmpty()) {
+        deleteButton.setEnabled(false);
+        enableKeyPad();
+        availableInputsJList.setEnabled(true);
       }
+      modelCanvas.repaint();
+      changed = true;
+      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+
 }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void stockValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockValueOptionButtonActionPerformed
-      if (!initializing) {
-
-        if (currentVertex.getType() != Vertex.CONSTANT) {
-          modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-          //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-          currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-          currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
-          givenValueButtonPreviouslySelected = false;
-          while (!this.formulaInputArea.getText().isEmpty()) {
-            this.deleteLastFormula();
-          }
-          currentVertex.clearInitialValue();
-          currentVertex.setType(Vertex.STOCK);
-          initializeAvailableInputNodes();
-          initValues();
-          this.enableKeyPadForStock();
-          modelCanvas.repaint(0);
-          logs.trace( "CalculationsPanel.accumulatesButtonActionPerformed.1");
-        }
-
-      }
-    }//GEN-LAST:event_stockValueOptionButtonActionPerformed
-
-    private void flowValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowValueOptionButtonActionPerformed
-
-      if (!initializing) {
+     
+      if (currentVertex.getType() != Vertex.CONSTANT) {
         modelCanvas.setCalculationsPanelChanged(true, currentVertex);
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
         currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
@@ -1073,14 +1087,34 @@ public class CalculationsPanelView extends javax.swing.JPanel
           this.deleteLastFormula();
         }
         currentVertex.clearInitialValue();
-        currentVertex.setType(Vertex.FLOW);
+        currentVertex.setType(Vertex.STOCK);
         initializeAvailableInputNodes();
         initValues();
-        this.enableKeyPadForStock();//funtion cannot use * or / in the first position
+        this.enableKeyPadForStock();
         modelCanvas.repaint(0);
-        logs.trace( "CalculationsPanel.functionButtonActionPerformed.1");
-
+        logs.trace("CalculationsPanel.accumulatesButtonActionPerformed.1");
       }
+    }//GEN-LAST:event_stockValueOptionButtonActionPerformed
+
+    private void flowValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowValueOptionButtonActionPerformed
+
+      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+      givenValueButtonPreviouslySelected = false;
+      while (!this.formulaInputArea.getText().isEmpty()) {
+        this.deleteLastFormula();
+      }
+      currentVertex.clearInitialValue();
+      currentVertex.setType(Vertex.FLOW);
+      initializeAvailableInputNodes();
+      initValues();
+      this.enableKeyPadForStock();//funtion cannot use * or / in the first position
+      modelCanvas.repaint(0);
+      logs.trace("CalculationsPanel.functionButtonActionPerformed.1");
+
+
     }//GEN-LAST:event_flowValueOptionButtonActionPerformed
 
     private void resetCalculationState(){
@@ -1135,21 +1169,21 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
     private void fixedValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedValueOptionButtonActionPerformed
       //Delete the equation
-      if (!initializing) {
-        if (!givenValueButtonPreviouslySelected) {
-          givenValueButtonPreviouslySelected = true;
 
-          //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-          currentVertex.setCalculationsButtonStatus(Selectable.NOSTATUS);
-          currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+      if (!givenValueButtonPreviouslySelected) {
+        givenValueButtonPreviouslySelected = true;
 
-          fixedValueLabel.setText(EditorConstants.CALC_PANEL_FIXED_VALUE);
-          needInputLabel.setText("");
-          initValues();
-          modelCanvas.repaint();
-          changes.add("Radio Button Clicked: givenValueButton");
-        }
+        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+        currentVertex.setCalculationsButtonStatus(Selectable.NOSTATUS);
+        currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+
+        fixedValueLabel.setText(EditorConstants.CALC_PANEL_FIXED_VALUE);
+        needInputLabel.setText("");
+        initValues();
+        modelCanvas.repaint();
+        changes.add("Radio Button Clicked: givenValueButton");
       }
+
     }//GEN-LAST:event_fixedValueOptionButtonActionPerformed
 
   /**
@@ -1232,38 +1266,38 @@ public class CalculationsPanelView extends javax.swing.JPanel
   }//GEN-LAST:event_fixedValueInputBoxActionPerformed
 
   private void subtractButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subtractButtonActionPerformed
-    if (!initializing) {
-      changed = true;
-      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-      deleteButton.setEnabled(true);
-      resetGraphStatus();
-      //reset background colors
-      resetColors();
+    
+    changed = true;
+    modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+    //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    deleteButton.setEnabled(true);
+    resetGraphStatus();
+    //reset background colors
+    resetColors();
 
-      currentVertex.addToNodeEquation(EditorConstants.OPERATOR_MINUS);
-      commitEdit();
-      addedOperand(false);
-    }
+    currentVertex.addToNodeEquation(EditorConstants.OPERATOR_MINUS);
+    commitEdit();
+    addedOperand(false);
+
   }//GEN-LAST:event_subtractButtonActionPerformed
 
   private void divideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_divideButtonActionPerformed
-    if (!initializing) {
-      changed = true;
-      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-      
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
-      deleteButton.setEnabled(true);
-      resetGraphStatus();
-      
-      //reset background colors
-      resetColors();
+    
+    changed = true;
+    modelCanvas.setCalculationsPanelChanged(true, currentVertex);
 
-      currentVertex.addToNodeEquation(EditorConstants.OPERATOR_DIVIDE);
-      commitEdit();
-      addedOperand(false);
-    }
+    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    deleteButton.setEnabled(true);
+    resetGraphStatus();
+
+    //reset background colors
+    resetColors();
+
+    currentVertex.addToNodeEquation(EditorConstants.OPERATOR_DIVIDE);
+    commitEdit();
+    addedOperand(false);
+
   }//GEN-LAST:event_divideButtonActionPerformed
 
   private void keyboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyboardButtonActionPerformed
@@ -1372,26 +1406,6 @@ public class CalculationsPanelView extends javax.swing.JPanel
     preparePanelForFlow();
   }
 
-
-  Vertex currentVertex;
-  NodeEditor nodeEditor;
-
-  private DefaultListModel availableInputJListModel = new DefaultListModel();
-  private Graph modelGraph;
-  private GraphCanvas modelCanvas;
-  private boolean changed = false;
-  private boolean initializing = true;
-  private boolean givenValueButtonPreviouslySelected = false;
-  boolean jListVariablesNotEmpty = false;
-  //this is the only way to prevent the equation from deleting
-  private String status = "none";
-  private LinkedList<String> changes = new LinkedList<String>();
-  private final DecimalFormat inputDecimalFormat = new DecimalFormat("###0.###");
-  private CalculationPanelHelper calculationHelper;
-
-  /** Logger **/
-  private static Logger logs = Logger.getLogger(CalculationsPanelView.class);
-  
 }
 
 

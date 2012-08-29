@@ -16,4 +16,7 @@ public class EditorConstants {
   public static char OPERATOR_DIVIDE = '/';
   
   public static String CALC_PANEL_FIXED_VALUE = "Fixed value = ";
+  
+  public static final String VERSION = "Version 1.2 released on May 15, 2012";
+  public static String VERSIONID = "2";
 }

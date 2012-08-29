@@ -1,8 +1,8 @@
 /*
- * InputsPanel.java
- *
- * Created on Nov 21, 2010, 10:23:54 AM
- * Updated by rptiwari on May 5,2012
+ * LAITS Project
+ * Arizona State University
+ * 
+ * @author: rptiwari
  */
 package laits.gui;
 
@@ -17,52 +17,86 @@ import javax.swing.*;
 import laits.gui.controllers.InputsPanelController;
 import org.apache.log4j.Logger;
 
-/**
- * @author rptiwari
- */
+
 public class InputsPanelView extends javax.swing.JPanel implements ItemListener {
 
   Graph modelGraph;
   GraphCanvas modelCanvas;
-  public LinkedList<JCheckBox> checkboxList = new LinkedList<JCheckBox>();
+  public LinkedList<JCheckBox> checkboxList;
   Stack undoStack = new Stack();
   boolean undoFlag = false;
   Vertex currentVertex;
-  NodeEditor nodeEditor;
-
-  boolean initializing = true;
+  
   public String itemChanged;
   
   public boolean correctinput = false;
   private final boolean TYPE_CHANGE = true;
-  private final boolean NO_TYPE_CHANGE = false;
   private InputsPanelController inputsPanelController;
+  private static InputsPanelView inputView;
+  boolean isSavedNode ;
   
-
   /** Logger **/
   private static Logger logs = Logger.getLogger(InputsPanelView.class);
+  
   /**
-   * Creates new form InputsPanel
+   * Implementing Singleton pattern for Inputs Panel
+   * @param v: Vertex for which this panel is to be created
+   * @param gc: GraphCanvas of the LAITS application
+   * @return 
    */
-  public InputsPanelView(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
-    logs.trace("Initializing Inputs Panel");
+  public static InputsPanelView getInstance(){
+    if(inputView == null){
+      logs.info("Instantiating Description Panel.");
+      inputView = new InputsPanelView();
+    }
+    
+    return inputView;
+  }
+  
+  /**
+   * Private Constructor
+   * @param gc : GraphCanvas of LAITS Application.
+   */
+  private InputsPanelView(){
     initComponents();
-    this.nodeEditor = parent;
-    this.modelGraph = g;
-    this.modelCanvas = gc;
-    this.currentVertex = v;
+    modelCanvas = GraphCanvas.getInstance();
+    modelGraph = GraphCanvas.getInstance().getGraph();   
+    checkboxList = new LinkedList<JCheckBox>();
+  }
+  
+  /**
+   * Method to Initialize Input Tab of Node Editor for a particular node
+   * @param inputVertex: Vertex for which this Input tab is being constructed
+   */ 
+  public void initPanel(Vertex inputVertex){
+    logs.trace("Initializing InputPanel for Vertex "+inputVertex.getNodeName());
+    resetInputsPanel();
+    
+    currentVertex = inputVertex;
+    
     availableInputNodesPanels.setVisible(false);
     undoStack.setSize(1);
-    availableInputNodesPanels.setLayout(new GridLayout(g.getVertexes().size(), 1));
+    availableInputNodesPanels.setLayout(new GridLayout(modelGraph.getVertexes().size(), 1));
     
     updateNodeDescription();
     initAvailableInputNodes();
     loadSavedInputState();
-    inputsPanelController = new InputsPanelController(g, gc, v, parent, this);
     
-    initializing = false;
+    inputsPanelController = new InputsPanelController(modelCanvas, currentVertex, this);
   }
-
+  
+  private void resetInputsPanel(){
+    buttonGroup1.clearSelection();
+    nodeDescriptionLabel.setText("");
+    inputNodesSelectionOptionButton.setEnabled(true);
+    fixedValueOptionButton.setEnabled(true);
+    availableInputNodesPanels.removeAll();
+    availableInputNodesPanels.setEnabled(true);
+    checkboxList.clear();
+    
+    isSavedNode = false;
+  }
+  
   /**
    * Method to set the Node Description in the UI
    */
@@ -100,7 +134,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     txt.setMargin(new java.awt.Insets(50, 5, 0, 0));
     availableInputNodesPanels.add(txt);
     
-    nodeEditor.repaint();
+    NodeEditor.getInstance().repaint();
   }
   
   /**
@@ -140,7 +174,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * Method to Add One Check Box corresponding to each Available Input Node
    */
   private void addAvailableNodesCheckBoxes(){
-    logs.trace("Adding all the Avaiable Input Nodes for "+
+    logs.trace("Adding all the Available Input Nodes for "+
             currentVertex.getNodeName());
     
     for (int i = 0; i < modelGraph.getVertexes().size(); i++) {
@@ -165,6 +199,8 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * this will mark previously selected inputs as selected check boxes.
    */
   public void loadSavedInputState() {
+    logs.trace("Loading Saved Inputs for Vertex "+currentVertex.getNodeName());
+    
     if (currentVertex.getType() == Vertex.CONSTANT) {
       fixedValueOptionButton.setSelected(true);
     } else if ((currentVertex.getType() == Vertex.FLOW) || 
@@ -173,7 +209,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       loadSavedInputsForStockAndFlow();
     }
   }
-  
+    
   /**
    * Method to load previously selected Inputs for Stock and Flow Nodes
    */
@@ -185,8 +221,10 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       String originNodeName = currentVertex.inedges.get(i).start.getNodeName();
               
       for (int j=0; j<checkboxList.size(); j++) {
-        if (checkboxList.get(j).getText().equalsIgnoreCase(originNodeName))
+        if (checkboxList.get(j).getText().equalsIgnoreCase(originNodeName)){
+          isSavedNode = true;
           checkboxList.get(j).setSelected(true);
+        }  
       }
     }
     availableInputNodesPanels.setVisible(true);
@@ -197,10 +235,11 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * available input nodes
    */
   public void itemStateChanged(ItemEvent e) {
+    if(isSavedNode)
+      return;
+    
     logs.trace("Input Node selection changed");
     
-    if (initializing == false)
-    {
       //Reset the Status of Current Node
       modelCanvas.setInputsPanelChanged(true, currentVertex);
       currentVertex.setInputsButtonStatus(currentVertex.NOSTATUS);
@@ -256,14 +295,9 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
         }
       }
 
-
-      //for (int i = 0; i < currentVertex.inedges.size(); i++)
-      //  currentVertex.inedges.get(i).showInListModel = true;
-      
-      nodeEditor.getCalculationsPanel().restart_calc_panel(TYPE_CHANGE);
-      
+      NodeEditor.getInstance().getCalculationsPanel().restart_calc_panel(TYPE_CHANGE);
       resetGraphStatus();
-    }
+    
   }
   
   
@@ -280,7 +314,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       current.setGraphsButtonStatus(Vertex.NOSTATUS);
     }
     
-    nodeEditor.canGraphBeDisplayed();
+    NodeEditor.getInstance().canGraphBeDisplayed();
   }
 
  
@@ -461,12 +495,12 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
        }
         
        resetGraphStatus();
-       nodeEditor.getCalculationsPanel().resetColors(TYPE_CHANGE);
-       nodeEditor.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
+       NodeEditor.getInstance().getCalculationsPanel().resetColors(TYPE_CHANGE);
+       NodeEditor.getInstance().getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
      }
       
      currentVertex.setType(Vertex.CONSTANT);
-     nodeEditor.getCalculationsPanel().update();
+     NodeEditor.getInstance().getCalculationsPanel().update();
      displayCurrentInputsPanel(false);
      
      fixedValueOptionButton.setEnabled(false);
@@ -487,8 +521,8 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
         currentVertex.setInputsSelected(true);
           
         resetGraphStatus();
-        nodeEditor.getCalculationsPanel().resetColors(TYPE_CHANGE);
-        nodeEditor.getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
+        NodeEditor.getInstance().getCalculationsPanel().resetColors(TYPE_CHANGE);
+        NodeEditor.getInstance().getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
         
       }
      
@@ -500,7 +534,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       fixedValueOptionButton.setEnabled(true);
       inputNodesSelectionOptionButton.setEnabled(false);
       displayCurrentInputsPanel(true);
-      nodeEditor.getCalculationsPanel().update();
+      NodeEditor.getInstance().getCalculationsPanel().update();
       modelCanvas.repaint(0);
     }//GEN-LAST:event_inputNodesSelectionOptionButtonActionPerformed
 

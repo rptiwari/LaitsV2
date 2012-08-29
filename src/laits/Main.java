@@ -1,32 +1,18 @@
 package laits;
 
-import java.awt.Color;
 import laits.gui.dialog.HelpDialog;
 import laits.gui.dialog.ExitDialog;
 import laits.gui.dialog.SendTicketDialog;
-import laits.gui.dialog.MessageDialog;
 import laits.gui.dialog.AboutDialog;
-import laits.comm.CommException;
-import laits.data.DataException;
-import laits.data.Task;
 import laits.data.TaskFactory;
 import laits.graph.*;
 import laits.gui.*;
 
 import laits.gui.InstructionPanel;
-import laits.gui.NodeEditor;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.logging.Level;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import laits.plot.GraphRangeEditor;
 import org.apache.log4j.Logger;
@@ -39,6 +25,24 @@ import org.apache.log4j.Logger;
  */
 public class Main extends JFrame implements WindowListener {
 
+  private TaskFactory taskFactory;
+  private GraphCanvasScroll graphCanvasScroll;
+
+  public InstructionPanel instructionView;
+  public SituationPanel situationView;
+  public static boolean ReadModelFromFile = true;
+  public static boolean alreadyRan = false;
+  private static JTextArea memo = null;
+  public static boolean dialogIsShowing = false;
+  public static boolean windowIsClosing = false;
+  public static boolean debuggingModeOn = false;
+
+  private String taskFileName = null;
+
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(Main.class);
+  
+  
   /**
    *
    * @return
@@ -51,7 +55,7 @@ public class Main extends JFrame implements WindowListener {
    *
    * @return
    */
-  public Graph getGraph() {
+ /* public Graph getGraph() {
     return graph;
   }
 
@@ -60,12 +64,12 @@ public class Main extends JFrame implements WindowListener {
    *
    */
   public Main() {
-    logs.trace("Initializing LAITS Application");
+    logs.info("Initializing LAITS Application");
 
     taskFactory = TaskFactory.getInstance();
 
     // Create a new Author Graph
-    graph = new Graph();
+    //graph = Graph.getGraph();
     initComponents();
 
     // Initialize Tab views
@@ -89,8 +93,8 @@ public class Main extends JFrame implements WindowListener {
     this.setTitle("LAITS Authoring Tool");
 
     this.tabPane.setSelectedIndex(0);
-
-    logs.trace("LAITS Application oladed successfully");
+    
+    logs.info("LAITS Application loaded successfully");
   }
 
 
@@ -356,7 +360,8 @@ public class Main extends JFrame implements WindowListener {
    */
   private void menuItemOpenTaskActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemOpenTaskActionPerformed
 
-    if (graph.getVertexes().size() > 0){
+    
+    if (graphCanvasScroll.getGraph().getVertexes().size() > 0){
 
       int choice = JOptionPane.showConfirmDialog(this,
               "All the unsaved work will be lost, so you want to continue ?",
@@ -512,7 +517,7 @@ public class Main extends JFrame implements WindowListener {
       // Test if file name has already been selected
       if(taskFileName!=null){
         System.out.println("Selected File "+taskFileName);
-        SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, graph, null, situationView);
+        SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
       }else{
         // Display the Save Dialog Box
         JFileChooser fc = new JFileChooser();
@@ -539,7 +544,7 @@ public class Main extends JFrame implements WindowListener {
           }
 
           taskFileName = savedFileName+ext;
-          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, graph, null, situationView);
+          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
         }
       }
       return true;
@@ -571,7 +576,7 @@ public class Main extends JFrame implements WindowListener {
             }
           }
           taskFileName = savedFileName+ext;
-          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, graph, null, situationView);
+          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
         }
         return true;
     }
@@ -582,27 +587,4 @@ public class Main extends JFrame implements WindowListener {
 
   }
 
-
-  /**
-   * Member Variable Declaration
-   */
-  public static final String VERSION = "Version 1.2 released on May 15, 2012";
-  public static String VERSIONID = "2";
-  private TaskFactory taskFactory;
-  private Graph graph = null;
-  private GraphCanvasScroll graphCanvasScroll;
-
-  public InstructionPanel instructionView;
-  public SituationPanel situationView;
-  public static boolean ReadModelFromFile = true;
-  public static boolean alreadyRan = false;
-  private static JTextArea memo = null;
-  public static boolean dialogIsShowing = false;
-  public static boolean windowIsClosing = false;
-  public static boolean debuggingModeOn = false;
-
-  private String taskFileName = null;
-
-  /** Logger **/
-  private static Logger logs = Logger.getLogger(Main.class);
 }

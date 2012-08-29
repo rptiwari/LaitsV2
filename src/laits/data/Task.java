@@ -13,6 +13,41 @@ import org.apache.log4j.Logger;
  * @version 20101114
  */
 public final class Task implements Product {
+  private int id;
+  private String title;
+  private String imageUrl;
+  private String summary;
+  private String description;
+  private int typeTask;
+  // options possible for typeTask
+  public static final int NO_TYPE_TASK = 0;
+  public static final int CONSTRUCT = 1;
+  public static final int MODEL = 2;
+  public static final int DEBUG = 3;
+  public static final int WHOLE = 4;
+  private int phaseTask;
+  // options possible for phaseTask
+  public static final int NO_PHASE_TASK = 0;
+  public static final int INTRO = 1;
+  public static final int TRAINING = 2;
+  public static final int CHALLENGE = 3;
+  public static final int THE_BREAK = 4;
+  private LinkedList<String> vertexNames;
+  private int startTime;
+  private int endTime;
+  private String unitTime;
+  private String problemSeeking;
+  private String problemSeekingCorrespondingSentence;
+  //FOR VERSION 2, TASK HAVE A DECISION TREE
+  private LinkedList<String> tree;
+  private LinkedList<String> extranodes = new LinkedList<String>();
+  public LinkedList<Edge> alledgesDebug = null;
+  public LinkedList<Vertex> listOfVertexesDebug = null;
+  public LinkedList<Vertex> listOfVertexes = null;
+  public LinkedList<Edge> alledges = null;
+
+  /** Logger */
+  private static Logger logs = Logger.getLogger(Task.class);
 
   /**
    * Constructor
@@ -635,9 +670,7 @@ public final class Task implements Product {
             }
           }
             
-          currentVertex.correctValues.add(currentValue);
-          logs.trace("Vertex "+currentVertex.getNodeName()+
-                  " Value: "+currentValue);
+          currentVertex.correctValues.add(currentValue);          
           
         } else if (currentVertex.getType() == Vertex.FLOW) {
           
@@ -825,39 +858,5 @@ public final class Task implements Product {
       return constantList.size();
 }
 
-  private int id;
-  private String title;
-  private String imageUrl;
-  private String summary;
-  private String description;
-  private int typeTask;
-  // options possible for typeTask
-  public static final int NO_TYPE_TASK = 0;
-  public static final int CONSTRUCT = 1;
-  public static final int MODEL = 2;
-  public static final int DEBUG = 3;
-  public static final int WHOLE = 4;
-  private int phaseTask;
-  // options possible for phaseTask
-  public static final int NO_PHASE_TASK = 0;
-  public static final int INTRO = 1;
-  public static final int TRAINING = 2;
-  public static final int CHALLENGE = 3;
-  public static final int THE_BREAK = 4;
-  private LinkedList<String> vertexNames;
-  private int startTime;
-  private int endTime;
-  private String unitTime;
-  private String problemSeeking;
-  private String problemSeekingCorrespondingSentence;
-  //FOR VERSION 2, TASK HAVE A DECISION TREE
-  private LinkedList<String> tree;
-  private LinkedList<String> extranodes = new LinkedList<String>();
-  public LinkedList<Edge> alledgesDebug = null;
-  public LinkedList<Vertex> listOfVertexesDebug = null;
-  public LinkedList<Vertex> listOfVertexes = null;
-  public LinkedList<Edge> alledges = null;
-
-  /** Logger */
-  private static Logger logs = Logger.getLogger(Task.class);
+  
 }

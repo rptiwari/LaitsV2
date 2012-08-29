@@ -44,28 +44,28 @@
                       </Group>
                       <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="textIntialValue" alignment="0" pref="78" max="32767" attributes="0"/>
-                          <Component id="textFinalValue" alignment="0" pref="78" max="32767" attributes="0"/>
-                          <Component id="comboUnits" alignment="0" min="-2" pref="78" max="-2" attributes="0"/>
+                          <Component id="textIntialValue" alignment="0" max="32767" attributes="0"/>
+                          <Component id="textFinalValue" alignment="0" max="32767" attributes="0"/>
                           <Component id="buttonCancel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="comboUnits" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="69" pref="69" max="69" attributes="0"/>
-              <Component id="labelErrorInitial" pref="221" max="32767" attributes="0"/>
+              <Component id="labelErrorInitial" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="labelErrorFinal" pref="290" max="32767" attributes="0"/>
+              <Component id="labelErrorFinal" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
               <Component id="buttonSave" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="180" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

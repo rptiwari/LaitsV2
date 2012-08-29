@@ -11,6 +11,7 @@ import laits.graph.Graph;
 import laits.graph.GraphCanvas;
 import laits.graph.Vertex;
 import laits.gui.SituationPanel;
+import org.apache.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -25,8 +26,20 @@ import org.jdom2.output.XMLOutputter;
  * Intermediate Solution and finally generating the final solution
  */
 public class SolutionManager {
+  private static SolutionManager managerObject;
+  private String problemDescription;
+  private String imageURL;
+  private Graph solutionGraph;
+  // XML Parsing Variables
+  Document document;
+  Element rootNode;
+  Graph authorGraph;
+  /** Logger */
+  private static Logger logs = Logger.getLogger(SolutionManager.class);
+  
 
   private SolutionManager() {
+    authorGraph = Graph.getGraph();
   }
 
   public static SolutionManager getSolutionManager() {
@@ -66,15 +79,13 @@ public class SolutionManager {
     loadAuthorGraph(authorCanvas);
   }
 
-  public void saveIntermediateSolution(String selectedFile, Graph authorGraph,
-          GraphCanvas authorCanvas,
-          SituationPanel situationView) {
+  public void saveIntermediateSolution(String selectedFile, GraphCanvas authorCanvas, SituationPanel situationView) {
 
     buildEmptyXMLStructure();
 
     saveSituationPanel(situationView);
 
-    saveAuthorGraph(authorGraph, authorCanvas);
+    saveAuthorGraph();
 
     // Write the output to the file
     XMLOutputter xmlOutput = new XMLOutputter();
@@ -133,7 +144,7 @@ public class SolutionManager {
     document.getRootElement().addContent(imageURL);
   }
 
-  private void saveAuthorGraph(Graph authorGraph, GraphCanvas authorCanvas) {
+  private void saveAuthorGraph() {
     // Create Vertices Element
     Element vertices = new Element("Vertices");
 
@@ -190,18 +201,15 @@ public class SolutionManager {
       Element sourceVertex = new Element("Start");
       Element targetVertex = new Element("End");
       Element edgeType = new Element("EdgeType");
-      //Element show = new Element("ShowInListModel");
-
+      
       sourceVertex.setText(currentEdge.getStartVertex().getNodeName());
       targetVertex.setText(currentEdge.getEndVertex().getNodeName());
       edgeType.setText(currentEdge.getEdgeType());
-      //show.addContent(String.valueOf(currentEdge.getShowInListModel()));
-
+      
       edge.addContent(sourceVertex);
       edge.addContent(targetVertex);
       edge.addContent(edgeType);
-      //edge.addContent(show);
-
+      
       edges.addContent(edge);
     }
 
@@ -260,11 +268,5 @@ public class SolutionManager {
   }
 
 
-  private static SolutionManager managerObject;
-  private String problemDescription;
-  private String imageURL;
-  private Graph solutionGraph;
-  // XML Parsing Variables
-  Document document;
-  Element rootNode;
+  
 }

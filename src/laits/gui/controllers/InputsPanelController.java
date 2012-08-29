@@ -22,18 +22,14 @@ public class InputsPanelController {
   Graph modelGraph;
   GraphCanvas modelCanvas;
   Vertex currentVertex;
-  NodeEditor nodeEditor ;
   InputsPanelView inputsPanel;
   
-  public InputsPanelController(Graph modelGraph,
-                               GraphCanvas modelCanvas,
+  public InputsPanelController(GraphCanvas modelCanvas,
                                Vertex currentVertex,
-                               NodeEditor nodeEditor,
                                InputsPanelView inputsPanel){
-    this.modelGraph = modelGraph;
+    this.modelGraph = modelCanvas.getGraph();
     this.modelCanvas = modelCanvas;
     this.currentVertex = currentVertex;
-    this.nodeEditor = nodeEditor;
     this.inputsPanel = inputsPanel;
   }
   

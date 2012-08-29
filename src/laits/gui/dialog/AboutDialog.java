@@ -1,12 +1,7 @@
 package laits.gui.dialog;
 
-/**
- * Dialog box About
- *
- * @author Javier Gonzalez Sanchez
- * @author Maria Elena Chavez Echeagaray
- * @version 20090817
- */
+import laits.common.EditorConstants;
+
 public class AboutDialog extends javax.swing.JDialog {
 
   /**
@@ -17,9 +12,9 @@ public class AboutDialog extends javax.swing.JDialog {
    */
   public AboutDialog(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
-    this.setTitle("About...");
+    this.setTitle("About LAITS...");
     initComponents();
-    this.versionLabel.setText(laits.Main.VERSION);
+    this.versionLabel.setText(EditorConstants.VERSION);
     this.setLocationRelativeTo(parent);
     this.pack();
   }

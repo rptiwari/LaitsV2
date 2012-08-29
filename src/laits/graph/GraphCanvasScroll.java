@@ -24,13 +24,9 @@ import org.apache.log4j.Logger;
  */
 public class GraphCanvasScroll extends JPanel implements MouseListener, KeyListener {
 
-  public Graph graph;
-  public String taskDescription;
   private Dimension area;
   private GraphCanvas graphCanvas;
-  private JFrame jf;
-
-
+  
   /**
    * This method calls the getGraphCanvas() method of GraphCanvas.
    * @return a GraphCanvas object
@@ -48,9 +44,10 @@ public class GraphCanvasScroll extends JPanel implements MouseListener, KeyListe
   public GraphCanvasScroll(Main jf) {
     super(new BorderLayout());
     area = new Dimension(0, 0);
-    this.jf = jf;
-    this.graph = jf.getGraph();
-    graphCanvas = new GraphCanvas(jf);
+    
+    graphCanvas = GraphCanvas.getInstance();
+    graphCanvas.setMainFrame(jf);
+    
     graphCanvas.setBackground(Color.white);
     graphCanvas.addMouseListener(this);
     graphCanvas.setFocusable(true);
@@ -156,6 +153,10 @@ public class GraphCanvasScroll extends JPanel implements MouseListener, KeyListe
   public void keyReleased(KeyEvent e)
   {
   }
+  
+  public Graph getGraph(){
+    return graphCanvas.getGraph();
+  }  
 
   /** Logger **/
   private static Logger logs = Logger.getLogger(GraphCanvasScroll.class);

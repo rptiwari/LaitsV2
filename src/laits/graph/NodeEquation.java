@@ -93,6 +93,7 @@ public class NodeEquation {
     
   }
   
+  @Override
   public String toString(){
     StringBuffer result = new StringBuffer();
     
@@ -219,6 +220,7 @@ public class NodeEquation {
         return false;
     }
     
+    @Override
     public String toString(){
       return String.valueOf(operatorValue);
     }  
@@ -273,6 +275,7 @@ public class NodeEquation {
       return false;
     } 
     
+    @Override
     public String toString(){
       return operandValue;
     }
