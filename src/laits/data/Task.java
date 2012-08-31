@@ -1,7 +1,7 @@
 package laits.data;
 
-import laits.graph.Edge;
-import laits.graph.Vertex;
+import laits.model.Edge;
+import laits.model.Vertex;
 import java.util.*;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;

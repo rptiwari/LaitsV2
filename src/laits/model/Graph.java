@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import laits.gui.dialog.PlotDialog;
 import java.awt.Graphics;

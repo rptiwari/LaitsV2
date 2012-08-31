@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 

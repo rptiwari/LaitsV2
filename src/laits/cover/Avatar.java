@@ -1,8 +1,8 @@
 package laits.cover;
 
 import laits.Main;
-import laits.graph.GraphCanvas;
-import laits.graph.Selectable;
+import laits.model.GraphCanvas;
+import laits.model.Selectable;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

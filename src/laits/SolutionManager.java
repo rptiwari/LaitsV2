@@ -6,10 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import laits.graph.Edge;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Edge;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.gui.SituationPanel;
 import org.apache.log4j.Logger;
 import org.jdom2.Document;
@@ -237,7 +237,7 @@ public class SolutionManager {
         newVertex.setSelectedDescription(el.getChildText("CorrectDescription"));
         newVertex.setType(Integer.valueOf(el.getChildText("Type")));
         newVertex.setInitialValue(Double.valueOf(el.getChildText("InitialValue")));
-        newVertex.setDescriptionButtonStatus(1);
+        newVertex.setDescriptionDefined(true);
         newVertex.addToNodeEquation(el.getChildText("NodeEquation"));
         newVertex.setNodePlan(Integer.parseInt(el.getChildText("Plan")));
         

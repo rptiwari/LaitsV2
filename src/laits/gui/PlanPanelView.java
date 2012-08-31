@@ -5,9 +5,10 @@
 
 package laits.gui;
 
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import javax.swing.ButtonGroup;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 
 import org.apache.log4j.Logger;
 
@@ -22,13 +23,15 @@ public class PlanPanelView extends javax.swing.JPanel {
   private GraphCanvas modelCanvas;
   private String selectedPlan;
   private static PlanPanelView planView;
+  private boolean isViewEnabled;
+  
   
   /** Logger **/
   private static Logger logs = Logger.getLogger(PlanPanelView.class);
   
   public static PlanPanelView getInstance(){
     if(planView == null){
-      logs.info("Instantiating Description Panel.");
+      logs.info("Instantiating Plan Panel.");
       planView = new PlanPanelView();
     }
     return planView;
@@ -40,18 +43,34 @@ public class PlanPanelView extends javax.swing.JPanel {
     modelGraph = GraphCanvas.getInstance().getGraph();
   }
   
-  public void initPanel(Vertex inputVertex){
+  public void initPanel(Vertex inputVertex, boolean newNode){
     
     currentVertex = inputVertex;
-    resetPlanPanel();
-    setSelectedPlan();
+    
+    if(newNode)
+      initPanelForNewNode();
+    else
+      initPanelForSavedNode();
+    
     setVisible(true);
   }
   
-  private void resetPlanPanel(){
-    buttonGroup1.clearSelection();
+  public void initPanelForSavedNode(){
+    logs.trace("Initializing plan panel for Node "+currentVertex.getNodeName());
+    setSelectedPlan();
   }
   
+  public void initPanelForNewNode(){
+    logs.trace("Initializing plan panel For New Node");
+    resetPlanPanel();   
+  }
+  
+  private void resetPlanPanel(){
+    isViewEnabled = false;
+    buttonGroup1.clearSelection();
+  
+  }
+ 
   /**
    * Method to set the initialize the selected plan radio button
    */
@@ -96,31 +115,51 @@ public class PlanPanelView extends javax.swing.JPanel {
   }
   
   public int getSelectedPlan(){
-    
     int selectedPlanIndex = Vertex.NOPLAN;
     
-    if (this.fixedNumberButton.isSelected()) 
+    if (fixedNumberButton.isSelected()) 
       selectedPlanIndex = Vertex.FIXED_VALUE;
-    else if (this.proportionalValueButton.isSelected())
+    
+    else if (proportionalValueButton.isSelected())
       selectedPlanIndex = Vertex.FCT_PROP;
-    else if (this.increaseButton.isSelected()) 
+    
+    else if (increaseButton.isSelected()) 
       selectedPlanIndex = Vertex.ACC_INC;
-    else if (this.decreaseButton.isSelected()) 
+    
+    else if (decreaseButton.isSelected()) 
       selectedPlanIndex = Vertex.ACC_DEC;
-    else if (this.bothButton.isSelected()) 
+    
+    else if (bothButton.isSelected()) 
       selectedPlanIndex = Vertex.ACC_BOTH;
-    else if (this.differenceButton.isSelected())
+    
+    else if (differenceButton.isSelected())
       selectedPlanIndex = Vertex.FCT_DIFF;
-    else if (this.ratioTwoQuantitiesButton.isSelected()) 
+    
+    else if (ratioTwoQuantitiesButton.isSelected()) 
       selectedPlanIndex = Vertex.FCT_RATIO;
     
     logs.trace("Selected Plan is "+selectedPlanIndex);
+    
     return selectedPlanIndex;
     
   }
   
-  
+  public boolean validatePlanPanel(){
+    if(buttonGroup1.getSelection() == null)
+      return false;
+    
+    return true;
+  }
 
+  public boolean isViewEnabled(){
+    return isViewEnabled;
+  }
+  
+  public void setViewEnabled(boolean flag){
+    isViewEnabled = flag;
+  }
+  
+  
   /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

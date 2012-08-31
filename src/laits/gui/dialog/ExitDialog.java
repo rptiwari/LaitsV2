@@ -1,7 +1,7 @@
 package laits.gui.dialog;
 
 import laits.Main;
-import laits.graph.GraphCanvas;
+import laits.model.GraphCanvas;
 
 import java.awt.Frame;
 import java.io.File;

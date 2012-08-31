@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import java.awt.*;
 import org.apache.log4j.Logger;
@@ -36,10 +36,11 @@ public class Selectable {
   private    String label = "";
 
   // These variables represent the status's of the indicators, needed here to define the painLabel method
-  private   int descriptionButtonStatus = 0;
-  private   int inputsButtonStatus = 0;
-  private   int calculationsButtonStatus = 0;
-  private   int graphsButtonStatus = 0;
+  private boolean descriptionDefined = false;
+  private boolean inputsDefined = false;
+  private boolean calculationsDefined = false;
+  private boolean graphsDefined = false;
+  private boolean planDefined = false;
 
 
   // These variables are used for the indicators on the node
@@ -190,80 +191,72 @@ public class Selectable {
    * This method retrieves the status of the descriptions panel button for version 2
    * @return the inputs button status
    */
-  public int getDescriptionButtonStatus() {
-    return descriptionButtonStatus;
+  public boolean isDescriptionDefined() {
+    return descriptionDefined;
   }
 
   /**
    * This method set sets the descriptions button status to the parameter status
    * @param status is the inputs button status
    */
-  public void setDescriptionButtonStatus(int status) {
-    descriptionButtonStatus = status;
+  public void setDescriptionDefined(boolean status) {
+    descriptionDefined = status;
   }
 
+  
+  public boolean isPlanDefined(){
+    return planDefined;
+  }
+  
+  public void setPlanDefined(boolean status){
+    planDefined = status;
+  }
   /**
    * This method retrieves the status of the inputs panel button for version 2
    * @return the inputs button status
    */
-  public int getInputsButtonStatus() {
-    return inputsButtonStatus;
+  public boolean isInputsDefined() {
+    return inputsDefined;
   }
 
   /**
    * This method set sets the inputs button status to the parameter status
    * @param status is the inputs button status
    */
-  public void setInputsButtonStatus(int status) {
-    inputsButtonStatus = status;
-    String color="white";
-    if(status==CORRECT)
-      color="green";
-    else if (status==WRONG)
-      color="red";
-    else if (status==GAVEUP)
-      color="yellow";
-    //logs.trace("The i indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
+  public void setInputsDefined(boolean status) {
+    inputsDefined = status;
   }
 
   /**
    * This method retrieves the status of the calculations panel button for version 2
    * @return the calculations button status
    */
-  public int getCalculationsButtonStatus() {
-    return calculationsButtonStatus;
+  public boolean isCalculationsDefined() {
+    return calculationsDefined;
   }
 
   /**
    * This method set sets the calculations button status to the parameter status
    * @param status is the calculations button status
    */
-  public void setCalculationsButtonStatus(int status) {
-    calculationsButtonStatus = status;
-    String color="white";
-    if(status==CORRECT)
-      color="green";
-    else if (status==WRONG)
-      color="red";
-    else if (status==GAVEUP)
-      color="yellow";
-    //logs.trace("The g indicator of \""+this.nodeName.replace("_", " ")+"\" is changed to "+color);
+  public void setCalculationsDefined(boolean status) {
+    calculationsDefined = status;
   }
 
   /**
    * This method retrieves the status of the graphs panel button for version 2
    * @return the graphs button status
    */
-  public int getGraphsButtonStatus() {
-    return graphsButtonStatus;
+  public boolean isGraphDefined() {
+    return graphsDefined;
   }
 
   /**
    * This method set sets the graphs button status to the parameter status
    * @param status is the graphs button status
    */
-  public void setGraphsButtonStatus(int status) {
-    graphsButtonStatus = status;
+  public void setGraphsDefined(boolean status) {
+    graphsDefined = status;
   }
 
   /**
@@ -340,33 +333,9 @@ public class Selectable {
     moveLabel(50, 50);
   }
 
-//  /**
-//   * Getter method to return the value of the label of the selectable
-//   * @return the label
-//   */
-//  public String getNodeName() {
-//    return label;
-//  }
 
   /**
-   * Setter method to change the value of the label of the selectable
-   * @param label the label to set
-   */
-//  public void setLabel(String label) {
-//    if (label != null) {
-//      if (label.contains("_")) {
-//        this.label = label.replaceAll("_", " ");
-//      } else {
-//        this.label = label;
-//      }
-//    }
-//    else {
-//      label = "";
-//    }
-//  }
-
-  /**
-   * Method to paint the label of a selectable
+   * Method to paint the label of a Vertex in the Canvas
    *
    * @param g
    */
@@ -377,29 +346,21 @@ public class Selectable {
     validateLabelBounds();
     g.setFont(labelFont);
 
-      // begin shadow
-      if (descriptionButtonStatus == CORRECT) {
-        g.setColor(new Color(155,250,140));
-      } else if (descriptionButtonStatus == WRONG) {
-        g.setColor(Color.pink);
-      } else if (descriptionButtonStatus == GAVEUP) {
-        g.setColor(new Color(252,252,130));
-      } else if (descriptionButtonStatus == NOSTATUS) {
-        g.setColor(Color.WHITE);
-      }
+    // begin shadow
+    if (isDescriptionDefined()) 
+      g.setColor(new Color(155,250,140));
+    else 
+      g.setColor(Color.WHITE);
+      
+    g.drawString(nodeName, labelPoint.x - 1, labelPoint.y);
+    g.drawString(nodeName, labelPoint.x + 1, labelPoint.y);
+    g.drawString(nodeName, labelPoint.x, labelPoint.y - 1);
+    g.drawString(nodeName, labelPoint.x, labelPoint.y + 1);
+    // end shadow
 
-      g.drawString(nodeName, labelPoint.x - 1, labelPoint.y);
-      g.drawString(nodeName, labelPoint.x + 1, labelPoint.y);
-      g.drawString(nodeName, labelPoint.x, labelPoint.y - 1);
-      g.drawString(nodeName, labelPoint.x, labelPoint.y + 1);
-      // end shadow
-      // begin text
-
-
-      g.setColor(getColor(Color.black));
-      g.drawString(nodeName, labelPoint.x, labelPoint.y);
-      // end text
-
+    // begin text
+    g.setColor(getColor(Color.black));
+    g.drawString(nodeName, labelPoint.x, labelPoint.y);     
   }
 
   /**

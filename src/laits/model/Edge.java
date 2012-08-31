@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import java.awt.*;
 import java.util.LinkedList;

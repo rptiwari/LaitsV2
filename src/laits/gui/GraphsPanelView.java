@@ -10,9 +10,9 @@ package laits.gui;
 import laits.comm.CommException;
 import laits.data.Task;
 import laits.data.TaskFactory;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.plot.PlotPanel;
 import java.awt.*;
 import javax.swing.JPanel;
@@ -65,11 +65,12 @@ public class GraphsPanelView extends javax.swing.JPanel {
     if ((modelCanvas.getModelHasBeenRun() == true) && (currentVertex.getType() != Vertex.NOTYPE)
             && ((!currentVertex.isNodeEquationEmpty()) || (currentVertex.getType() == Vertex.CONSTANT)))
 
-      userAnswerPanel = new PlotPanel(this.currentVertex);
+      userAnswerPanel = new PlotPanel(currentVertex);
 
-    this.updateDescription();
-    this.testResetLayout();
+    updateDescription();
+    testResetLayout();
   }
+  
   
   public void testResetLayout() {
     allGraphsPanel.removeAll();
@@ -123,7 +124,7 @@ public class GraphsPanelView extends javax.swing.JPanel {
    * currently being edited
    */
   public void updateDescription() {
-    descriptionLabel.setText("<html><b>Description:</b> " + currentVertex.getSelectedDescription() + "</html>");
+    descriptionLabel.setText("<html><b>Description:</b> <br/>" + currentVertex.getSelectedDescription() + "</html>");
   }
 
   public void resetLayout() {
@@ -156,8 +157,12 @@ public class GraphsPanelView extends javax.swing.JPanel {
 
     nodeDescriptionLabel.setText("<html></html>");
 
+    allGraphsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
     userGraphLabel.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
     userGraphLabel.setText("Author's Graph:");
+    allGraphsPanel.add(userGraphLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
+    allGraphsPanel.add(filler1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 303, 447, 41));
 
     userAnswerPanel.setMaximumSize(new java.awt.Dimension(286, 99));
     userAnswerPanel.setPreferredSize(new java.awt.Dimension(286, 99));
@@ -166,53 +171,20 @@ public class GraphsPanelView extends javax.swing.JPanel {
     userAnswerPanel.setLayout(userAnswerPanelLayout);
     userAnswerPanelLayout.setHorizontalGroup(
       userAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 409, Short.MAX_VALUE)
+      .addGap(0, 440, Short.MAX_VALUE)
     );
     userAnswerPanelLayout.setVerticalGroup(
       userAnswerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 109, Short.MAX_VALUE)
+      .addGap(0, 216, Short.MAX_VALUE)
     );
+
+    allGraphsPanel.add(userAnswerPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 440, 216));
 
     correctGraphLabel1.setText("     ");
+    allGraphsPanel.add(correctGraphLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 391, -1, -1));
 
     correctGraphLabel2.setText("                   ");
-
-    javax.swing.GroupLayout allGraphsPanelLayout = new javax.swing.GroupLayout(allGraphsPanel);
-    allGraphsPanel.setLayout(allGraphsPanelLayout);
-    allGraphsPanelLayout.setHorizontalGroup(
-      allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(allGraphsPanelLayout.createSequentialGroup()
-        .addContainerGap()
-        .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(userGraphLabel)
-          .addComponent(correctGraphLabel1)
-          .addComponent(correctGraphLabel2))
-        .addContainerGap(69, Short.MAX_VALUE))
-      .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(allGraphsPanelLayout.createSequentialGroup()
-          .addContainerGap()
-          .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addContainerGap(31, Short.MAX_VALUE)))
-    );
-    allGraphsPanelLayout.setVerticalGroup(
-      allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(allGraphsPanelLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(userGraphLabel)
-        .addGap(18, 18, 18)
-        .addComponent(userAnswerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
-        .addComponent(correctGraphLabel2)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(correctGraphLabel1)
-        .addGap(210, 210, 210))
-      .addGroup(allGraphsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(allGraphsPanelLayout.createSequentialGroup()
-          .addGap(303, 303, 303)
-          .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addContainerGap(262, Short.MAX_VALUE)))
-    );
+    allGraphsPanel.add(correctGraphLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 369, -1, -1));
 
     descriptionLabel.setText("<html><b>Description:</b></html>");
     descriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -224,25 +196,25 @@ public class GraphsPanelView extends javax.swing.JPanel {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addGap(287, 287, 287)
-        .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(287, 287, 287)
+            .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
+        .addGap(20, 20, 20)
+        .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap())
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-          .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-            .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(allGraphsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addGroup(layout.createSequentialGroup()
-            .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(286, 286, 286)))
-        .addGap(90, 90, 90))
+        .addComponent(nodeDescriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(376, 376, 376))
     );
   }// </editor-fold>//GEN-END:initComponents
 

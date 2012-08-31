@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import laits.Main;
 import java.awt.BorderLayout;

@@ -7,11 +7,13 @@
 
 package laits.gui;
 
+import laits.model.DecisionTreeRenderer;
+import laits.model.DescriptionTree;
 import laits.data.DecisionTreeNode;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
-import laits.graph.Graph;
-import laits.graph.Selectable;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
+import laits.model.Graph;
+import laits.model.Selectable;
 import laits.gui.dialog.MessageDialog;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -23,7 +25,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
-import laits.graph.*;
+import laits.common.ErrorMessages;
 import org.apache.log4j.Logger;
 
 
@@ -76,15 +78,23 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     modelGraph = GraphCanvas.getInstance().getGraph();   
   }
   
+  public void initPanel(Vertex inputVertex, boolean newNode){
+    currentVertex = inputVertex;
+    
+    if(newNode)
+      initPanelForNewNode();
+    else
+      initPanelForSavedNode();
+  }
   /**
    * Initialize Description Panel for a particular Vertex
    * @param inputVertex 
    */
-  public void initPanel(Vertex inputVertex){
-    logs.trace("Initializing Description Panel for Vertex "+inputVertex.getNodeName());
-    resetDescriptionPanel();
+  public void initPanelForSavedNode(){
+    logs.trace("Initializing Description Panel for Node "+
+            currentVertex.getNodeName());
     
-    currentVertex = inputVertex;
+    
     nodeNameTextField.setText(currentVertex.getNodeName());
     
     initTree();
@@ -99,6 +109,20 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     quantityDescriptionTextField.setText(currentVertex.getSelectedDescription());
   }
   
+  public void initPanelForNewNode(){
+    logs.trace("Initializing Description Panel for New Node");
+    resetDescriptionPanel();
+    initTree();
+    
+    try {
+      decisionTreePaths = getPaths(decisionTree, true);
+    } catch (Exception ex) {
+      logs.error("Error in Creating Description Tree "+ex.getMessage());
+    }
+
+    initTreeSelectionListener();
+  }
+  
   private void resetDescriptionPanel(){
     nodeNameTextField.setText("");
     quantityDescriptionTextField.setText("");   
@@ -109,7 +133,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     quantityDescriptionTextField.setBackground(Selectable.COLOR_CORRECT);
     nodeNameTextField.setBackground(Selectable.COLOR_CORRECT);
     decisionTree.setEnabled(false);
-    currentVertex.setDescriptionButtonStatus(currentVertex.CORRECT);
+    currentVertex.setDescriptionDefined(true);
     
     if(currentVertex.getNodeName() == "")
       NodeEditor.getInstance().setTitle("New Node");
@@ -235,23 +259,22 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
             .addComponent(referencesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGap(53, 53, 53))
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(jRadioCorrect)
-            .addGap(26, 26, 26)
-            .addComponent(jRadioInCorrect)
-            .addGap(27, 27, 27)
-            .addComponent(buttonAddDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(48, 48, 48))
           .addGroup(contentPanelLayout.createSequentialGroup()
-            .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, contentPanelLayout.createSequentialGroup()
-                .addComponent(NodeNameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 508, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(evenMorePreciseLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-              .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING))
+            .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addGroup(contentPanelLayout.createSequentialGroup()
+                .addComponent(jRadioCorrect)
+                .addGap(26, 26, 26)
+                .addComponent(jRadioInCorrect)
+                .addGap(27, 27, 27)
+                .addComponent(buttonAddDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, contentPanelLayout.createSequentialGroup()
+                  .addComponent(NodeNameLabel)
+                  .addGap(18, 18, 18)
+                  .addComponent(nodeNameTextField))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
+                .addComponent(evenMorePreciseLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)))
             .addContainerGap(30, Short.MAX_VALUE))))
     );
     contentPanelLayout.setVerticalGroup(
@@ -260,21 +283,21 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
         .addContainerGap()
         .addComponent(evenMorePreciseLabel)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(18, 18, 18)
-        .addComponent(referencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(30, 30, 30)
+        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
         .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(NodeNameLabel)
           .addComponent(nodeNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addGap(18, 18, 18)
+        .addComponent(referencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jRadioCorrect)
           .addComponent(jRadioInCorrect)
           .addComponent(buttonAddDesc))
-        .addContainerGap(59, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -436,30 +459,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
    */
   public boolean processSubmitAction(){
 
-    String inputNodeName = nodeNameTextField.getText();
-    String inputDescription = quantityDescriptionTextField.getText();
-    
-    // Validating Input
-    if (inputNodeName.isEmpty()) {
-      MessageDialog.showMessageDialog(null, true, "Node name can not be empty", 
-              modelGraph);
-      return false;
-    }
-    if (inputDescription.isEmpty()) {
-      MessageDialog.showMessageDialog(null, true, 
-              "Quantity Description can not be empty", modelGraph);
-      return false;
-    }
-
-    // Check for Duplicate Node
-    if (duplicatedNode(inputNodeName)) {
-      String message = String.format("A node with name %s already exists in the"
-              + " Graph", inputNodeName);
-      logs.debug(message);
-      MessageDialog.showMessageDialog(null, true, message, modelGraph);
-      nodeNameTextField.setText("");
-      return false;
-    }
+    if(validateNodeName() && validateNodeDescription()){
     
     /* Check if Author has added correct description for the Node
     if(!dTree.nodeHasCorrectDesciption(inputNodeName)){
@@ -475,12 +475,56 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     
     dTree.updateNodeName(dTreeNodeName, inputNodeName);
     */
-    currentVertex.setNodeName(inputNodeName);
-    currentVertex.setSelectedDescription(inputDescription);
+    currentVertex.setNodeName(nodeNameTextField.getText());
+    currentVertex.setSelectedDescription(quantityDescriptionTextField.getText());
     
     // Moves the Label below the node
     currentVertex.defaultLabel();
 
+    return true;
+    }
+    return false;
+  }
+  
+  private boolean validateNodeName(){
+    String inputNodeName = nodeNameTextField.getText();
+    
+    // Check if Node Name is provided
+    if(inputNodeName.isEmpty()){
+      NodeEditor.getInstance().setEditorMessage(ErrorMessages.EMPTY_NODE_ERROR);
+      return false;
+    }
+    
+    // Check for Invalid Names
+    if(inputNodeName.length() == 1){
+      logs.trace("here here");
+      if(inputNodeName.charAt(0) == '+' || inputNodeName.charAt(0) == '-' ||
+              inputNodeName.charAt(0) == '*' || inputNodeName.charAt(0) == '/'){
+        NodeEditor.getInstance().setEditorMessage(
+                ErrorMessages.OPERATOR_AS_NODE_NAME);
+        
+        return false;
+      }        
+    }
+    
+    // Check for Duplicate NodeName
+    if (duplicatedNode(inputNodeName)) {
+      String message = String.format("A node with name %s already exists in the"
+              + " Graph", inputNodeName);
+      NodeEditor.getInstance().setEditorMessage(message);
+      nodeNameTextField.setText("");
+      return false;
+    }
+    
+    return true;
+  }
+  
+  private boolean validateNodeDescription(){
+  if(quantityDescriptionTextField.getText().isEmpty()){
+      NodeEditor.getInstance().setEditorMessage(
+              ErrorMessages.EMPTY_NODE_DESCRIPTION);
+      return false;
+    }
     return true;
   }
 
@@ -522,7 +566,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
       if (node != null) {
         n = (DecisionTreeNode) node.getUserObject();
         //change input button status so that the (g) graphic on the vertex turns white
-        currentVertex.setDescriptionButtonStatus(currentVertex.NOSTATUS);
+        currentVertex.setDescriptionDefined(false);
         //reset background colors
         quantityDescriptionTextField.setBackground(Selectable.COLOR_GREY);
         nodeNameTextField.setBackground(Selectable.COLOR_GREY);

@@ -1,11 +1,11 @@
 package laits;
 
+import laits.model.GraphCanvasScroll;
 import laits.gui.dialog.HelpDialog;
 import laits.gui.dialog.ExitDialog;
 import laits.gui.dialog.SendTicketDialog;
 import laits.gui.dialog.AboutDialog;
 import laits.data.TaskFactory;
-import laits.graph.*;
 import laits.gui.*;
 
 import laits.gui.InstructionPanel;

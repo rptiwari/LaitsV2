@@ -3,7 +3,7 @@
  * Arizona State University
  */
 
-package laits.graph;
+package laits.model;
 
 import laits.LAITSException;
 
@@ -11,20 +11,19 @@ import laits.LAITSException;
  *
  * @author ramayantiwari
  */
+public class InvalidOperandException extends InvalidEquationException{
 
-public class InvalidEquationException extends LAITSException{
-
-  public InvalidEquationException(){
+  public InvalidOperandException(){
     super();
     errorMessage = "Unknown";
   }
 
-  public InvalidEquationException(String err){
+  public InvalidOperandException(String err){
     super(err);
     errorMessage = err;
   }
 
-  public InvalidEquationException(String err, Throwable cause){
+  public InvalidOperandException(String err, Throwable cause){
     super(err, cause);
     errorMessage = err;
   }

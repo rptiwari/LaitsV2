@@ -1,7 +1,7 @@
 package laits.gui.dialog;
 
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
 import java.util.LinkedList;
 import javax.swing.JLabel;
 

@@ -4,9 +4,9 @@
  */
 package laits.gui.controllers;
 
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.gui.CalculationsPanelView;
 import laits.gui.NodeEditor;
 
@@ -50,13 +50,15 @@ public class CalculationPanelHelper {
 
   }
 
-  private void processConstantVertex(){
+  private void processConstantVertex() throws CalculationPanelException{
 
     String fixedValue = calculationPanel.getFixedValue();
 
     if(fixedValue != null && !fixedValue.isEmpty()){
       currentVertex.setInitialValue(
               Double.parseDouble(fixedValue));
+    }else{
+      throw new CalculationPanelException("Initial Value for the Node is not provided");
     }
 
     int size = currentVertex.inedges.size();

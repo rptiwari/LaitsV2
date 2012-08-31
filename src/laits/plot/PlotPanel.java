@@ -2,9 +2,9 @@ package laits.plot;
 
 import laits.data.TaskFactory;
 import laits.Main;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;

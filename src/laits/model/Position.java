@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import javax.vecmath.Vector2d;
 

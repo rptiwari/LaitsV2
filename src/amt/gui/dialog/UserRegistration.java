@@ -5,7 +5,7 @@
 package amt.gui.dialog;
 
 import amt.ApplicationUser;
-import laits.graph.Graph;
+import laits.model.Graph;
 import org.apache.log4j.Logger;
 
 /**

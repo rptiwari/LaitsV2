@@ -1,8 +1,8 @@
 package laits.gui.dialog;
 
 import laits.data.Task;
-import laits.graph.Graph;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.Vertex;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

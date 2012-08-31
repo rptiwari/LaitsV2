@@ -5,10 +5,10 @@
 package laits.gui.controllers;
 
 import java.util.ArrayList;
-import laits.graph.Edge;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Edge;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.gui.DescriptionPanelView;
 import laits.gui.InputsPanelView;
 import laits.gui.NodeEditor;

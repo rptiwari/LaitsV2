@@ -6,7 +6,10 @@
  */
 package laits.gui;
 
-import laits.graph.*;
+import laits.model.Selectable;
+import laits.model.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -46,6 +49,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
   private final DecimalFormat inputDecimalFormat = new DecimalFormat("###0.###");
   private CalculationPanelHelper calculationHelper;
   private static CalculationsPanelView calcView;
+  private boolean isViewEnabled;
   
   /** Logger **/
   private static Logger logs = Logger.getLogger(CalculationsPanelView.class);
@@ -60,7 +64,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
    */
   public static CalculationsPanelView getInstance(){
     if(calcView == null){
-      logs.info("Instantiating Description Panel.");
+      logs.info("Instantiating Calculations Panel.");
       calcView = new CalculationsPanelView();
     }
     
@@ -73,18 +77,37 @@ public class CalculationsPanelView extends javax.swing.JPanel
     modelGraph = GraphCanvas.getInstance().getGraph();   
   }
   
-  public void initPanel(Vertex inputVertex){
-    resetCalculationsPanel();
-            
+  public void initPanel(Vertex inputVertex, boolean newNode){
     currentVertex = inputVertex;
-    initValues();
-    addedOperand(false);
+    
+    if(newNode)
+      initPanelForNewNode();
+    else
+      initPanelForSavedNode();
     
     calculationHelper = new CalculationPanelHelper(modelCanvas, currentVertex, 
                                                    calcView);
   }
   
+  public void initPanelForSavedNode(){
+    logs.trace("Initializing Calculations Panel for Node "+currentVertex.getNodeName());
+    resetCalculationsPanel();
+    
+    initValues();
+    addedOperand(false);    
+    
+  }
+  
+  public void initPanelForNewNode(){
+    logs.trace("Initializing Calculations Panel for Node "+currentVertex.getNodeName());
+    resetCalculationsPanel();
+    
+    initValues();
+    addedOperand(false);    
+  }
+  
   private void resetCalculationsPanel(){
+    isViewEnabled = false;
     buttonGroup1.clearSelection();
     
     fixedValueOptionButton.setEnabled(true);
@@ -95,6 +118,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     
     calculatorPanel.setVisible(true);
     fixedValueLabel.setVisible(true);
+    fixedValueInputBox.setText("");
     fixedValueInputBox.setVisible(true);
     keyPanel.setVisible(true);
     
@@ -115,7 +139,8 @@ public class CalculationsPanelView extends javax.swing.JPanel
     fixedValueOptionButton.setEnabled(true);
     flowValueOptionButton.setEnabled(true);
     stockValueOptionButton.setEnabled(true); 
-
+    
+    logs.trace("Type of this node is "+currentVertex.getType());
 
     if (currentVertex.getType() == Vertex.CONSTANT) {
 
@@ -157,7 +182,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       formulaInputArea.setEnabled(true);
       formulaInputArea.setVisible(true);
 
-    } else if (currentVertex.getType() == laits.graph.Vertex.STOCK) {
+    } else if (currentVertex.getType() == Vertex.STOCK) {
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(true);
       stockValueOptionButton.setSelected(true);
@@ -193,7 +218,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       stockValueOptionButton.setEnabled(false);
       flowValueOptionButton.setEnabled(false);
       calculatorPanel.setVisible(false);
-      if (currentVertex.getCalculationsButtonStatus() != currentVertex.GAVEUP) {
+      if (currentVertex.isCalculationsDefined()) {
         fixedValueInputBox.setVisible(false);
         fixedValueLabel.setVisible(false);
         setKeyboardStatus(false);
@@ -329,7 +354,6 @@ public class CalculationsPanelView extends javax.swing.JPanel
       }
     }
 
-    //updateInputs();
   }
 
   public void resetColors(boolean typeChange) {
@@ -376,7 +400,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       quantitySelectionPanel.setBackground(Selectable.COLOR_CORRECT);
     }
 
-    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    currentVertex.setCalculationsDefined(false);
   }
 
   public void resetColors() {
@@ -387,7 +411,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     currentVertex.setNodeEquationIsCorrect(false);
     
 
-    if (currentVertex.getCalculationsButtonStatus() != currentVertex.NOSTATUS) {
+    if (currentVertex.isCalculationsDefined()) {
       if (!currentVertex.getIsGivenValueCorrect()) {
         fixedValueInputBox.setBackground(Selectable.COLOR_WHITE);
         currentVertex.setIsGivenValueCorrect(false);
@@ -402,69 +426,21 @@ public class CalculationsPanelView extends javax.swing.JPanel
         quantitySelectionPanel.setBackground(Selectable.COLOR_CORRECT);
       }
 
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
     }
   }
 
   private void resetGraphStatus() {
-    Vertex v = new Vertex();
-    int firstNodeWithNoStatus = -1;
-    int firstIndexOfNoStatus = -1;
-    boolean restart = true;
-    int[] nodeStatus = new int[modelGraph.getVertexes().size()];
-
-    logs.trace( "CalculationsPanel - Reset colors.");
-    while (restart) {
-      currentVertex.setGraphsButtonStatus(v.NOSTATUS);
-      modelCanvas.checkNodeForLinksToOtherNodes(currentVertex); // Checks the vertex to see if it is an input to another node
-      for (int a = 0; a < modelGraph.getVertexes().size(); a++) {
-        v = (Vertex) modelGraph.getVertexes().get(a);
-        if (v.getGraphsButtonStatus() == v.NOSTATUS) {
-          if (firstNodeWithNoStatus == -1) {
-            firstNodeWithNoStatus = a;
-          }
-          if (v.getType() == Vertex.CONSTANT || v.getType() == Vertex.FLOW) {
-            for (int i = 0; i < v.inedges.size(); i++) {
-              Vertex current = (Vertex) v.inedges.get(i).end;
-              current.setGraphsButtonStatus(current.NOSTATUS);
-            }
-            for (int i = 0; i < v.outedges.size(); i++) {
-              Vertex current = (Vertex) v.outedges.get(i).end;
-              current.setGraphsButtonStatus(current.NOSTATUS);
-            }
-          } else if (currentVertex.getType() == Vertex.STOCK) {
-            for (int i = 0; i < v.outedges.size(); i++) {
-              Vertex current = (Vertex) v.outedges.get(i).end;
-              current.setGraphsButtonStatus(current.NOSTATUS);
-            }
-          }
-        }
-      }
-
-      for (int i = 0; i < modelGraph.getVertexes().size(); i++) {
-        nodeStatus[i] = ((Vertex) modelGraph.getVertexes().get(i)).getGraphsButtonStatus();
-        if (nodeStatus[i] == currentVertex.NOSTATUS) {
-          if (firstIndexOfNoStatus == -1) {
-            firstIndexOfNoStatus = i;
-          }
-        }
-      }
-
-      restart = (firstIndexOfNoStatus != firstNodeWithNoStatus) ? true : false;
-
-      firstIndexOfNoStatus = -1;
-      firstNodeWithNoStatus = -1;
-
-      //CHANGED nodeEditor.canGraphBeDisplayed();
-    }
+    
+    currentVertex.setGraphsDefined(false);
+    modelCanvas.checkNodeForLinksToOtherNodes(currentVertex); // Checks the vertex to see if it is an input to another node
+    
   }
 
   void restart_calc_panel(boolean TYPE_CHANGE) {
 
-    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    currentVertex.setCalculationsDefined(false);
     clearEquationArea(TYPE_CHANGE);
-    currentVertex.setHasBlueBorder(false);
-
     currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
     initValues();
   }
@@ -1027,7 +1003,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       changed = true;
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
       //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       deleteButton.setEnabled(true);
       resetGraphStatus();
       //reset background colors
@@ -1042,7 +1018,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       changed = true;
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
       //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       deleteButton.setEnabled(true);
       resetGraphStatus();
       //reset background colors
@@ -1059,20 +1035,22 @@ public class CalculationsPanelView extends javax.swing.JPanel
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
      
       //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       resetGraphStatus();
       formulaInputArea.setBackground(Color.WHITE);
       availableInputsJList.setBackground(Color.WHITE);
       deleteLastFormula();
+      
       if (formulaInputArea.getText().isEmpty()) {
         deleteButton.setEnabled(false);
         enableKeyPad();
         availableInputsJList.setEnabled(true);
       }
+      
       modelCanvas.repaint();
       changed = true;
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-
+      initializeAvailableInputNodes();
 }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void stockValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockValueOptionButtonActionPerformed
@@ -1080,7 +1058,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       if (currentVertex.getType() != Vertex.CONSTANT) {
         modelCanvas.setCalculationsPanelChanged(true, currentVertex);
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+        currentVertex.setCalculationsDefined(false);
         currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
         givenValueButtonPreviouslySelected = false;
         while (!this.formulaInputArea.getText().isEmpty()) {
@@ -1100,7 +1078,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
       //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
       givenValueButtonPreviouslySelected = false;
       while (!this.formulaInputArea.getText().isEmpty()) {
@@ -1118,7 +1096,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     }//GEN-LAST:event_flowValueOptionButtonActionPerformed
 
     private void resetCalculationState(){
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
       currentVertex.setCalculationsPanelChanged(true);
     }
@@ -1174,7 +1152,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
         givenValueButtonPreviouslySelected = true;
 
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsButtonStatus(Selectable.NOSTATUS);
+        currentVertex.setCalculationsDefined(false);
         currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
 
         fixedValueLabel.setText(EditorConstants.CALC_PANEL_FIXED_VALUE);
@@ -1186,50 +1164,9 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
     }//GEN-LAST:event_fixedValueOptionButtonActionPerformed
 
-  /**
-   * @author Curt Tyler
-   * @return boolean
-   */
-  public boolean checkForCorrectCalculations() {
-
-    boolean correctness = false;
-    Double enteredValue;
-    if (fixedValueInputBox.getText().trim().isEmpty()) {
-      enteredValue = 0.0;
-      correctness = false;
-    } else {
-      enteredValue = Double.parseDouble(fixedValueInputBox.getText());
-    }
-
-    if (currentVertex.getType() == Vertex.CONSTANT) {
-      // Check if user has entered some value
-      String value = fixedValueInputBox.getText();
-
-      if(value == null || fixedValueInputBox.getText().isEmpty()){
-        return false;
-      }else{
-
-      }
-    } else if (currentVertex.getType() == Vertex.FLOW) {
-      //currentVertex.checkFormulaCorrect(correctVertex.getFormula());
-      correctness = (currentVertex.getIsFormulaCorrect());
-    } else if (currentVertex.getType() == Vertex.STOCK) {
-      //currentVertex.checkFormulaCorrect(correctVertex.getFormula());
-      //currentVertex.setIsGivenValueCorrect(correctVertex.getInitialValue() == enteredValue);
-
-      if (currentVertex.getIsGivenValueCorrect()
-              && currentVertex.getIsFormulaCorrect()) {
-        correctness = true;
-      } else {
-        correctness = false;
-      }
-    }
-
-    return correctness;
-  }
-
+  
     private void fixedValueInputBoxKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fixedValueInputBoxKeyReleased
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+      currentVertex.setCalculationsDefined(false);
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
 
       resetGraphStatus();
@@ -1270,7 +1207,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     changed = true;
     modelCanvas.setCalculationsPanelChanged(true, currentVertex);
     //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    currentVertex.setCalculationsDefined(false);
     deleteButton.setEnabled(true);
     resetGraphStatus();
     //reset background colors
@@ -1287,7 +1224,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     changed = true;
     modelCanvas.setCalculationsPanelChanged(true, currentVertex);
 
-    currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    currentVertex.setCalculationsDefined(false);
     deleteButton.setEnabled(true);
     resetGraphStatus();
 
@@ -1405,7 +1342,27 @@ public class CalculationsPanelView extends javax.swing.JPanel
   public void preparePanelForStock(){
     preparePanelForFlow();
   }
-
+  
+  // TODO: Need more sophisticated calculation checking
+  public boolean validateCalculationsPanel(){
+    if(currentVertex.getType() == Vertex.NOTYPE)
+      return false;
+    try{
+      calculationHelper.processSumitAction();
+    }catch(CalculationPanelException ex){
+      logs.error("Error in Processing Calculations Panel "+ex.getMessage());
+      return false;
+    }  
+    return true;
+  }
+  
+  public boolean isViewEnabled(){
+    return isViewEnabled;
+  }
+  
+  public void setViewEnabled(boolean flag){
+    isViewEnabled = flag;
+  }  
 }
 
 

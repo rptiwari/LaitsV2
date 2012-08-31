@@ -1,7 +1,7 @@
 package laits.gui;
 
 import laits.cover.Cover;
-import laits.graph.Selectable;
+import laits.model.Selectable;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;

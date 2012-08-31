@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import javax.swing.JOptionPane;
 import java.util.*;
-import laits.graph.Graph;
+import laits.model.Graph;
 
 /**
  * This class make the connection with the online database using an HTTP port.

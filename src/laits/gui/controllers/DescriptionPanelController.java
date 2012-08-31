@@ -5,9 +5,9 @@
 
 package laits.gui.controllers;
 
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.gui.DescriptionPanelView;
 import laits.gui.NodeEditor;
 

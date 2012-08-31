@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import laits.Main;
 import laits.cover.Avatar;
@@ -421,15 +421,12 @@ public class GraphCanvas extends JPanel
     int i1 = x + v.width / 2 - distance - iconWidth * 3 / 2;
     int i2 = y + v.height / 2 - iconHeight / 2;
     
-    if (v.getInputsButtonStatus() == Vertex.NOSTATUS) 
+    if (!v.isInputsDefined()) 
         g.drawImage(inputsNoStatus, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getInputsButtonStatus() == Vertex.CORRECT) 
+    else 
         g.drawImage(inputsCorrect, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getInputsButtonStatus() == Vertex.WRONG) {
-        g.drawImage(inputsWrong, i1, i2, iconWidth, iconHeight, this);
-    }
   }
   
   /**
@@ -444,14 +441,12 @@ public class GraphCanvas extends JPanel
     int i1 = x + v.width / 2 - iconWidth / 2;
     int i2 = y + v.height / 2 - iconHeight / 2;
     
-    if (v.getCalculationsButtonStatus() == Vertex.NOSTATUS)
+    if (!v.isCalculationsDefined())
         g.drawImage(calculationsNoStatus, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getCalculationsButtonStatus() == Vertex.CORRECT)
+    else 
         g.drawImage(calculationsCorrect, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getCalculationsButtonStatus() == Vertex  .WRONG) 
-        g.drawImage(calculationsWrong, i1, i2, iconWidth, iconHeight, this);    
   }
   
   /**
@@ -466,14 +461,12 @@ public class GraphCanvas extends JPanel
     int i1 = x + v.width / 2 + iconWidth / 2 + distance;
     int i2 = y + v.height / 2 - iconHeight / 2;
     
-    if (v.getGraphsButtonStatus() == Vertex.NOSTATUS) 
+    if (!v.isGraphDefined()) 
         g.drawImage(graphsNoStatus, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getGraphsButtonStatus() == Vertex.CORRECT) 
+    else
         g.drawImage(graphsCorrect, i1, i2, iconWidth, iconHeight, this);
     
-    else if (v.getGraphsButtonStatus() == Vertex.WRONG) 
-        g.drawImage(graphsWrong, i1, i2, iconWidth, iconHeight, this);
   }
   
   private void closeWindows() {
@@ -486,37 +479,29 @@ public class GraphCanvas extends JPanel
   }
 
   public boolean canRun() {
-    Vertex v;
-    int noneCount = 0; //counts the vertices that fail the runnable test
-    boolean runnable = false;
     int n = modelGraph.getVertexes().size();
-    Object a[] = modelGraph.getVertexes().toArray();
+    
+    if(n==0)
+      return false;
+    
+    Object vertexArray[] = modelGraph.getVertexes().toArray();
+    Vertex v;
+    
     for (int j = 0; j < n; j++) {
-
-      v = (Vertex) a[j];
-      if (v.getEditorOpen() == false && (v.getType() != Vertex.NOTYPE) && (v.getType() != Vertex.CONSTANT)) {
-        // do nothing
-      } else if ((v.getType() == Vertex.CONSTANT) || (v.getType() == Vertex.STOCK)) {
-        if (v.getInitialValue() != Vertex.NOTFILLED) {
-          // do nothing
-        } else {
-          noneCount++;
-        }
-      } else {
-        noneCount++;
-        break;
+      v = (Vertex) vertexArray[j];
+      
+      if(v.getEditorOpen()){
+        return false;
       }
+      
+      if(v.getType() == Vertex.CONSTANT || v.getType() == Vertex.STOCK ){
+        if(v.getInitialValue() == Vertex.NOTFILLED)
+          return false;
+      }
+    
     }
 
-    if (noneCount > 0) {
-      runnable = false;
-    } else if (modelGraph.getVertexes().size() == 0) {
-      runnable = false;
-    } else {
-      runnable = true;
-    }
-    a = null;
-    return runnable;
+    return true;
   }
 
   /**
@@ -1420,6 +1405,11 @@ public class GraphCanvas extends JPanel
     int x = e.getX();
     int y = e.getY();
     Vertex clickedVertex = hitVertex(x, y);
+    if(clickedVertex == null){
+      logs.error("Could not selected the node");
+      return;
+    }
+    
     logs.debug("Mouse clicked on vertex " + clickedVertex.getNodeName());
 
     if (e.getButton() != MouseEvent.BUTTON3 && pressedOnVertex(clickedVertex, e)) {
@@ -1448,7 +1438,7 @@ public class GraphCanvas extends JPanel
                 + clickedVertex.getNodeName());
         
         NodeEditor nodeEditor = NodeEditor.getInstance();
-        nodeEditor.initNodeEditor(clickedVertex);
+        nodeEditor.initNodeEditor(clickedVertex,false);
 
         clickedVertex.setIsOpen(true);
         nodeEditor.setVisible(true);
@@ -1499,18 +1489,6 @@ public class GraphCanvas extends JPanel
     return false;
   }
 
-  public boolean checkNodeForCorrectCalculations(int vertexIndex) {
-    return NodeEditor.getInstance().getCalculationsPanel().checkForCorrectCalculations();
-  }
-
-  public boolean checkNodeForCorrectInputs(int vertexIndex) {
-    return NodeEditor.getInstance().getInputsPanel().checkForCorrectInputs();
-  }
-
-  public boolean checkNodeForCorrectInputSyntactics(int vertexIndex) {
-    return !(NodeEditor.getInstance().getInputsPanel().hasInputError());
-  }
-
   // This method checks a vertex to see if that vertex is an input of another vertex, if it is, the vertex that takes this vertex as
   // an input will have its graphButtonStatus reset.
   public void checkNodeForLinksToOtherNodes(Vertex v) {
@@ -1521,7 +1499,7 @@ public class GraphCanvas extends JPanel
 
         for (int x = 0; x < vertexBeingChecked.inedges.size(); x++) {
           if (vertexBeingChecked.inedges.get(x).start.getNodeName().equalsIgnoreCase(v.getNodeName())); 
-          vertexBeingChecked.setGraphsButtonStatus(vertexBeingChecked.NOSTATUS); // reset the vertex
+          vertexBeingChecked.setGraphsDefined(false); // reset the vertex
           repaint(0); // repaint
         }
       }

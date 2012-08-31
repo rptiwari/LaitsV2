@@ -6,7 +6,11 @@
  */
 package laits.gui;
 
-import laits.graph.*;
+import laits.model.Selectable;
+import laits.model.Edge;
+import laits.model.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
@@ -33,7 +37,8 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
   private final boolean TYPE_CHANGE = true;
   private InputsPanelController inputsPanelController;
   private static InputsPanelView inputView;
-  boolean isSavedNode ;
+  boolean isViewEnabled;
+  boolean extraChangeEvent;
   
   /** Logger **/
   private static Logger logs = Logger.getLogger(InputsPanelView.class);
@@ -46,7 +51,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    */
   public static InputsPanelView getInstance(){
     if(inputView == null){
-      logs.info("Instantiating Description Panel.");
+      logs.info("Instantiating Inputs Panel.");
       inputView = new InputsPanelView();
     }
     
@@ -64,15 +69,26 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     checkboxList = new LinkedList<JCheckBox>();
   }
   
+  public void initPanel(Vertex inputVertex, boolean newNode){
+    currentVertex = inputVertex;
+    
+    if(newNode)
+      initPanelForNewNode();
+    else
+      initPanelForSavedNode();
+    
+    inputsPanelController = new InputsPanelController(modelCanvas, currentVertex, this);
+    extraChangeEvent = false;
+  }
+   
   /**
    * Method to Initialize Input Tab of Node Editor for a particular node
    * @param inputVertex: Vertex for which this Input tab is being constructed
    */ 
-  public void initPanel(Vertex inputVertex){
-    logs.trace("Initializing InputPanel for Vertex "+inputVertex.getNodeName());
+  public void initPanelForSavedNode(){
+    logs.trace("Initializing InputPanel for Vertex "+currentVertex.getNodeName());
     resetInputsPanel();
     
-    currentVertex = inputVertex;
     
     availableInputNodesPanels.setVisible(false);
     undoStack.setSize(1);
@@ -81,8 +97,18 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     updateNodeDescription();
     initAvailableInputNodes();
     loadSavedInputState();
+  }
+  
+  public void initPanelForNewNode(){
+    logs.trace("Initializing InputPanel for New Node");
+    resetInputsPanel();
     
-    inputsPanelController = new InputsPanelController(modelCanvas, currentVertex, this);
+    
+    availableInputNodesPanels.setVisible(false);
+    undoStack.setSize(1);
+    availableInputNodesPanels.setLayout(new GridLayout(modelGraph.getVertexes().size(), 1));
+    
+    initAvailableInputNodes();    
   }
   
   private void resetInputsPanel(){
@@ -93,8 +119,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     availableInputNodesPanels.removeAll();
     availableInputNodesPanels.setEnabled(true);
     checkboxList.clear();
-    
-    isSavedNode = false;
+    isViewEnabled = false;
   }
   
   /**
@@ -222,7 +247,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
               
       for (int j=0; j<checkboxList.size(); j++) {
         if (checkboxList.get(j).getText().equalsIgnoreCase(originNodeName)){
-          isSavedNode = true;
+          extraChangeEvent = true;
           checkboxList.get(j).setSelected(true);
         }  
       }
@@ -235,69 +260,71 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * available input nodes
    */
   public void itemStateChanged(ItemEvent e) {
-    if(isSavedNode)
+    if(extraChangeEvent){
+      extraChangeEvent = false;
       return;
+    }
     
     logs.trace("Input Node selection changed");
     
-      //Reset the Status of Current Node
-      modelCanvas.setInputsPanelChanged(true, currentVertex);
-      currentVertex.setInputsButtonStatus(currentVertex.NOSTATUS);
-      currentVertex.setCalculationsButtonStatus(currentVertex.NOSTATUS);
+    //Reset the Status of Current Node
+    modelCanvas.setInputsPanelChanged(true, currentVertex);
+    currentVertex.setCalculationsDefined(false);
 
-      //Find the box which had the state change
-      Vertex changedVertex = null;
-      
-      for (int i = 0; i < checkboxList.size(); i++)
-        if(e.getSource() == checkboxList.get(i))
-          changedVertex = modelGraph.getVertexByName(checkboxList.get(i).getText());
+    //Find the box which had the state change
+    Vertex changedVertex = null;
 
-      if (changedVertex == null)
-      {
-        logs.debug("Error in Finding Changed Vertex");
-        JOptionPane.showMessageDialog(null, "Cannot get the node you selected!!");
-        return;
+    for (int i = 0; i < checkboxList.size(); i++) {
+      if (e.getSource() == checkboxList.get(i)) {
+        changedVertex = modelGraph.getVertexByName(checkboxList.get(i).getText());
+      }
+    }
+
+    if (changedVertex == null) {
+      logs.debug("Error in Finding Changed Vertex");
+      JOptionPane.showMessageDialog(null, "Cannot get the node you selected!!");
+      return;
+    }
+
+    if (e.getStateChange() == ItemEvent.SELECTED) {
+      modelGraph.addEdge(changedVertex, currentVertex);
+
+      if (!currentVertex.getListInputs().isEmpty()) {
+        currentVertex.setListInputs(currentVertex.getListInputs() + ",");
       }
 
-      if (e.getStateChange() == ItemEvent.SELECTED){
-        modelGraph.addEdge(changedVertex, currentVertex);
-        
-        if (!currentVertex.getListInputs().isEmpty()) {
-          currentVertex.setListInputs( currentVertex.getListInputs() + ",");
-        }
-          
-        currentVertex.setListInputs( currentVertex.getListInputs()+ changedVertex.getNodeName());
-        if (!changedVertex.getListOutputs().isEmpty()) {
-          changedVertex.setListOutputs( changedVertex.getListOutputs() + ",");
-        }
-          
-        changedVertex.setListOutputs( changedVertex.getListOutputs()+ currentVertex.getNodeName());
-        modelCanvas.repaint(0);
-     }else{
-        for (int j = 0; j < currentVertex.inedges.size(); j++){
-          Edge edge = currentVertex.inedges.get(j);
-          
-          if (edge.start == changedVertex && edge.end == currentVertex){
-            currentVertex.inedges.remove(edge);
-            changedVertex.outedges.remove(edge);
-            modelGraph.getEdges().remove(edge);
+      currentVertex.setListInputs(currentVertex.getListInputs() + changedVertex.getNodeName());
+      if (!changedVertex.getListOutputs().isEmpty()) {
+        changedVertex.setListOutputs(changedVertex.getListOutputs() + ",");
+      }
 
-            if (!currentVertex.getListInputs().isEmpty()){
-              currentVertex.deleteFromListInputs( changedVertex.getNodeName());
-            }
-            
-            if (!changedVertex.getListOutputs().isEmpty()){
-              changedVertex.deleteFromListOutputs(currentVertex.getNodeName());
-            }
-            
-            modelCanvas.repaint();
+      changedVertex.setListOutputs(changedVertex.getListOutputs() + currentVertex.getNodeName());
+      modelCanvas.repaint(0);
+    } else {
+      for (int j = 0; j < currentVertex.inedges.size(); j++) {
+        Edge edge = currentVertex.inedges.get(j);
+
+        if (edge.start == changedVertex && edge.end == currentVertex) {
+          currentVertex.inedges.remove(edge);
+          changedVertex.outedges.remove(edge);
+          modelGraph.getEdges().remove(edge);
+
+          if (!currentVertex.getListInputs().isEmpty()) {
+            currentVertex.deleteFromListInputs(changedVertex.getNodeName());
           }
+
+          if (!changedVertex.getListOutputs().isEmpty()) {
+            changedVertex.deleteFromListOutputs(currentVertex.getNodeName());
+          }
+
+          modelCanvas.repaint();
         }
       }
+    }
 
-      NodeEditor.getInstance().getCalculationsPanel().restart_calc_panel(TYPE_CHANGE);
-      resetGraphStatus();
-    
+    NodeEditor.getInstance().getCalculationsPanel().restart_calc_panel(TYPE_CHANGE);
+    resetGraphStatus();
+
   }
   
   
@@ -311,10 +338,9 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     
     for(int i=0;i<totalNodes;i++){
       Vertex current = modelGraph.getVertexes().get(i);
-      current.setGraphsButtonStatus(Vertex.NOSTATUS);
+      current.setGraphsDefined(false);
     }
     
-    NodeEditor.getInstance().canGraphBeDisplayed();
   }
 
  
@@ -485,8 +511,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
      modelCanvas.setInputsPanelChanged(true, currentVertex);
 
      if(currentVertex.getType() == Vertex.STOCK || 
-             currentVertex.getType() == Vertex.FLOW ||
-             currentVertex.getType() == Vertex.AUXILIARY ){
+             currentVertex.getType() == Vertex.FLOW){
         
        for (int i = 0; i < checkboxList.size(); i++){
          if(checkboxList.get(i).isSelected()){
@@ -501,6 +526,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       
      currentVertex.setType(Vertex.CONSTANT);
      NodeEditor.getInstance().getCalculationsPanel().update();
+     NodeEditor.getInstance().setEditorMessage("");
      displayCurrentInputsPanel(false);
      
      fixedValueOptionButton.setEnabled(false);
@@ -517,7 +543,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       if ((currentVertex.getType() == Vertex.FLOW) || 
               (currentVertex.getType() == Vertex.STOCK)) {
         
-        currentVertex.setInputsButtonStatus(currentVertex.NOSTATUS);
+        currentVertex.setInputsDefined(false);
         currentVertex.setInputsSelected(true);
           
         resetGraphStatus();
@@ -535,6 +561,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       inputNodesSelectionOptionButton.setEnabled(false);
       displayCurrentInputsPanel(true);
       NodeEditor.getInstance().getCalculationsPanel().update();
+      NodeEditor.getInstance().setEditorMessage("");
       modelCanvas.repaint(0);
     }//GEN-LAST:event_inputNodesSelectionOptionButtonActionPerformed
 
@@ -552,7 +579,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
     if (!getValueButtonSelected()  && !getInputsButtonSelected() ) {
         syntaxError = true;
     }
-    else if (this.getInputsButtonSelected() == true) {
+    else if (getInputsButtonSelected() == true) {
         syntaxError = true;
         for (JCheckBox box : checkboxList) {
           // If there is at least one inputs check box selected, then there is no error
@@ -561,30 +588,22 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
           }
         }
       }
-
+    logs.trace("Error in Inputs Panel = "+syntaxError);
     return syntaxError;
   }
 
-  /**
-   * This is a modified version of checkButtonActionPerformed. This is to be
-   * used when needing to know if the user has chosen correct inputs, and not
-   * needing this to be done only if the user clicks the checkButton
-   *
-   * @author Curt Tyler
-   * @return boolean
-   */
-  public boolean checkForCorrectInputs() {
-    // Only check for STOCK and FLOW
-
-    if(currentVertex.getType() == Vertex.STOCK || currentVertex.getType() == Vertex.FLOW){
-      if(currentVertex.inDegree()>0){
-        return true;
-      }
-    }
-    return false;
+  
+  public boolean validateInputsPanel(){
+    return !hasInputError();
   }
 
-
+  public boolean isViewEnabled(){
+    return isViewEnabled;
+  }
+  
+  public void setViewEnabled(boolean flag){
+    isViewEnabled = flag;
+  }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JPanel availableInputNodesPanels;

@@ -3,7 +3,7 @@
  * Arizona State University
  */
 
-package laits.graph;
+package laits.model;
 
 import java.util.Deque;
 import java.util.Iterator;

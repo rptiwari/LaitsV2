@@ -1,6 +1,6 @@
 package laits.cover;
 
-import laits.graph.Vertex;
+import laits.model.Vertex;
 import java.awt.*;
 import java.awt.Graphics;
 import javax.swing.JPanel;

@@ -1,5 +1,5 @@
 
-package laits.graph;
+package laits.model;
 
 import java.awt.Component;
 import javax.swing.Icon;

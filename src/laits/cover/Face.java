@@ -1,7 +1,7 @@
 package laits.cover;
 
 import laits.Main;
-import laits.graph.GraphCanvas;
+import laits.model.GraphCanvas;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;

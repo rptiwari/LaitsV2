@@ -1,10 +1,10 @@
 package laits.cover;
 
 import laits.Main;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
 import laits.gui.SideBar;
-import laits.graph.Vertex;
+import laits.model.Vertex;
 import java.awt.*;
 import java.awt.Graphics;
 import javax.swing.JPanel;

@@ -5,9 +5,9 @@ import laits.comm.CommException;
 
 import laits.data.Task;
 import laits.data.TaskFactory;
-import laits.graph.Graph;
-import laits.graph.GraphCanvas;
-import laits.graph.Vertex;
+import laits.model.Graph;
+import laits.model.GraphCanvas;
+import laits.model.Vertex;
 import laits.gui.dialog.MessageDialog;
 
 import java.awt.*;
@@ -134,7 +134,7 @@ public class SideBar {
     modelCanvas.paintVertex(newVertex);
     
     NodeEditor nodeEditor = NodeEditor.getInstance();    
-    nodeEditor.initNodeEditor(newVertex);
+    nodeEditor.initNodeEditor(newVertex,true);
     
     modelCanvas.getOpenTabs().add(nodeEditor);
     resetRunModel();
@@ -206,14 +206,8 @@ public class SideBar {
           return;
         }
 
-
-        //boolean aMissingNode = isMissingNode();
-        boolean aDuplicateNode = false;
-
-
         Vertex current;
         runBtnClickCount++;
-
 
         if (gc.canRun()) {
 
@@ -222,7 +216,7 @@ public class SideBar {
 
             for (int i = 0; i < mmodelGraph.getVertexes().size(); i++) {
               current = (Vertex) mmodelGraph.getVertexes().get(i);
-              current.setGraphsButtonStatus(current.CORRECT);
+              current.setGraphsDefined(true);
               // Because the model was successfully run, this variable gets set to true
               gc.modelHasBeenRanAtLeastOnce = true;
             }
@@ -232,11 +226,7 @@ public class SideBar {
                                             mmodelGraph);
 
         } // cannot run due to syntacs error
-        else if (aDuplicateNode) {
-          String message = "There is a repeated node description somewhere "
-                  + "in your graph.";
-          MessageDialog.showMessageDialog(null, true, message, mmodelGraph);
-        }
+        
         // There is a wrong descriptions somewhere in the graph
         else {
           String message = "All nodes must have calculations before "

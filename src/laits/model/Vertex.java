@@ -1,4 +1,4 @@
-package laits.graph;
+package laits.model;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -7,18 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 
-/**
- * This are the vertexes "nodes" of the graph. Drawing, behavior and vertex
- * attributes are encapsulated here.
- *
- * @author Javier Gonzalez Sanchez
- * @author Lakshmi Sudha Marothu
- * @author Maria Elena Chavez Echeagaray @auther Patrick Lu
- * @author Megan Kearl
- * @author Andrew Williamson
- *
- * @version 04-05-2012
- */
+
 public class Vertex extends Selectable {
 
   //Contants used to define the type of node of the vertex
@@ -76,8 +65,6 @@ public class Vertex extends Selectable {
    * booleans that describe the current state of the node: what is selected, and
    * correct
    */
-  private boolean isCalculationPanelCorrect = false;
-  private boolean isInputsPanelCorrect = false;
   private boolean inputsSelected = false;
   private boolean isOpen = false;// is the node currently opened in the nodeEditor
   private boolean isinputsTypeCorrect = false;
@@ -99,6 +86,7 @@ public class Vertex extends Selectable {
   private boolean hasBlueBorder = false;
   private boolean isUsingAllAvailableInputs = false;
 
+  private boolean hasCorrectInputs = false;
 
 
   /**
@@ -583,58 +571,7 @@ public class Vertex extends Selectable {
    * @return
    */
   public double execute(Graph g) {
-
     return 0.0;
-
-//    int in = inedges.size();
-//    Object inEdges[] = inedges.toArray();
-//    int out = outedges.size();
-//    Object outEdges[] = outedges.toArray();
-//    double inputs = 0.0;
-//    double outputs = 0.0;
-//    double temp=0.0;
-//
-//    if (this.typeNode==STOCK) {
-////      String splitStock[] = this.getFormula().split(" ");
-//      boolean add = true;
-//      for (int i = 0; i < splitStock.length; i++) {
-//        if (!splitStock[i].equals("+") && !splitStock[i].equals("-")) {
-//          String node = splitStock[i].replace("_", " ");
-//          //find the vertex used in the stock eq
-//          for (int j = 0; j < in; j++) {
-//            Edge et = ((Edge) inEdges[j]);
-//            /*
-//             * When using the Version2 of the tool, we can have flows or
-//             * constants connected to Stocks.
-//             */
-//            if (((et.start.typeNode==FLOW)
-//                    || ((et.start.typeNode==CONSTANT)))
-//                    && node.equals(et.start.getNodeName()))
-//            {
-//              if (add) {
-//                inputs = inputs + et.start.execute(g);
-//                break;
-//              } else {
-//                inputs = inputs - et.start.execute(g);
-//                break;
-//              }
-//            }
-//          }
-//        } else if (splitStock[i].equals("+")) {
-//          add = true;
-//        } else if (splitStock[i].equals("-")) {
-//          add = false;
-//        }
-//      }
-//
-//      if (this.formula.isFormulaEmpty()) {
-//        temp = initialValue;
-//      } else {
-//        temp +=  inputs - outputs;
-//      }
-//      return temp;
-//    }
-//    return temp;
   }
 
 
@@ -849,8 +786,6 @@ public class Vertex extends Selectable {
    else {
      return false;
    }
-
-   this.setHasBlueBorder(correct);
    return correct;
   }
 
@@ -1164,40 +1099,13 @@ public class Vertex extends Selectable {
     return this.graphOpen;
   }
 
-  /**
-   * Getter method to see if the node is a debug Node
-   * @return
-   */
-  public boolean getIsDebug() {
-    return isDebug;
-  }
-
-  /**
-   * Setter method to tell if the node is a debug node
-   * @param isDebug
-   */
-  public void setIsDebug(boolean isDebug) {
-    this.isDebug = isDebug;
-    this.setHasBlueBorder(true);
-  }
-
-  public boolean getIsExtraNode() {
-    return isExtraNode;
-  }
-
-  public void setIsExtraNode(boolean isExtraNode) {
-    this.isExtraNode = isExtraNode;
-  }
-
   public boolean getHasBlueBorder() {
     return hasBlueBorder;
   }
 
-  public void setHasBlueBorder(boolean hasBlueBorder) {
-    this.hasBlueBorder = hasBlueBorder;
+  public void setHasBlueBorder(boolean input) {
+    this.hasBlueBorder = input;
   }
-
-
 
   /**
    * Method to paint the Vertex depending on the type of the vertex.
@@ -1340,46 +1248,6 @@ public class Vertex extends Selectable {
     position.y += y;
   }
 
-  /**
-   * Get the string that represent the Vertex
-   *
-   * @return a String with all the information of a Vertex
-   */
-  @Override
-  public String toString() {
-
-    String s = super.toString();
-
-    s += "Instance Variables of Vertex.java:\n";
-    s += "--------------------------------------\n";
-
-    if (this.typeNode!=CONSTANT) {
-      s += "listInputs........'" + listInputs.toString() + "'\n";
-      s += "listOutputs.......'" + listOutputs.toString() + "'\n";
-      s += "formula..............'" + nodeEquation.toString() + "'\n";
-    }
-
-    if (!isDebug) {
-      s += "correctValues: \n\n";
-
-      for (int i = 0; i < correctValues.size(); i++) {
-        s += "\t[" + (i + 1) + "] = '" + correctValues.get(i).toString() + "'\n";
-      }
-    }
-    s += "\nselectedDescription..'" + selectedDescription.toString() + "'\n";
-    s += "selectedPlan.........'" + this.planNodeToString() + "'\n";
-
-    if (typeNode!=CONSTANT) {
-      s += "initialValue.........'" + initialValue + "'\n";
-    }
-
-    s += "type.................'" + this.typeNodeToString()+ "'\n";
-    s += "position.............'" + position + "'\n";
-    s += "------------------------------------------------------------\n";
-
-    return s;
-  }
-  
   public void clearFormula() {
     nodeEquation.clear()  ;
   }
@@ -1529,47 +1397,12 @@ public class Vertex extends Selectable {
     }
   }
 
-  public boolean checkInputCorrectness(Vertex correct){//check the correctness of the entire input tab
-    if(correct.getInputsSelected()!=this.getInputsSelected())
-      return false;
-    if(correct.getType()==Vertex.CONSTANT)
-      return true;
-
-    //not a constant
-    String []correctInputs=correct.getListInputs().split(",");
-    if(this.inedges.size()!=correctInputs.length)
-      return false;
-    for(String correctInput : correctInputs){
-      boolean found=false;
-      for(int i=0;i<this.inedges.size();i++)
-        if(inedges.get(i).start.getNodeName().replaceAll("_", " ").equals(correctInput))
-          found=true;
-      if(!found)
-        return false;
-    }
-    return true;
+  public boolean isInputsCorrect(){
+    return hasCorrectInputs;
   }
-
-  public boolean checkCalCorrectness(Vertex correct){
-    if(correct.getType()!=this.getType())
-      return false;
-    switch(correct.getType())
-    {
-      case Vertex.CONSTANT:
-        if(this.initialValue!=correct.getInitialValue())
-          return false;
-        else
-          return true;
-      case Vertex.STOCK:
-        if(this.initialValue!=correct.getInitialValue())
-          return false;
-      case Vertex.FLOW:
-        isNodeEquationCorrect();
-        return(getIsFormulaCorrect());
-      default:
-        JOptionPane.showMessageDialog(null, "Unexpected node type");
-        return false;
-    }
+  
+  public void setInputsCorrect(boolean flag){
+    hasCorrectInputs = flag;
   }
   
   
