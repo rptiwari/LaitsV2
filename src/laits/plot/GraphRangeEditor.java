@@ -12,6 +12,7 @@ package laits.plot;
 
 import java.awt.Color;
 import laits.data.TaskFactory;
+import laits.model.GraphCanvas;
 
 /**
  *
@@ -234,9 +235,13 @@ public class GraphRangeEditor extends javax.swing.JDialog {
                 e.printStackTrace();
             }
             this.dispose();
+            
+            GraphCanvas.getInstance().resetAllNodeGraphs();
+            GraphCanvas.getInstance().repaint();
         }
     }//GEN-LAST:event_buttonSaveActionPerformed
 
+    
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         // Closing the window on Cancel
         this.dispose();

@@ -4,6 +4,7 @@ import laits.model.Edge;
 import laits.model.Vertex;
 import java.util.*;
 import javax.swing.JOptionPane;
+import laits.common.EditorConstants;
 import org.apache.log4j.Logger;
 
 /**
@@ -513,8 +514,8 @@ public final class Task implements Product {
 
       String userNodeName = v.getNodeName();
       String correctNodeName = listOfVertexes.get(i).getNodeName();
-      String userDesc = v.getSelectedDescription();
-      String correctDesc = listOfVertexes.get(i).getSelectedDescription();
+      String userDesc = v.getCorrectDescription();
+      String correctDesc = listOfVertexes.get(i).getCorrectDescription();
 
       // if the current vertex's nodename equals the nodeName variable
       if (correctNodeName.equalsIgnoreCase(userNodeName) 
@@ -630,7 +631,7 @@ public final class Task implements Product {
         
         Vertex currentVertex = vertexList.get(vertexNum);
         
-        if (currentVertex.getType() == currentVertex.STOCK && pointNumber > 0) {
+        if (currentVertex.getType() == EditorConstants.STOCK && pointNumber > 0) {
 
           double currentValue = currentVertex.correctValues
                     .get(pointNumber - 1); // get the previous value
@@ -672,7 +673,7 @@ public final class Task implements Product {
             
           currentVertex.correctValues.add(currentValue);          
           
-        } else if (currentVertex.getType() == Vertex.FLOW) {
+        } else if (currentVertex.getType() == EditorConstants.FLOW) {
           
             String formulaString = currentVertex.getNodeEquationAsString();
             
@@ -807,19 +808,19 @@ public final class Task implements Product {
         Vertex currentVertex = vertexList.get(i);
         currentVertex.correctValues.clear();
 
-        if (vertexList.get(i).getType() == Vertex.CONSTANT) {
+        if (vertexList.get(i).getType() == EditorConstants.CONSTANT) {
           for (int ii = 0; ii < numberOfPoints; ii++) {
               currentVertex.correctValues.add(currentVertex.getInitialValue());
           }
           constantList.add(vertexList.get(i));
         }
-        else if (vertexList.get(i).getType() == Vertex.STOCK) {
+        else if (vertexList.get(i).getType() == EditorConstants.STOCK) {
           if (currentVertex.correctValues.isEmpty()) {
               currentVertex.correctValues.add(currentVertex.getInitialValue());
           }
           stockList.add(vertexList.get(i));
         }
-        else if (vertexList.get(i).getType() == Vertex.FLOW) {
+        else if (vertexList.get(i).getType() == EditorConstants.FLOW) {
           flowList.add(vertexList.get(i));
         }
       }

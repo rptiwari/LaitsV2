@@ -2,6 +2,8 @@ package laits.model;
 
 import java.awt.*;
 import java.util.LinkedList;
+import laits.common.EditorConstants;
+import org.apache.log4j.Logger;
 
 /**
  * Defines edges/links for the graph.
@@ -24,7 +26,27 @@ public class Edge extends Selectable {
   private LinkedList allEdges;   // All edges in the graph, reference from graph.getEdges()
   private int width  = 10 * size;
   private int height = 5 * size;
+  private static Logger logs = Logger.getLogger(Edge.class);
 
+  public Edge(){
+    super();
+  }
+  public Edge(Edge sourceEdge){
+    multi = sourceEdge.multi;
+    pMid = sourceEdge.pMid;
+    control = sourceEdge.control;
+    length = sourceEdge.length;
+    start = sourceEdge.start;
+    end = sourceEdge.end;
+    p1x = sourceEdge.p1x;
+    p1y = sourceEdge.p1y;
+    p2x = sourceEdge.p2x;
+    p2y = sourceEdge.p2y;
+    edgetype = sourceEdge.edgetype;
+    set = sourceEdge.set;
+    width = sourceEdge.width;
+    height = sourceEdge.height;
+  }
   /**
    *
    * @param x
@@ -128,8 +150,7 @@ public class Edge extends Selectable {
       Point p2 = end.getPosition();
       length = Point.distance(p1.x, p1.y, p2.x, p2.y);
       if (length == 0) return;
-      double dy = p2.y - p1.y;
-      double dx = p2.x - p1.x;
+      
     }
   }
 
@@ -164,8 +185,6 @@ public class Edge extends Selectable {
   @Override
   public String toString() {
     String s = "(Edge de: ";
-    s += " " + start.getNodeName() + " a ";
-    s += " " + end.getNodeName() + " de tipo: ";
     s += " " + edgetype;
     return s + " )";
   }
@@ -287,26 +306,26 @@ public class Edge extends Selectable {
    * @return the edge type (either invalid, flowlink or regularlink)
    */
   public final String edgeType(Vertex start, Vertex end) {
-    if ((start.getType()==Vertex.NOTYPE) || (end.getType()==Vertex.NOTYPE)){
+    if ((start.getType()==EditorConstants.UNDEFINED_TYPE) || (end.getType()==EditorConstants.UNDEFINED_TYPE)){
       //if(start.VERSIONID.equals("112"))
       edgetype = "regularlink";
     } else if (existEdgeBetween(start, end)==0){
       // review that there is not a current edge
-      if ((start.getType()==Vertex.CONSTANT) && ((end.getType()==Vertex.FLOW) || (end.getType()==Vertex.AUXILIARY))) {
+      if ((start.getType()==EditorConstants.CONSTANT) && ((end.getType()==EditorConstants.FLOW) || (end.getType()==EditorConstants.AUXILIARY))) {
         // CONSTANT TYPE. Output: Flow and Auxiliary. Inputs: None.
         edgetype =  "regularlink";
-      } else if ((start.getType()==Vertex.AUXILIARY) && ((end.getType()==Vertex.FLOW) || (end.getType()==Vertex.AUXILIARY))){
+      } else if ((start.getType()==EditorConstants.AUXILIARY) && ((end.getType()==EditorConstants.FLOW) || (end.getType()==EditorConstants.AUXILIARY))){
         // AUXILIARY TYPE. Output: Flow, Auxiliary. Inputs: Constants, Auxiliary, Stock, Flow.
         edgetype =  "regularlink";
-      } else if ((start.getType()==Vertex.FLOW) && (end.getType()==Vertex.STOCK)){
+      } else if ((start.getType()==EditorConstants.FLOW) && (end.getType()==EditorConstants.STOCK)){
         // FLOW TYPE. Outputs: Stock (flowlink), Auxiliary. Inputs: Stock (flowlink / regularlink), auxiliary, constant.
         edgetype =  "flowlink";
-      } else if ((start.getType()==Vertex.FLOW) && (end.getType()==Vertex.AUXILIARY)){
+      } else if ((start.getType()==EditorConstants.FLOW) && (end.getType()==EditorConstants.AUXILIARY)){
         edgetype =  "regularlink";
-      } else if ((start.getType()==Vertex.STOCK) && ((end.getType()==Vertex.AUXILIARY) || (end.getType()==Vertex.STOCK))){
+      } else if ((start.getType()==EditorConstants.STOCK) && ((end.getType()==EditorConstants.AUXILIARY) || (end.getType()==EditorConstants.STOCK))){
         //STOCK TYPE. Outputs: Flow, Auxiliary, Stock. Inputs: Flow, Stock.
         edgetype =  "regularlink";
-      } else if ((start.getType()==Vertex.STOCK) && (end.getType()==Vertex.FLOW)){
+      } else if ((start.getType()==EditorConstants.STOCK) && (end.getType()==EditorConstants.FLOW)){
         edgetype =  "flowlink";
       } else {
         // ANY OTHER CONNECTION IS INVALID
@@ -316,7 +335,7 @@ public class Edge extends Selectable {
       // There is already an edge between this two nodes
       if (existEdgeBetween(start,end)==1){
         Edge edge;
-        if (((start.getType()==Vertex.STOCK) && (end.getType()==Vertex.FLOW))) {
+        if (((start.getType()==EditorConstants.STOCK) && (end.getType()==EditorConstants.FLOW))) {
           for (int i=0; i<this.allEdges.size(); i++){
             edge = (Edge) this.allEdges.toArray()[i];
             if (start.getNodeName().equals(edge.start.getNodeName()) && end.getNodeName().equals(edge.end.getNodeName())){
@@ -330,7 +349,7 @@ public class Edge extends Selectable {
             }
           }
         }
-        else if ((start.getType()==Vertex.FLOW) && (end.getType()==Vertex.STOCK))
+        else if ((start.getType()==EditorConstants.FLOW) && (end.getType()==EditorConstants.STOCK))
         {
           for (int i=0; i<this.allEdges.size(); i++)
           {
@@ -392,7 +411,6 @@ public class Edge extends Selectable {
           cont--;
           exist=true;
        }
-       //return exist;
        System.out.println("EDGE Cont: " + cont);
        return cont;
     }
@@ -586,7 +604,8 @@ public class Edge extends Selectable {
    */
   private void paintFlowLink(Graphics g) {
     validate();
-    double startX = start.getPositionX() + width / 2;
+    
+    double startX = start.getPositionX() + width / 2 ;
     double startY = start.getPositionY() + height / 2;
     double endX = end.getPositionX() + width / 2;
     double endY = end.getPositionY() + height / 2;
@@ -606,34 +625,35 @@ public class Edge extends Selectable {
    * @param g
    */
   private void paintCurvedArrow(Graphics g) {
-      int[] xval = new int[3];
-      int[] yval = new int[3];
-      Point p = JGScalculateControlPoint();
-      double longitude = 10;
-      double angle = 77;
-      double startX = start.getPositionX() + width / 2;
-      double startY = start.getPositionY() + height / 2;
-      double endX = end.getPositionX() + width / 2;
-      double endY = end.getPositionY() + height / 2;
-      double midx = (startX + (endX - startX) / 2);
-      double midy = (startY + (endY - startY) / 2);
-      double r = Math.sqrt((startX - endX) * (startX - endX) + (startY - endY) * (startY - endY));
-      double sinAngle = (endY - startY) / r;
-      double cosAngle = (endX - startX) / r;
-      double pointAx = p.x;
-      double pointAy = p.y;
-      double pointMidx = pointAx - longitude * cosAngle;
-      double pointMidy = pointAy - longitude * sinAngle;
-      double pointBx = (pointAx - pointMidx) * Math.cos(angle) - (pointAy -  pointMidy) * Math.sin(angle) + pointMidx;
-      double pointBy = (pointAx - pointMidx) * Math.sin(angle) + (pointAy -  pointMidy) * Math.cos(angle) + pointMidy;
-      double pointCx = (pointAx - pointMidx) * Math.cos(-angle) - (pointAy -  pointMidy) * Math.sin(-angle) + pointMidx;
-      double pointCy = (pointAx - pointMidx) * Math.sin(-angle) + (pointAy -  pointMidy) * Math.cos(-angle) + pointMidy;
-      xval[0] = (int) pointBx;
-      xval[1] = (int) pointAx;
-      xval[2] = (int) pointCx;
-      yval[0] = (int) pointBy;
-      yval[1] = (int) pointAy;
-      yval[2] = (int) pointCy;
+    
+    int[] xval = new int[3];
+    int[] yval = new int[3];
+    Point p = JGScalculateControlPoint();
+    double longitude = 10;
+    double angle = 77;
+    double startX = start.getPositionX() + width / 2;
+    double startY = start.getPositionY() + height / 2;
+    double endX = end.getPositionX() + width / 2;
+    double endY = end.getPositionY() + height / 2;
+    double midx = (startX + (endX - startX) / 2);
+    double midy = (startY + (endY - startY) / 2);
+    double r = Math.sqrt((startX - endX) * (startX - endX) + (startY - endY) * (startY - endY));
+    double sinAngle = (endY - startY) / r;
+    double cosAngle = (endX - startX) / r;
+    double pointAx = p.x;
+    double pointAy = p.y;
+    double pointMidx = pointAx - longitude * cosAngle;
+    double pointMidy = pointAy - longitude * sinAngle;
+    double pointBx = (pointAx - pointMidx) * Math.cos(angle) - (pointAy - pointMidy) * Math.sin(angle) + pointMidx;
+    double pointBy = (pointAx - pointMidx) * Math.sin(angle) + (pointAy - pointMidy) * Math.cos(angle) + pointMidy;
+    double pointCx = (pointAx - pointMidx) * Math.cos(-angle) - (pointAy - pointMidy) * Math.sin(-angle) + pointMidx;
+    double pointCy = (pointAx - pointMidx) * Math.sin(-angle) + (pointAy - pointMidy) * Math.cos(-angle) + pointMidy;
+    xval[0] = (int) pointBx;
+    xval[1] = (int) pointAx;
+    xval[2] = (int) pointCx;
+    yval[0] = (int) pointBy;
+    yval[1] = (int) pointAy;
+    yval[2] = (int) pointCy;
     Graphics2D g2d = (Graphics2D) g;
     Color temp = g2d.getColor();
     g2d.setColor(getColor(Color.BLACK));

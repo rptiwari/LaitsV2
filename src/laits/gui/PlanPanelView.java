@@ -5,7 +5,7 @@
 
 package laits.gui;
 
-import javax.swing.ButtonGroup;
+import laits.common.EditorConstants;
 import laits.model.Graph;
 import laits.model.GraphCanvas;
 import laits.model.Vertex;
@@ -77,35 +77,35 @@ public class PlanPanelView extends javax.swing.JPanel {
   private void setSelectedPlan(){
     int selectedPlanIndex = currentVertex.getNodePlan();
     logs.debug("Plan for Node "+currentVertex.getNodeName()+" is "+selectedPlanIndex);
-    if(selectedPlanIndex == Vertex.NOPLAN)
+    if(selectedPlanIndex == EditorConstants.UNDEFINED_PLAN)
       return;
     
     switch(selectedPlanIndex){
-      case Vertex.FIXED_VALUE:
+      case EditorConstants.FIXED_VALUE:
         this.fixedNumberButton.setSelected(true);
         break;
         
-      case Vertex.FCT_PROP:
+      case EditorConstants.FCT_PROP:
         this.proportionalValueButton.setSelected(true);
         break;
        
-      case Vertex.ACC_INC:
+      case EditorConstants.ACC_INC:
         this.increaseButton.setSelected(true);
         break;
       
-      case Vertex.ACC_DEC:
+      case EditorConstants.ACC_DEC:
         this.decreaseButton.setSelected(true);
         break;
       
-      case Vertex.ACC_BOTH:
+      case EditorConstants.ACC_BOTH:
         this.bothButton.setSelected(true);
         break;
        
-      case Vertex.FCT_DIFF:
+      case EditorConstants.FCT_DIFF:
         this.differenceButton.setSelected(true);
         break;
         
-      case Vertex.FCT_RATIO:
+      case EditorConstants.FCT_RATIO:
         this.ratioTwoQuantitiesButton.setSelected(true);
         break;
         
@@ -115,28 +115,28 @@ public class PlanPanelView extends javax.swing.JPanel {
   }
   
   public int getSelectedPlan(){
-    int selectedPlanIndex = Vertex.NOPLAN;
+    int selectedPlanIndex = EditorConstants.UNDEFINED_PLAN;
     
     if (fixedNumberButton.isSelected()) 
-      selectedPlanIndex = Vertex.FIXED_VALUE;
+      selectedPlanIndex = EditorConstants.FIXED_VALUE;
     
     else if (proportionalValueButton.isSelected())
-      selectedPlanIndex = Vertex.FCT_PROP;
+      selectedPlanIndex = EditorConstants.FCT_PROP;
     
     else if (increaseButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_INC;
+      selectedPlanIndex = EditorConstants.ACC_INC;
     
     else if (decreaseButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_DEC;
+      selectedPlanIndex = EditorConstants.ACC_DEC;
     
     else if (bothButton.isSelected()) 
-      selectedPlanIndex = Vertex.ACC_BOTH;
+      selectedPlanIndex = EditorConstants.ACC_BOTH;
     
     else if (differenceButton.isSelected())
-      selectedPlanIndex = Vertex.FCT_DIFF;
+      selectedPlanIndex = EditorConstants.FCT_DIFF;
     
     else if (ratioTwoQuantitiesButton.isSelected()) 
-      selectedPlanIndex = Vertex.FCT_RATIO;
+      selectedPlanIndex = EditorConstants.FCT_RATIO;
     
     logs.trace("Selected Plan is "+selectedPlanIndex);
     

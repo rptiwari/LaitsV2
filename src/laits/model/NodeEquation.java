@@ -5,6 +5,7 @@
 
 package laits.model;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ public class NodeEquation {
    */ 
   private String getCleanEquation(String inputEquation){
     String output = inputEquation.trim();
-    output = output.replaceAll(" ", "");
+    //output = output.replaceAll(" ", "");
     return output;
   }
   
@@ -52,7 +53,7 @@ public class NodeEquation {
    * an Equation
    */ 
   private String[] getEquationComponents(String inputEqution){
-    return inputEqution.split("[+-*/]");
+    return inputEqution.split(" ");
   }
   
   /**
@@ -63,13 +64,8 @@ public class NodeEquation {
    */
   public void add(char operator) 
          throws InvalidEquationException, InvalidOperatorException{
-    if(equation.size() == 0){
-      logs.trace("Adding operator "+operator+" before any operand");
-      throw new InvalidEquationException(
-              "Operator must be added after an operand");
-    }
-    
-    equation.add(new Operator(operator));    
+    equation.addLast(new Operator(operator)); 
+    equation.addLast("");
   }  
   
   /**
@@ -90,7 +86,7 @@ public class NodeEquation {
     }  
     
     equation.addLast(new Operand(inputOperand));
-    
+    equation.addLast("");
   }
   
   @Override
@@ -104,9 +100,11 @@ public class NodeEquation {
       if(next instanceof Operator){
         Operator ope = (Operator)next;
         result.append(ope.toString());
+        result.append(" ");
       }else if(next instanceof Operand){
         Operand opr = (Operand)next;
         result.append(opr.toString());
+        result.append(" ");
       }
     }
     
@@ -123,6 +121,7 @@ public class NodeEquation {
   
   public boolean removeLastComponent() throws NoSuchElementException{
     Object component = equation.removeLast();
+    component = equation.removeLast();
     
     if(component instanceof Operator)
       return true;
@@ -180,15 +179,28 @@ public class NodeEquation {
     String givenEquation = getCleanEquation(inputEquation);
     String equationComponents[] = getEquationComponents(givenEquation);
     
+    /*for(int i=0;i<operands.length;i++)
+        givenEquation = givenEquation.replaceFirst(operands[i], "");
+    
+    ArrayList<String> equationComponents = new ArrayList<String>();
+    equationComponents.add(operands[0]);
+    
+    for(int i=0;i<givenEquation.length();i++){
+        equationComponents.add(String.valueOf(givenEquation.charAt(i)));
+        equationComponents.add(operands[i+1]);
+    }
+    */
     for(String equationComponent : equationComponents){
       // Check if the component is an operator
       if(equationComponent.length() == 1){
         try{
           Operator newOpr = new Operator(equationComponent.charAt(0));  
           equation.addLast(newOpr);
+          equation.addLast("");
         }catch(InvalidOperatorException ex){
           Operand newOperand = new Operand(equationComponent);
           equation.addLast(newOperand);
+          equation.addLast("");
         }
         
       }else{

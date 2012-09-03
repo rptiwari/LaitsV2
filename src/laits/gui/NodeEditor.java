@@ -46,6 +46,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
   public boolean graphCanBeDisplayed = false;
   String savedNodeName;
   String savedDescription;
+  boolean savedNodeBorder;
   
   private Point initialClick = new Point();
   //Tab Pane Indexes
@@ -57,6 +58,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
   
   private boolean extraTabEvent;
   private int selectedTab;
+  private Vertex savedVertex;
   
   /** Logger */
   private static Logger logs = Logger.getLogger(NodeEditor.class);
@@ -83,18 +85,18 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
   }
   
   public void initNodeEditor(Vertex inputVertex, boolean newNode){
-    currentVertex = inputVertex;
     if(newNode)
-      initNodeEditorForNewNode();
+      initNodeEditorForNewNode(inputVertex);
     else
-      initNodeEditorForSavedNode();
+      initNodeEditorForSavedNode(inputVertex);
   }
   /**
    * Initialize NodeEditor for a new Node
    */
-  public void initNodeEditorForNewNode(){
+  public void initNodeEditorForNewNode(Vertex inputVertex){
     logs.trace("Initializing NodeEditor for a New Node - Start");
-    
+    currentVertex = inputVertex;
+    savedVertex = null;
     resetNodeEditor();
     initTabs(true);
     addWindowListener(this);
@@ -110,8 +112,17 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
    * Initialize NodeEditor with an existing node
    * @param inputVertex : saved node 
    */
-  public void initNodeEditorForSavedNode(){
-    logs.trace("Initializing NodeEditor for vertex "+currentVertex.getNodeName());
+  public void initNodeEditorForSavedNode(Vertex inputVertex){
+    logs.trace("Initializing NodeEditor for saved vertex ");
+    savedVertex = inputVertex;
+    savedVertex.setIsOpen(true);
+    savedNodeBorder = savedVertex.getHasBlueBorder();
+    savedVertex.setHasBlueBorder(false);
+    
+    currentVertex = new Vertex(inputVertex);
+    modelGraph.delVertex(savedVertex);
+    modelGraph.addVertex(currentVertex);
+    
     resetNodeEditor();
     
     initTabs(false);
@@ -121,6 +132,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     prepareNodeEditorDisplay();
 
     buttonDelete.setEnabled(true);
+    modelCanvas.repaint();
     
   }
   
@@ -178,7 +190,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
       pPanel.initPanel(currentVertex,false);
       iPanel.initPanel(currentVertex,false);
       cPanel.initPanel(currentVertex,false);
-      setSelectedPanel(currentVertex);
+      setSelectedPanel(currentVertex);      
     }
     gPanel.initPanel(currentVertex);
     
@@ -420,7 +432,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
       GraphCanvas.getOpenTabs().clear();
       setVisible(false);
       modelCanvas.getCover().getMenuBar().getNewNodeButton().setEnabled(true);
-      
+      modelCanvas.repaint();
       logs.trace("Closing Node Editor");
   }
 
@@ -684,10 +696,15 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     // Process OK Action for all the Tabs  - OK button is common for all the Tabs
     if(processEditorInput()){
       
-      if(checkNodeCorrectness())
+      if(checkNodeCorrectness()){
         currentVertex.setHasBlueBorder(true);
-      
-      currentVertex.setIsOpen(false);
+        currentVertex.setIsOpen(false);
+          
+        if(savedVertex != null){
+          savedVertex = null;
+        }
+        
+      }
       windowClosing(null);
     }  
   }//GEN-LAST:event_buttonOKActionPerformed
@@ -711,12 +728,22 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
     if(!buttonDelete.isEnabled()){
       logs.trace("Deleting Node "+currentVertex.getNodeName());
       modelGraph.delVertex(currentVertex);
+    }else{
+      modelGraph.delVertex(currentVertex);
+      currentVertex = null;
+      savedVertex.setIsOpen(false);      
+      savedVertex.setHasBlueBorder(savedNodeBorder);
+      modelGraph.addVertex(savedVertex);     
     }
+    modelCanvas.repaint();
     windowClosing(null);
   }
 
   private void processDeleteAction() {
+    logs.trace("Deleting Vertex "+currentVertex.getNodeName()+ "  InEdges="+
+            currentVertex.inedges.size()+" OutEdges="+currentVertex.outedges.size());
     modelGraph.delVertex(currentVertex);
+    savedVertex = null;
     this.windowClosing(null);
   }
   

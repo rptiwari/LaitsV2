@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.Random;
 import javax.swing.*;
+import laits.common.EditorConstants;
 import laits.gui.SituationPanel;
 
 import org.apache.log4j.Logger;
@@ -34,7 +35,7 @@ public class GraphCanvas extends JPanel
   private transient Point moveAllFrom = null;   // When all objects are being moved, this gives the last base point.
   private Point labelOffset = null;   // When allEdges label is being moved, this is the offset of the from the labelPoint to the mouse point.
   private Dimension area;
-  private JFrame frame; //Get JFrame from Main to pass to the equation dialog
+  private Main frame; //Get JFrame from Main to pass to the equation dialog
   private Cover cover;
   public boolean paintDescriptionText = false;
   protected Task task;
@@ -132,7 +133,7 @@ public class GraphCanvas extends JPanel
   }
 
   
-  public JFrame getFrame() {
+  public Main getFrame() {
     return frame;
   }
 
@@ -337,62 +338,6 @@ public class GraphCanvas extends JPanel
     g.drawImage(image, 0, 0, null);
     cover.paint(g);
     
-    
-    Graphics2D g2d = (Graphics2D) g;
-
-    if (!taskLinesInfo.isEmpty()) {
-      logs.trace("here");
-      // the location of the x-coord of the rectangle if the first line is the longest
-      int taskHeaderX = (int) descriptionPos.x - descriptionWidth - xBubbleOffset;
-      
-      // the location of the x-coord of the rectangle if any other line is longest
-      int taskNormalX = (int) descriptionPos.x - descriptionWidth - xBubbleOffset;
-      int yPlacement = (int) descriptionPos.y - descriptionHeight - yBubbleOffset;
-
-      // background of text box
-      g.setColor(Color.white);
-      int i1 = headerFontMetrics.stringWidth(taskLinesInfo.get(0)) + xIndent / 2;
-      int i2 = headerFontMetrics.getHeight() * (taskLinesInfo.size() + 1);
-      
-      g2d.fillRoundRect(taskHeaderX, yPlacement, i1, i2, rectArc, rectArc);
-      
-      // foreground of text area and text
-      g2d.setColor(Color.black);
-      
-      g2d.drawRoundRect(taskHeaderX, yPlacement, i1, i2, rectArc, rectArc);
-      
-      for (int i = 0; i < taskLinesInfo.size(); i++) {
-        if (i == 0) {
-          g.setFont(header);
-          g.drawString(taskLinesInfo.get(i), taskHeaderX + xIndent / 4, 
-                  yPlacement + headerFontMetrics.getHeight());
-        } else {
-          g.setFont(normal);
-          g.drawString(taskLinesInfo.get(i), taskNormalX + xIndent / 4, 
-                  yPlacement + normalFontMetrics.getHeight() * i + 
-                  headerFontMetrics.getHeight());
-        }
-      }
-
-      // this happens for any size task description bubble
-      g.setColor(Color.white);
-      
-      int polygonXpts[] = {(int) descriptionPos.x + descriptionWidth - xBubbleOffset, 
-        (int) descriptionPos.x + descriptionWidth - xIndent / 2 - xBubbleOffset, 
-        (int) descriptionPos.x + descriptionWidth - xIndent / 2 - xBubbleOffset};
-      
-      int polygonYpts[] = {yPlacement + d / 4, yPlacement + d / 2, yPlacement + d / 4};
-      
-      g.fillPolygon(polygonXpts, polygonYpts, polygonXpts.length);
-      g.setColor(Color.black);
-      
-      int i3 = (int) descriptionPos.x + descriptionWidth - xBubbleOffset;
-      int i4 = (int) descriptionPos.x + descriptionWidth - xIndent / 2 - xBubbleOffset;
-      
-      g.drawLine(i3, yPlacement + d / 4, i4, yPlacement + d / 2);
-      g.drawLine(i3, yPlacement + d / 4, i4, yPlacement + d / 4);
-    }
-    
     // Painting all the Vertices in the screen
     for (int i = 0; i < modelGraph.getVertexes().size(); i++) {
       drawVertexIcon(g, modelGraph.getVertexes().get(i));
@@ -494,7 +439,7 @@ public class GraphCanvas extends JPanel
         return false;
       }
       
-      if(v.getType() == Vertex.CONSTANT || v.getType() == Vertex.STOCK ){
+      if(v.getType() == EditorConstants.CONSTANT || v.getType() == EditorConstants.STOCK ){
         if(v.getInitialValue() == Vertex.NOTFILLED)
           return false;
       }
@@ -901,33 +846,6 @@ public class GraphCanvas extends JPanel
     modelGraph.setSelected(v);
   }
 
- 
-
-  /**
-   * Method to process that allEdges Vertex was pressed.
-   *
-   * @param selectedVertex the Vertex
-   * @param e mouse event
-   * @return true if the mouse was pressed on the vertex, false otherwise.
-   */
-  public final boolean pressedOnVertex(Vertex v, MouseEvent e) {
-    if (v == null) {
-      return false;
-    }
-    if (v.equals(modelGraph.getSelected()) && e.getButton() != MouseEvent.BUTTON3) {
-      // Just setSelected the node
-      v.alter();
-      v.isSelectedOnCanvas = true;
-
-      return true;
-    } //ELSE IF THE VERSIONID = 2
-    else {
-      v.alter();
-      v.isSelectedOnCanvas = true;
-      return true;
-    }
-  }
-
   /**
    * Method to process that allEdges Vertex was pressed.
    *
@@ -1010,7 +928,7 @@ public class GraphCanvas extends JPanel
           ed.start.addOutEdge(ed);
           //We don't need to delete the equation of the starting vertex
           v.addInEdge(ed);
-          if ((v.getType() != Vertex.STOCK)) {
+          if ((v.getType() != EditorConstants.STOCK)) {
             v.clearInitialValue();
             v.clearFormula();
           }
@@ -1269,25 +1187,22 @@ public class GraphCanvas extends JPanel
     boolean valid = false;
 
     //NONE TYPE. Inputs: None. Outputs: None.
-    if ((start.getType() == Vertex.NOTYPE) || (end.getType() == Vertex.NOTYPE)) {
+    if ((start.getType() == EditorConstants.UNDEFINED_TYPE) || (end.getType() == EditorConstants.UNDEFINED_TYPE)) {
       valid = false;      
     } else if (existEdgeBetween(start, end) == 0) {
       //Review that there is not allEdges current edge
-      if ((start.getType() == Vertex.CONSTANT) && ((end.getType() == Vertex.FLOW) || (end.getType() == Vertex.AUXILIARY))) {
+      if ((start.getType() == EditorConstants.CONSTANT) && ((end.getType() == EditorConstants.FLOW) || (end.getType() == EditorConstants.AUXILIARY))) {
         //CONSTANT TYPE. Output: Flow and Auxiliary. Inputs: None.
         valid = true;
-      } else if ((start.getType() == Vertex.AUXILIARY) && ((end.getType() == Vertex.FLOW) || (end.getType() == Vertex.AUXILIARY))) {
-        //AUXILIARY TYPE. Output: Flow, Auxiliary. Inputs: Constants, Auxiliary, Stock, Flow.
-        valid = true;
-      } else if ((start.getType() == Vertex.FLOW) && (end.getType() == Vertex.STOCK)) {
+      } else if ((start.getType() == EditorConstants.FLOW) && (end.getType() == EditorConstants.STOCK)) {
         //FLOW TYPE. Outputs: Stock (flowlink), Auxiliary. Inputs: Stock (flowlink / regularlink), auxiliary, constant.
         valid = true;
-      } else if ((start.getType() == Vertex.FLOW) && (end.getType() == Vertex.AUXILIARY)) {
+      } else if ((start.getType() == EditorConstants.FLOW) && (end.getType() == EditorConstants.AUXILIARY)) {
         valid = true;
-      } else if ((start.getType() == Vertex.STOCK) && ((end.getType() == Vertex.AUXILIARY) || (end.getType() == Vertex.STOCK))) {
+      } else if ((start.getType() == EditorConstants.STOCK) && ((end.getType() == EditorConstants.AUXILIARY) || (end.getType() == EditorConstants.STOCK))) {
         //STOCK TYPE. Outputs: Flow, Auxiliary, Stock. Inputs: Flow, Stock.
         valid = true;
-      } else if ((start.getType() == Vertex.STOCK) && (end.getType() == Vertex.FLOW)) {
+      } else if ((start.getType() == EditorConstants.STOCK) && (end.getType() == EditorConstants.FLOW)) {
         valid = true;
       } else {
         //ANY OTHER CONNECTION IS INVALID
@@ -1297,14 +1212,14 @@ public class GraphCanvas extends JPanel
       // There is already an edge between this two nodes
       if (existEdgeBetween(start, end) == 1) {
         Edge edge;
-        if (((start.getType() == Vertex.STOCK) && (end.getType() == Vertex.FLOW))) {
+        if (((start.getType() == EditorConstants.STOCK) && (end.getType() == EditorConstants.FLOW))) {
           for (int i = 0; i < modelGraph.getEdges().size(); i++) {
             edge = (Edge) modelGraph.getEdges().toArray()[i];
             if (start.getNodeName().equals(edge.start.getNodeName()) && end.getNodeName().equals(edge.end.getNodeName())) {
               valid = true;
             }
           }
-        } else if (((start.getType() == Vertex.FLOW) && (end.getType() == Vertex.STOCK))) {
+        } else if (((start.getType() == EditorConstants.FLOW) && (end.getType() == EditorConstants.STOCK))) {
           for (int i = 0; i < modelGraph.getEdges().size(); i++) {
             edge = (Edge) modelGraph.getEdges().toArray()[i];
             if (start.getNodeName().equals(edge.end.getNodeName()) && end.getNodeName().equals(edge.start.getNodeName())) {
@@ -1433,14 +1348,14 @@ public class GraphCanvas extends JPanel
         MessageDialog.showMessageDialog(null, true, "Please close the current Node Editor.", modelGraph);
         logs.trace("MouseClicked, the node " + clickedVertex.getNodeName() + " is already open");
       } 
+      
       else if (!clickedVertex.getIsOpen()) {
         logs.trace("Getting Node Editor Instance to display node "
                 + clickedVertex.getNodeName());
         
         NodeEditor nodeEditor = NodeEditor.getInstance();
         nodeEditor.initNodeEditor(clickedVertex,false);
-
-        clickedVertex.setIsOpen(true);
+        modelGraph.setSelected(clickedVertex);
         nodeEditor.setVisible(true);
         openTabs.add(nodeEditor);
       }
@@ -1448,6 +1363,33 @@ public class GraphCanvas extends JPanel
 
   }
 
+  /**
+   * Method to process that allEdges Vertex was pressed.
+   *
+   * @param selectedVertex the Vertex
+   * @param e mouse event
+   * @return true if the mouse was pressed on the vertex, false otherwise.
+   */
+  public final boolean pressedOnVertex(Vertex v, MouseEvent e) {
+    if (v == null) {
+      logs.trace("V is NULL");
+      return false;
+    }
+    if (v.equals(modelGraph.getSelected()) && e.getButton() != MouseEvent.BUTTON3) {
+      // Just setSelected the node
+      v.alter();
+      v.isSelectedOnCanvas = true;
+
+      return true;
+    } //ELSE IF THE VERSIONID = 2
+    else {
+      v.alter();
+      v.isSelectedOnCanvas = true;
+      return true;
+    }
+  }
+  
+  
   @Override
   public Dimension getPreferredSize() {
     if (imageSize.equals(area)) {
@@ -1507,6 +1449,12 @@ public class GraphCanvas extends JPanel
 
   }
 
+  
+  public void resetAllNodeGraphs(){
+    for(Vertex v : modelGraph.getVertexes()){
+      v.setGraphsDefined(false);
+    }
+  }
   @Override
   public void componentShown(ComponentEvent e) {
   }

@@ -26,6 +26,7 @@ import javax.swing.text.DefaultFormatter;
 import laits.common.EditorConstants;
 import laits.gui.controllers.CalculationPanelException;
 import laits.gui.controllers.CalculationPanelHelper;
+import laits.model.Edge;
 import org.apache.log4j.Logger;
 
 
@@ -142,7 +143,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     
     logs.trace("Type of this node is "+currentVertex.getType());
 
-    if (currentVertex.getType() == Vertex.CONSTANT) {
+    if (currentVertex.getType() == EditorConstants.CONSTANT) {
 
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(false);
@@ -159,7 +160,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       }
       setKeyboardStatus(true);
       
-    }else if (currentVertex.getType() == Vertex.FLOW) {
+    }else if (currentVertex.getType() == EditorConstants.FLOW) {
       // the fixed value button is not enabled, the only choices are function or accumulator
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(true);
@@ -182,7 +183,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       formulaInputArea.setEnabled(true);
       formulaInputArea.setVisible(true);
 
-    } else if (currentVertex.getType() == Vertex.STOCK) {
+    } else if (currentVertex.getType() == EditorConstants.STOCK) {
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(true);
       stockValueOptionButton.setSelected(true);
@@ -212,7 +213,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
       fixedValueInputBox.setVisible(true);
       fixedValueInputBox.setEnabled(true);
 
-    } else if ((currentVertex.getType() == Vertex.NOTYPE) && (!currentVertex.getInputsSelected())) {
+    } else if ((currentVertex.getType() == EditorConstants.UNDEFINED_TYPE) && (!currentVertex.getInputsSelected())) {
       //If the user does not define the inputs first he or she could not define any calculation
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(false);
@@ -224,7 +225,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
         setKeyboardStatus(false);
       }
       this.disableKeyPad();
-    } else if ((currentVertex.getType() == Vertex.NOTYPE) && (currentVertex.getInputsSelected())) {
+    } else if ((currentVertex.getType() == EditorConstants.UNDEFINED_TYPE) && (currentVertex.getInputsSelected())) {
       //the user selected inptus in the inputs tab, but has ot selected anything yet in the calculation tab.
       fixedValueOptionButton.setEnabled(false);
       stockValueOptionButton.setEnabled(true);
@@ -268,9 +269,12 @@ public class CalculationsPanelView extends javax.swing.JPanel
     if (inEdgesSize > 0) {
       int count = 0;
       String operandName = "";
-
+      Edge thisEdge;
+      
       for (int i = 0; i < inEdgesSize; i++) {
-        operandName = currentVertex.inedges.get(i).start.getNodeName();
+        thisEdge = currentVertex.inedges.get(i);
+        setLinkType(thisEdge);
+        operandName = thisEdge.start.getNodeName();
 
         if (!currentVertex.containsOperandInNodeEquation(operandName)) {
           availableInputJListModel.add(count++, operandName);
@@ -285,6 +289,13 @@ public class CalculationsPanelView extends javax.swing.JPanel
     }
 
     availableInputsJList.repaint();
+  }
+  
+  private void setLinkType(Edge inputEdge){
+    if(currentVertex.getType() == EditorConstants.FLOW)
+       inputEdge.setEdgeType("flowlink");
+    else if(currentVertex.getType() == EditorConstants.STOCK)
+       inputEdge.setEdgeType("regularlink");
   }
   
   public void showThatJListModelHasNoInputs() {
@@ -306,6 +317,11 @@ public class CalculationsPanelView extends javax.swing.JPanel
   }
   
 
+  private void clearEquation(){
+    currentVertex.clearNodeEquation();
+    formulaInputArea.setText("");
+  }
+  
   /**
    * Update displayed equation in the text area by removing the last value
    * entered
@@ -318,7 +334,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     resetGraphStatus();
     currentVertex.removeLastElementFromNodeEquation();
 
-    String formula = this.formulaInputArea.getText().trim();
+    String formula = formulaInputArea.getText().trim();
     if (!formula.endsWith("+") && !formula.endsWith("-") && !formula.endsWith("*") && !formula.endsWith("/")) //the deleted item is a vertex
     {
       String delVertexName;
@@ -343,7 +359,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
   public void commitEdit() {
     resetGraphStatus();
     
-    if (currentVertex.getType() == Vertex.FLOW || currentVertex.getType() == Vertex.STOCK) {
+    if (currentVertex.getType() == EditorConstants.FLOW || currentVertex.getType() == EditorConstants.STOCK) {
       String formulaStr = currentVertex.getNodeEquationAsString();
       formulaInputArea.setText(formulaStr);
       
@@ -378,7 +394,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     if (!currentVertex.getIsCalculationTypeCorrect() || typeChange) {
       //  radioButtonPanel.setBackground(Selectable.COLOR_WRONG);
       currentVertex.setIsInputsTypeCorrect(false);
-      if (currentVertex.getType() == Vertex.STOCK || currentVertex.getType() == Vertex.FLOW) {
+      if (currentVertex.getType() == EditorConstants.STOCK || currentVertex.getType() == EditorConstants.FLOW) {
         fixedValueOptionButton.setSelected(false);
         fixedValueOptionButton.setEnabled(false);
         stockValueOptionButton.setEnabled(true);
@@ -386,10 +402,10 @@ public class CalculationsPanelView extends javax.swing.JPanel
         stockValueOptionButton.setSelected(false);
         flowValueOptionButton.setSelected(false);
         currentVertex.setIsCalculationTypeCorrect(false);
-        if (currentVertex.getType() == Vertex.FLOW) {
+        if (currentVertex.getType() == EditorConstants.FLOW) {
           enableKeyPad();
           deleteButton.setEnabled(true);
-        } else if (currentVertex.getType() == Vertex.STOCK) {
+        } else if (currentVertex.getType() == EditorConstants.STOCK) {
           disableKeyPad();
           addButton.setEnabled(true);
           subtractButton.setEnabled(true);
@@ -440,8 +456,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
   void restart_calc_panel(boolean TYPE_CHANGE) {
 
     currentVertex.setCalculationsDefined(false);
-    clearEquationArea(TYPE_CHANGE);
-    currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+    clearEquationArea(TYPE_CHANGE);    
     initValues();
   }
 
@@ -455,8 +470,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
     if ((currentVertex.getInitialValue() != Vertex.NOTFILLED) || typeChange) {
       fixedValueInputBox.setText("");
       currentVertex.clearInitialValue();
-    }
-    currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+    }    
   }
 
   /**
@@ -569,7 +583,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
   private void addedOperand(boolean justAdded) {
     if (justAdded) {
       availableInputsJList.setEnabled(false);
-      if (currentVertex.getType() == Vertex.STOCK) {
+      if (currentVertex.getType() == EditorConstants.STOCK) {
         this.enableKeyPadForStock();
       } else {
         enableKeyPad();
@@ -1054,52 +1068,43 @@ public class CalculationsPanelView extends javax.swing.JPanel
 }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void stockValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockValueOptionButtonActionPerformed
-     
-      if (currentVertex.getType() != Vertex.CONSTANT) {
-        modelCanvas.setCalculationsPanelChanged(true, currentVertex);
-        //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
-        currentVertex.setCalculationsDefined(false);
-        currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
-        givenValueButtonPreviouslySelected = false;
-        while (!this.formulaInputArea.getText().isEmpty()) {
-          this.deleteLastFormula();
-        }
-        currentVertex.clearInitialValue();
-        currentVertex.setType(Vertex.STOCK);
-        initializeAvailableInputNodes();
-        initValues();
-        this.enableKeyPadForStock();
-        modelCanvas.repaint(0);
-        logs.trace("CalculationsPanel.accumulatesButtonActionPerformed.1");
-      }
-    }//GEN-LAST:event_stockValueOptionButtonActionPerformed
-
-    private void flowValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowValueOptionButtonActionPerformed
+      logs.trace("Preparing UI for Stock Node");
 
       modelCanvas.setCalculationsPanelChanged(true, currentVertex);
       //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
       currentVertex.setCalculationsDefined(false);
-      currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
+      
       givenValueButtonPreviouslySelected = false;
-      while (!this.formulaInputArea.getText().isEmpty()) {
-        this.deleteLastFormula();
-      }
+
+      clearEquation();
       currentVertex.clearInitialValue();
-      currentVertex.setType(Vertex.FLOW);
+      currentVertex.setType(EditorConstants.STOCK);
+
       initializeAvailableInputNodes();
       initValues();
-      this.enableKeyPadForStock();//funtion cannot use * or / in the first position
+      enableKeyPadForStock();
       modelCanvas.repaint(0);
-      logs.trace("CalculationsPanel.functionButtonActionPerformed.1");
 
+    }//GEN-LAST:event_stockValueOptionButtonActionPerformed
 
+    private void flowValueOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowValueOptionButtonActionPerformed
+      logs.trace("Preparing UI for Flow Node");
+      modelCanvas.setCalculationsPanelChanged(true, currentVertex);
+      //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
+      currentVertex.setCalculationsDefined(false);
+      
+      givenValueButtonPreviouslySelected = false;
+      
+      clearEquation();
+      currentVertex.clearInitialValue();
+      currentVertex.setType(EditorConstants.FLOW);
+      initializeAvailableInputNodes();
+      initValues();
+      enableKeyPadForStock();//funtion cannot use * or / in the first position
+      modelCanvas.repaint(0);
+      
     }//GEN-LAST:event_flowValueOptionButtonActionPerformed
 
-    private void resetCalculationState(){
-      currentVertex.setCalculationsDefined(false);
-      currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
-      currentVertex.setCalculationsPanelChanged(true);
-    }
     
     /**
      * This method will remove the given node from Available Input Nodes jList
@@ -1137,11 +1142,8 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
       // Disable jListBox if there are no inputs to be selected
       if (availableInputsJList.getModel().getSize() == 0) {
-        logs.trace("No More Input elements to select");
-        currentVertex.setIsUsingAllAvailableInputs(true);
+        logs.trace("No More Input elements to select");        
         availableInputsJList.setEnabled(false);
-      } else {
-        currentVertex.setIsUsingAllAvailableInputs(false);
       }
 }//GEN-LAST:event_availableInputsJListMouseClicked
 
@@ -1153,8 +1155,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
         //change the calculation and graph status so that the (c) and (g) circles on the vertex turns white
         currentVertex.setCalculationsDefined(false);
-        currentVertex.currentStatePanel[Selectable.CALC] = Selectable.NOSTATUS;
-
+        
         fixedValueLabel.setText(EditorConstants.CALC_PANEL_FIXED_VALUE);
         needInputLabel.setText("");
         initValues();
@@ -1321,7 +1322,7 @@ public class CalculationsPanelView extends javax.swing.JPanel
 
   public void doSubmit() throws CalculationPanelException {
     // If TYPE of Vertex is uundefined, return;
-    if(currentVertex.getType() == Vertex.NOTYPE)
+    if(currentVertex.getType() == EditorConstants.UNDEFINED_TYPE)
       return ;
 
     calculationHelper.processSumitAction();
@@ -1345,9 +1346,15 @@ public class CalculationsPanelView extends javax.swing.JPanel
   
   // TODO: Need more sophisticated calculation checking
   public boolean validateCalculationsPanel(){
-    if(currentVertex.getType() == Vertex.NOTYPE)
+    int type = currentVertex.getType();
+    
+    if(type == EditorConstants.UNDEFINED_TYPE)
       return false;
     try{
+      if ((type == EditorConstants.STOCK || type == EditorConstants.FLOW) && availableInputsJList.getModel().getSize() != 0) {
+        logs.trace("All the Inputs are not used");        
+        return false;
+      }
       calculationHelper.processSumitAction();
     }catch(CalculationPanelException ex){
       logs.error("Error in Processing Calculations Panel "+ex.getMessage());

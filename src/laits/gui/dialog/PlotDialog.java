@@ -97,8 +97,7 @@ public class PlotDialog extends javax.swing.JDialog implements WindowListener {
 
     public void windowClosed(WindowEvent e)
     {
-        node.setGraphOpen(false);
-        graph.getPlots().remove(this);
+      graph.getPlots().remove(this);
     }
 
     public void windowIconified(WindowEvent e){}

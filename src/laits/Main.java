@@ -14,6 +14,7 @@ import java.awt.event.WindowListener;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import laits.model.GraphCanvas;
 import laits.plot.GraphRangeEditor;
 import org.apache.log4j.Logger;
 
@@ -132,163 +133,177 @@ public class Main extends JFrame implements WindowListener {
    * NETBEANS CODE ---------------------------------------------------------
    */
   @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
 
-        statusBar = new javax.swing.JPanel();
-        ticketPanel = new javax.swing.JPanel();
-        statusBarLabel = new javax.swing.JLabel();
-        tabPane = new javax.swing.JTabbedPane();
-        instructionPanel = new javax.swing.JPanel();
-        problemPanel = new javax.swing.JPanel();
-        mainPanel = new javax.swing.JPanel();
-        centerPanel = new javax.swing.JPanel();
-        graphCanvasScrollPane = new javax.swing.JPanel();
-        menuBar = new javax.swing.JMenuBar();
-        menuFile = new javax.swing.JMenu();
-        menuItemNewTask = new javax.swing.JMenuItem();
-        menuItemOpenTask = new javax.swing.JMenuItem();
-        menuItemSaveTask = new javax.swing.JMenuItem();
-        menuItemSaveAs = new javax.swing.JMenuItem();
-        menuItemEditTimeRange = new javax.swing.JMenuItem();
-        menuItemGenerateSolution = new javax.swing.JMenuItem();
-        menuItemExit = new javax.swing.JMenuItem();
-        menuHelp = new javax.swing.JMenu();
-        menuItemAbout = new javax.swing.JMenuItem();
-        menuItemHelp = new javax.swing.JMenuItem();
-        separator = new javax.swing.JPopupMenu.Separator();
-        menuItemFeedback = new javax.swing.JMenuItem();
+    statusBar = new javax.swing.JPanel();
+    ticketPanel = new javax.swing.JPanel();
+    statusBarLabel = new javax.swing.JLabel();
+    tabPane = new javax.swing.JTabbedPane();
+    instructionPanel = new javax.swing.JPanel();
+    problemPanel = new javax.swing.JPanel();
+    mainPanel = new javax.swing.JPanel();
+    centerPanel = new javax.swing.JPanel();
+    graphCanvasScrollPane = new javax.swing.JPanel();
+    menuBar = new javax.swing.JMenuBar();
+    menuFile = new javax.swing.JMenu();
+    menuItemNewTask = new javax.swing.JMenuItem();
+    menuItemOpenTask = new javax.swing.JMenuItem();
+    menuItemSaveTask = new javax.swing.JMenuItem();
+    menuItemSaveAs = new javax.swing.JMenuItem();
+    menuItemEditTimeRange = new javax.swing.JMenuItem();
+    menuItemGenerateSolution = new javax.swing.JMenuItem();
+    menuItemExit = new javax.swing.JMenuItem();
+    jMenuItem1 = new javax.swing.JMenuItem();
+    menuHelp = new javax.swing.JMenu();
+    menuItemAbout = new javax.swing.JMenuItem();
+    menuItemHelp = new javax.swing.JMenuItem();
+    separator = new javax.swing.JPopupMenu.Separator();
+    menuItemFeedback = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Affective Meta Tutor");
+    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setTitle("Affective Meta Tutor");
 
-        statusBar.setLayout(new java.awt.BorderLayout());
+    statusBar.setLayout(new java.awt.BorderLayout());
 
-        ticketPanel.setLayout(new java.awt.BorderLayout());
+    ticketPanel.setLayout(new java.awt.BorderLayout());
 
-        statusBarLabel.setText("*");
-        ticketPanel.add(statusBarLabel, java.awt.BorderLayout.CENTER);
+    statusBarLabel.setText("  ");
+    ticketPanel.add(statusBarLabel, java.awt.BorderLayout.CENTER);
 
-        statusBar.add(ticketPanel, java.awt.BorderLayout.CENTER);
+    statusBar.add(ticketPanel, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(statusBar, java.awt.BorderLayout.SOUTH);
+    getContentPane().add(statusBar, java.awt.BorderLayout.SOUTH);
 
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Instructions</body></html>", instructionPanel);
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Situation</body></html>", problemPanel);
+    tabPane.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        tabPaneMouseClicked(evt);
+      }
+    });
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Instructions</body></html>", instructionPanel);
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Situation</body></html>", problemPanel);
 
-        mainPanel.setLayout(new java.awt.BorderLayout());
+    mainPanel.setLayout(new java.awt.BorderLayout());
 
-        centerPanel.setLayout(new java.awt.BorderLayout());
+    centerPanel.setLayout(new java.awt.BorderLayout());
 
-        graphCanvasScrollPane.setLayout(new java.awt.GridLayout(1, 0));
-        centerPanel.add(graphCanvasScrollPane, java.awt.BorderLayout.CENTER);
+    graphCanvasScrollPane.setLayout(new java.awt.GridLayout(1, 0));
+    centerPanel.add(graphCanvasScrollPane, java.awt.BorderLayout.CENTER);
 
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+    mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
 
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Model</body></html>", mainPanel);
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Model</body></html>", mainPanel);
 
-        getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
+    getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
 
-        menuFile.setBorder(null);
-        menuFile.setText("File");
+    menuFile.setBorder(null);
+    menuFile.setText("File");
 
-        menuItemNewTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        menuItemNewTask.setText("New Task");
-        menuItemNewTask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemNewTaskActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemNewTask);
+    menuItemNewTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+    menuItemNewTask.setText("New Task");
+    menuItemNewTask.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemNewTaskActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemNewTask);
 
-        menuItemOpenTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        menuItemOpenTask.setText("Open Task...");
-        menuItemOpenTask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemOpenTaskActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemOpenTask);
+    menuItemOpenTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+    menuItemOpenTask.setText("Open Task...");
+    menuItemOpenTask.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemOpenTaskActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemOpenTask);
 
-        menuItemSaveTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        menuItemSaveTask.setText("Save Task...");
-        menuItemSaveTask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemSaveTaskActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemSaveTask);
+    menuItemSaveTask.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+    menuItemSaveTask.setText("Save Task...");
+    menuItemSaveTask.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemSaveTaskActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemSaveTask);
 
-        menuItemSaveAs.setText("Save As");
-        menuItemSaveAs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemSaveAsActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemSaveAs);
+    menuItemSaveAs.setText("Save As");
+    menuItemSaveAs.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemSaveAsActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemSaveAs);
 
-        menuItemEditTimeRange.setText("Edit Time Range");
-        menuItemEditTimeRange.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemEditTimeRangeActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemEditTimeRange);
+    menuItemEditTimeRange.setText("Edit Time Range");
+    menuItemEditTimeRange.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemEditTimeRangeActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemEditTimeRange);
 
-        menuItemGenerateSolution.setText("Generate Solution");
-        menuItemGenerateSolution.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemGenerateSolutionActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemGenerateSolution);
+    menuItemGenerateSolution.setText("Generate Solution");
+    menuItemGenerateSolution.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemGenerateSolutionActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemGenerateSolution);
 
-        menuItemExit.setText("Exit");
-        menuItemExit.setActionCommand("ExitCommand");
-        menuItemExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemExitActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemExit);
+    menuItemExit.setText("Exit");
+    menuItemExit.setActionCommand("ExitCommand");
+    menuItemExit.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemExitActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemExit);
 
-        menuBar.add(menuFile);
+    jMenuItem1.setText("jMenuItem1");
+    jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jMenuItem1ActionPerformed(evt);
+      }
+    });
+    menuFile.add(jMenuItem1);
 
-        menuHelp.setText("Help");
+    menuBar.add(menuFile);
 
-        menuItemAbout.setText("About...");
-        menuItemAbout.setActionCommand("menuItemAbout");
-        menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemAboutActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemAbout);
+    menuHelp.setText("Help");
 
-        menuItemHelp.setText("Help");
-        menuItemHelp.setActionCommand("menuItemAbout");
-        menuItemHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemHelpActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemHelp);
-        menuHelp.add(separator);
+    menuItemAbout.setText("About...");
+    menuItemAbout.setActionCommand("menuItemAbout");
+    menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemAboutActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemAbout);
 
-        menuItemFeedback.setText("Send Feedback...");
-        menuItemFeedback.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemFeedbackActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemFeedback);
+    menuItemHelp.setText("Help");
+    menuItemHelp.setActionCommand("menuItemAbout");
+    menuItemHelp.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemHelpActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemHelp);
+    menuHelp.add(separator);
 
-        menuBar.add(menuHelp);
+    menuItemFeedback.setText("Send Feedback...");
+    menuItemFeedback.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemFeedbackActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemFeedback);
 
-        setJMenuBar(menuBar);
+    menuBar.add(menuHelp);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+    setJMenuBar(menuBar);
+
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
 
   /**
    * Method to display the dialog box of "About..." from the "Help" menu at the
@@ -414,6 +429,17 @@ public class Main extends JFrame implements WindowListener {
     }
   }//GEN-LAST:event_menuItemSaveAsActionPerformed
 
+  private void tabPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabPaneMouseClicked
+    // TODO add your handling code here:
+    resetStatusMessage();
+  }//GEN-LAST:event_tabPaneMouseClicked
+
+  private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    // TODO add your handling code here:
+    logs.info("Vertices: "+GraphCanvas.getInstance().getGraph().getVertexes().size());
+    logs.info("Vertices: "+GraphCanvas.getInstance().getGraph().getEdges().size());
+  }//GEN-LAST:event_jMenuItem1ActionPerformed
+
   private void openNewTask() {
     JFileChooser fc = new JFileChooser();
 
@@ -427,9 +453,8 @@ public class Main extends JFrame implements WindowListener {
       // Remove all the existing nodes
       graphCanvasScroll.getGraphCanvas().deleteAll();
 
-      SolutionManager.getSolutionManager().loadSavedSolutioin(
+      ModelPersistenceManager.getPersistenceManager().loadSavedModel(
                 openFile.getAbsolutePath(),
-                graphCanvasScroll.getGraphCanvas(),
                 situationView);
     }
   }
@@ -473,31 +498,32 @@ public class Main extends JFrame implements WindowListener {
   public void performCleanUp(){
 
   }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel centerPanel;
-    private javax.swing.JPanel graphCanvasScrollPane;
-    private javax.swing.JPanel instructionPanel;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenu menuFile;
-    private javax.swing.JMenu menuHelp;
-    private javax.swing.JMenuItem menuItemAbout;
-    private javax.swing.JMenuItem menuItemEditTimeRange;
-    private javax.swing.JMenuItem menuItemExit;
-    private javax.swing.JMenuItem menuItemFeedback;
-    private javax.swing.JMenuItem menuItemGenerateSolution;
-    private javax.swing.JMenuItem menuItemHelp;
-    private javax.swing.JMenuItem menuItemNewTask;
-    private javax.swing.JMenuItem menuItemOpenTask;
-    private javax.swing.JMenuItem menuItemSaveAs;
-    private javax.swing.JMenuItem menuItemSaveTask;
-    private javax.swing.JPanel problemPanel;
-    private javax.swing.JPopupMenu.Separator separator;
-    private javax.swing.JPanel statusBar;
-    private javax.swing.JLabel statusBarLabel;
-    private javax.swing.JTabbedPane tabPane;
-    private javax.swing.JPanel ticketPanel;
-    // End of variables declaration//GEN-END:variables
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JPanel centerPanel;
+  private javax.swing.JPanel graphCanvasScrollPane;
+  private javax.swing.JPanel instructionPanel;
+  private javax.swing.JMenuItem jMenuItem1;
+  private javax.swing.JPanel mainPanel;
+  private javax.swing.JMenuBar menuBar;
+  private javax.swing.JMenu menuFile;
+  private javax.swing.JMenu menuHelp;
+  private javax.swing.JMenuItem menuItemAbout;
+  private javax.swing.JMenuItem menuItemEditTimeRange;
+  private javax.swing.JMenuItem menuItemExit;
+  private javax.swing.JMenuItem menuItemFeedback;
+  private javax.swing.JMenuItem menuItemGenerateSolution;
+  private javax.swing.JMenuItem menuItemHelp;
+  private javax.swing.JMenuItem menuItemNewTask;
+  private javax.swing.JMenuItem menuItemOpenTask;
+  private javax.swing.JMenuItem menuItemSaveAs;
+  private javax.swing.JMenuItem menuItemSaveTask;
+  private javax.swing.JPanel problemPanel;
+  private javax.swing.JPopupMenu.Separator separator;
+  private javax.swing.JPanel statusBar;
+  private javax.swing.JLabel statusBarLabel;
+  private javax.swing.JTabbedPane tabPane;
+  private javax.swing.JPanel ticketPanel;
+  // End of variables declaration//GEN-END:variables
 
 
   public JTabbedPane getTabPane() {
@@ -517,7 +543,7 @@ public class Main extends JFrame implements WindowListener {
       // Test if file name has already been selected
       if(taskFileName!=null){
         System.out.println("Selected File "+taskFileName);
-        SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
+        ModelPersistenceManager.getPersistenceManager().saveModel(taskFileName, situationView);
       }else{
         // Display the Save Dialog Box
         JFileChooser fc = new JFileChooser();
@@ -544,7 +570,7 @@ public class Main extends JFrame implements WindowListener {
           }
 
           taskFileName = savedFileName+ext;
-          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
+          ModelPersistenceManager.getPersistenceManager().saveModel(taskFileName, situationView);
         }
       }
       return true;
@@ -576,7 +602,7 @@ public class Main extends JFrame implements WindowListener {
             }
           }
           taskFileName = savedFileName+ext;
-          SolutionManager.getSolutionManager().saveIntermediateSolution(taskFileName, null, situationView);
+          ModelPersistenceManager.getPersistenceManager().saveModel(taskFileName, situationView);
         }
         return true;
     }
@@ -584,7 +610,15 @@ public class Main extends JFrame implements WindowListener {
       logs.debug( e.toString());
       return false;
     }
-
   }
-
+  
+  public void setStatusMessage(String msg){
+    statusBarLabel.setText(msg);
+  }
+  
+  public void resetStatusMessage(){
+    statusBarLabel.setText("");
+  }
+  
+  
 }

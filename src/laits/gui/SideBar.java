@@ -24,6 +24,25 @@ import org.apache.log4j.Logger;
  */
 public class SideBar {
 
+  private JPanel buttonPanel;
+  private GraphCanvas modelCanvas;
+  private Graph mmodelGraph;
+  private Font font;
+  private int startPosition = 0, hintLocation = 0;
+
+  private JButton diagramButton, equationButton;
+  private JButton runModelButton;
+  private JButton newNodeButton;
+  private JButton doneButton;
+
+  private Main parent;
+  private int runBtnClickCount = 0;
+
+  private static final String EMPTY_NODE_NAME = "";
+
+  /** Logger **/
+  private static Logger logs = Logger.getLogger(SideBar.class);
+  
   /**
    *
    * @param gc
@@ -289,23 +308,6 @@ public class SideBar {
   }
 
 
-  private JPanel buttonPanel;
-  private GraphCanvas modelCanvas;
-  private Graph mmodelGraph;
-  private Font font;
-  private int startPosition = 0, hintLocation = 0;
-
-  private JButton diagramButton, equationButton;
-  private JButton runModelButton;
-  private JButton newNodeButton;
-  private JButton doneButton;
-
-  private Frame parent;
-  private int runBtnClickCount = 0;
-
-  private static final String EMPTY_NODE_NAME = "";
-
-  /** Logger **/
-  private static Logger logs = Logger.getLogger(SideBar.class);
+  
 
 }

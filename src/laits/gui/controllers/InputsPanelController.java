@@ -5,6 +5,7 @@
 package laits.gui.controllers;
 
 import java.util.ArrayList;
+import laits.common.EditorConstants;
 import laits.model.Edge;
 import laits.model.Graph;
 import laits.model.GraphCanvas;
@@ -37,8 +38,8 @@ public class InputsPanelController {
   public void prepareFixedValueNode(){
     // If this node was a stock/flow earlier, reset incoming/outgoing links
     
-    if(currentVertex.getType() == Vertex.STOCK || 
-            currentVertex.getType() == Vertex.FLOW){
+    if(currentVertex.getType() == EditorConstants.STOCK || 
+            currentVertex.getType() == EditorConstants.FLOW){
       
     }
   }

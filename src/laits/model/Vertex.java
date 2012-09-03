@@ -5,60 +5,24 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
+import laits.common.EditorConstants;
 import org.apache.log4j.Logger;
 
 
 public class Vertex extends Selectable {
 
-  //Contants used to define the type of node of the vertex
-  public final static int NOTYPE = 1;
-  public final static int STOCK = 2;
-  public final static int FLOW = 3;
-  public final static int AUXILIARY = 4;
-  public final static int CONSTANT = 5;
-  public final static int INFLOW = 6;
-  public final static int OUTFLOW = 7;
-
-  //Contants used to define the type of plan for a specific node
-  public final static int NOPLAN = 0;/*"no plan has been defined"*/
-  public final static int FIXED_VALUE = 1;/*"fixed value" in XML */
-  public final static int FCT_DIFF = 2;/*"difference of two quantities" in XML*/
-  public final static int FCT_RATIO = 3;/*"ratio of two quantities" in XML*/
-  public final static int FCT_PROP = 4;/*"proportional to accumulator and input" in XML*/
-  public final static int ACC_INC = 5;/*"said to increase" in XML*/
-  public final static int ACC_DEC = 6;/*"said to decrease" in XML*/
-  public final static int ACC_BOTH = 7;/*"said to both increase and decrease" in XML*/
-
-  // list of edges coming in
   public LinkedList<Edge> inedges = new LinkedList<Edge>();
-  // list of edges coming out
   public LinkedList<Edge> outedges = new LinkedList<Edge>();
-  // position of the node on the panel
   private Point position;
-  // type of node: constant, stock, or flow
-  private int typeNode = NOTYPE;
-  // Content of the tree to display in the description panel
+  private int typeNode;
   private TreePath treePath;
-  //Complete description of the quantity the node describes
-  private String selectedDescription = "";
-  // lists of the inputs and outputs of this node at this specific moment.
+  private String correctDescription = "";
   private String listInputs = "";
   private String listOutputs = "";
-
-  // this field has the status of each panel at every moment, which can be differnet from the status of the buttons.
-  public int[] currentStatePanel= new int[4];
-
-  // the plan of the node
   private int nodePlan;
-  // Each value in 'correctValues' represents a point on the graph
   public LinkedList<Double> correctValues = new LinkedList<Double>();
-  // InitialValue for a stock and AllValues for the constant, nothing in case of flow
   private double initialValue = 0.0;
-  // constant that represents when the initialvalue hasn't been filled yet
   public final static double NOTFILLED = Double.NEGATIVE_INFINITY;
-  // Inforamtion of the equation used in flow and stock nodes
-  // private String formula = null;
-  //private Formula formula;
   private NodeEquation nodeEquation;
   
   /*
@@ -81,10 +45,8 @@ public class Vertex extends Selectable {
   public int paintNoneHeight = 6 * size; // elements needed to display the node
   public int width = 11 * size; // elements needed to display the node
   public int height = 6 * size; // elements needed to display the node
-  private boolean isDebug = false; // if the node is a debug node this is true
-  private boolean isExtraNode = false; // if the node is an extra node this is true
   private boolean hasBlueBorder = false;
-  private boolean isUsingAllAvailableInputs = false;
+ // private boolean isUsingAllAvailableInputs = false;
 
   private boolean hasCorrectInputs = false;
 
@@ -120,10 +82,14 @@ public class Vertex extends Selectable {
     editorOpen = false;
     initialValue = NOTFILLED;
     nodeEquation = new NodeEquation();
-    typeNode = NOTYPE;
-    nodePlan = NOPLAN;
-    init_currentStatePanel(Selectable.NOSTATUS);
+    typeNode = EditorConstants.UNDEFINED_TYPE;
+    nodePlan = EditorConstants.UNDEFINED_PLAN;
     defaultLabel();
+  }
+  
+  public Vertex(Vertex sourceVertex){
+    super();
+    setVertex(sourceVertex);
   }
 
 /**
@@ -160,7 +126,7 @@ public class Vertex extends Selectable {
    */
   public void setType(int newType) {
     this.typeNode = newType;
-    if(newType==Vertex.CONSTANT)
+    if(newType == EditorConstants.CONSTANT)
       this.inputsSelected=false;
     else
       this.inputsSelected=true;
@@ -175,44 +141,7 @@ public class Vertex extends Selectable {
   }
 
 
-  /**
-   *
-   */
-  public void init_currentStatePanel(int status)
-  {
-    for (int i= 0; i< currentStatePanel.length; i++)
-      currentStatePanel[i]=status;
-  }
-
-  /* gives the description in a string of what the type of node is*/
-  /**
-   * This method takes th node type and returns a string representation of it
-   * @return string with the node type
-   */
-  public String typeNodeToString() {
-
-    switch (typeNode)
-    {
-      case NOTYPE:
-        return "No Type Entered";
-      case STOCK:
-        return "STOCK";
-      case FLOW:
-        return "FLOW";
-      case AUXILIARY:
-        return "AUXILIARY";
-      case CONSTANT:
-        return "CONSTANT";
-      case INFLOW:
-        return "INFLOW";
-      case OUTFLOW:
-        return "OUTFLOW";
-      default:
-        return "ERROR TYPE NODE";
-    }
-  }
-
-
+  
   /**
    * Setter method to change the tree of situation description for this task
    * @param tp tree path containing the type of situation for this task
@@ -234,8 +163,8 @@ public class Vertex extends Selectable {
    * Setter method to change the name of the description selected
    * @param description the name of the description selected
    */
-  public void setSelectedDescription(String description) {
-    this.selectedDescription = description;
+  public void setCorrectDescription(String description) {
+    this.correctDescription = description;
   }
 
   /**
@@ -299,8 +228,8 @@ public class Vertex extends Selectable {
    * Getter method to get the name of the description selected
    * @return the name of the description selected
    */
-  public String getSelectedDescription() {
-    return this.selectedDescription;
+  public String getCorrectDescription() {
+    return this.correctDescription;
   }
 
   /**
@@ -319,44 +248,12 @@ public class Vertex extends Selectable {
     return this.nodePlan;
   }
 
-  /* gives the description in a string of what the plan of node is*/
-  /**
-   * This method takes the node plan and returns a string representation of it
-   * @return string with the nodes plan
-   */
-  public String planNodeToString() {
-
-    switch (this.nodePlan)
-    {
-      case NOPLAN:
-        return "No Plan Entered";
-      case FIXED_VALUE:
-        return "FIXED_VALUE";
-      case FCT_DIFF:
-        return "FCT_DIFF";
-      case FCT_RATIO:
-        return "FCT_RATIO";
-      case FCT_PROP:
-        return "FCT_PROP";
-      case ACC_INC:
-        return "ACC_INC";
-      case ACC_DEC:
-        return "ACC_DEC";
-      case ACC_BOTH:
-        return "ACC_BOTH";
-      default:
-        return "ERROR PLAN NODE";
-    }
-  }
-
-
-
           /**
    * Setter method to change the initialValue of the node
    * @param newinitialValue  the initialValue of the node
    */
   public void setInitialValue(double newinitialValue ) {
-    this.initialValue  = newinitialValue ;
+    initialValue  = newinitialValue ;
   }
 
   /**
@@ -666,7 +563,7 @@ public class Vertex extends Selectable {
   public final boolean hit(int a, int b) {
     int x = position.x;
     int y = position.y;
-    if (typeNode==CONSTANT) {
+    if (typeNode==EditorConstants.CONSTANT) {
       double areaOfConstant = ((width + 5) * (height + 5)) / 2;
       double a1 = Math.abs(a * (y + height / 2) + b * (x + width / 2) + x * (y + height) - a * (y + height) - b * x - (y + height / 2) * (x + width / 2)) / 2;
       double a2 = Math.abs((a * y + b * x + (x + width / 2) * (y + height / 2) - a * (y + height / 2) - b * (x + width / 2) - y * x)) / 2;
@@ -676,11 +573,11 @@ public class Vertex extends Selectable {
         return true;
       }
     }
-    if ((typeNode==NOTYPE) || (typeNode==STOCK)) {
+    if ((typeNode==EditorConstants.UNDEFINED_TYPE) || (typeNode==EditorConstants.STOCK)) {
       if (a >= (x - 5) && a <= (x + width + 5) && b >= (y - 5) && b <= (y + height + 5)) {
         return true;
       }
-    } else if ((typeNode==AUXILIARY) || (typeNode==FLOW)) {
+    } else if ((typeNode==EditorConstants.AUXILIARY) || (typeNode==EditorConstants.FLOW)) {
       x = x + width / 2;
       y = y + height / 2;
       double r = Math.sqrt((a - x) * (a - x) + (b - y) * (b - y));
@@ -744,61 +641,29 @@ public class Vertex extends Selectable {
 
    boolean correct = false;
 
-   if (this.getType() == Vertex.CONSTANT) {
-     if (this.getInitialValue() != Vertex.NOTFILLED) {
-
+   if (getType() == EditorConstants.CONSTANT) {
+     if (this.getInitialValue() != Vertex.NOTFILLED) 
        correct = true;
-     }
-     else {
-       correct = false;
-     }
    }
-   else if (this.getType() == Vertex.FLOW) {
-     if (!this.isNodeEquationEmpty()) {
-       if (isUsingAllAvailableInputs) {
+   
+   else if (getType() == EditorConstants.FLOW) {
+     if (!isNodeEquationEmpty()) {
+       correct = true;
+     }     
+   }
+   else if (getType() == EditorConstants.STOCK) {
+     
+     if (this.getInitialValue() != Vertex.NOTFILLED) {
+       if (!isNodeEquationEmpty()) {
          correct = true;
        }
-       else {
-         correct = false;
-       }
-     }
-     else {
-       correct = false;
      }
    }
-   else if (this.getType() == Vertex.STOCK) {
-
-     if (this.getInitialValue() != Vertex.NOTFILLED) {
-       if (!this.isNodeEquationEmpty()) {
-         if (isUsingAllAvailableInputs) {
-           correct = true;
-         } else {
-           correct = false;
-         }
-       } else {
-         correct = false;
-       }
-     } else {
-       correct = false;
-     }
-   }
-
-   else {
-     return false;
-   }
+   
    return correct;
   }
 
-  public boolean isUsingAllAvaliableInputs() {
-    return isUsingAllAvailableInputs;
-  }
-
-  public void setIsUsingAllAvailableInputs(boolean didUseAllInputs) {
-    this.isUsingAllAvailableInputs = didUseAllInputs;
-  }
-
-
-
+  
   /**
    * Method to place the label at the bottom part of the Vertex. The label
    * always appear at the bottom.
@@ -856,7 +721,7 @@ public class Vertex extends Selectable {
   }
 
   /**
-   * Paint node type STOCK (dashed rectangle). The rectangle is specified by the
+   * Paint node type EditorConstants.STOCK (dashed rectangle). The rectangle is specified by the
    * x, y, widht, height, centerx, centery arguments. Size is set to 10 in
    * selectable.java.
    *
@@ -865,31 +730,29 @@ public class Vertex extends Selectable {
   public void paintStock(Graphics g) {
     int x = position.x;
     int y = position.y;
+
     int centerx = x + width / 2;
     int centery = y + height / 2;
+
     Graphics2D g2d = (Graphics2D) g;
     Stroke currentStroke = g2d.getStroke();
+
     // begin shadow
+    Color sc;
     if (!hasBlueBorder) {
-      Color sc = getColor(color);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawRect(x, y, width, height);
-      g2d.drawRect(x + 4, y + 4, width - 8, height - 8);
+      sc = getColor(color);
     } else {
-      Color sc = getColor(Color.blue);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawRect(x, y, width, height);
-      g2d.drawRect(x + 4, y + 4, width - 8, height - 8);
+      sc = getColor(Color.BLUE);
     }
-    // end shadow
+
+    int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
+    int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
+    int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
+    g2d.setColor(new Color(re, gr, bl));
+    g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+    g2d.drawRect(x, y, width, height);
+    g2d.drawRect(x + 4, y + 4, width - 8, height - 8);
+
     // begin shape
     g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
     g2d.setColor(getColor(color));
@@ -904,46 +767,6 @@ public class Vertex extends Selectable {
     g2d.drawLine(centerx, centery + 3, centerx, centery - 3);
     // end shape
     g2d.setStroke(currentStroke);
-  }
-
-  /**
-   * Paint node type AUXILIARY (double-line oval). The rectangle is specified by
-   * the x, y, widht, height, centerx, centery arguments. Size is set to 10 in
-   * selectable.java.
-   *
-   * @param g
-   */
-  public void paintAuxiliary(Graphics g) {
-
-    // Requested by Sylvie to be a rectangle and not a circle
-    int x = position.x;
-    int y = position.y;
-    int centerx = x + width / 2;
-    int centery = y + paintNoneHeight / 2;
-    Graphics2D g2d = (Graphics2D) g;
-    Stroke currentStroke = g2d.getStroke();
-    // begin shadow
-    Color sc = getColor(color);
-    int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-    int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-    int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-    g2d.setColor(new Color(re, gr, bl));
-    g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 5f, new float[]{5f}, 0f));
-    g2d.drawRect(x, y, width, paintNoneHeight);
-    // end shadow
-    // begin shape
-    g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 5f, new float[]{5f}, 0f));
-    g2d.setColor(sc);
-    g2d.drawRect(x, y, width, paintNoneHeight);
-    //draw the internal square
-    g2d.setColor(Color.WHITE);
-    g2d.fillRect(x + 2, y + 2, width - 4, paintNoneHeight - 4);
-    g2d.setColor(new Color(re, gr, bl));
-    g2d.drawLine(centerx - 3, centery, centerx + 3, centery);
-    g2d.drawLine(centerx, centery + 3, centerx, centery - 3);
-    // end shape
-    g2d.setStroke(currentStroke);
-
   }
 
   /**
@@ -963,31 +786,24 @@ public class Vertex extends Selectable {
 
     Graphics2D g2d = (Graphics2D) g;
     Stroke currentStroke = g2d.getStroke();
+    
     // begin shadow
-    if (!hasBlueBorder) {
-      Color sc = getColor(color);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawLine(x, y + height / 2, x + width / 2, y);
-      g2d.drawLine(x, y + height / 2, x + width / 2, y + height);
-      g2d.drawLine(x + width / 2, y, x + width, y + height / 2);
-      g2d.drawLine(x + width, y + height / 2, x + width / 2, y + height);
-    } else {
+    Color sc;
+    if (!hasBlueBorder) 
+      sc = getColor(color);
+    else
+      sc = getColor(Color.BLUE);
+    
+    int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
+    int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
+    int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
+    g2d.setColor(new Color(re, gr, bl));
+    g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+    g2d.drawLine(x, y + height / 2, x + width / 2, y);
+    g2d.drawLine(x, y + height / 2, x + width / 2, y + height);
+    g2d.drawLine(x + width / 2, y, x + width, y + height / 2);
+    g2d.drawLine(x + width, y + height / 2, x + width / 2, y + height);
 
-      Color sc = getColor(Color.BLUE);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawLine(x, y + height / 2, x + width / 2, y);
-      g2d.drawLine(x, y + height / 2, x + width / 2, y + height);
-      g2d.drawLine(x + width / 2, y, x + width, y + height / 2);
-      g2d.drawLine(x + width, y + height / 2, x + width / 2, y + height);
-    }
     // end shadow
     g2d.setStroke(currentStroke);
     g.setColor(getColor(color));
@@ -1019,33 +835,24 @@ public class Vertex extends Selectable {
   public void paintFlow(Graphics g) {
     int x = position.x;
     int y = position.y;
-    int centerx = x + width / 2;
-    int centery = y + height / 2;
+    
     Graphics2D g2d = (Graphics2D) g;
     Stroke currentStroke = g2d.getStroke();
     // begin shadow
-    if (!hasBlueBorder) {
-      Color sc = getColor(color);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.drawLine(centerx - 3, centery, centerx + 3, centery);
-      g2d.drawLine(centerx, centery + 3, centerx, centery - 3);
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawOval(width / 4 + x, y, width / 2, height);
+    Color sc;
+    if (!hasBlueBorder) 
+      sc = getColor(color);
+    else
+      sc = getColor(Color.BLUE);
+      
+    int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
+    int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
+    int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
+    g2d.setColor(new Color(re, gr, bl));
+    
+    g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+    g2d.drawOval(width / 4 + x, y, width / 2, height);
 
-    } else {
-      Color sc = getColor(Color.BLUE);
-      int re = sc.getRed() + (255 - sc.getRed()) * 2 / 3;
-      int gr = sc.getGreen() + (255 - sc.getGreen()) * 2 / 3;
-      int bl = sc.getBlue() + (255 - sc.getBlue()) * 2 / 3;
-      g2d.setColor(new Color(re, gr, bl));
-      g2d.drawLine(centerx - 3, centery, centerx + 3, centery);
-      g2d.drawLine(centerx, centery + 3, centerx, centery - 3);
-      g2d.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-      g2d.drawOval(width / 4 + x, y, width / 2, height);
-    }
     // end shadow
     g2d.setStroke(currentStroke);
     g2d.setColor(getColor(color));
@@ -1055,11 +862,7 @@ public class Vertex extends Selectable {
     //draw internal circle
     g2d.setColor(Color.WHITE);
     g2d.fillOval(width / 4 + x + 2, y + 2, width / 2 - 4, height - 4);
-    //draw cross in center of vertex
-    g2d.setColor(Color.GRAY);
-    //g2d.setColor(new Color(re, gr, bl));
-    g.drawLine(centerx - 3, centery, centerx + 3, centery);
-    g.drawLine(centerx, centery + 3, centerx, centery - 3);
+    
   }
 
 
@@ -1079,24 +882,6 @@ public class Vertex extends Selectable {
    */
   public boolean getEditorOpen() {
     return this.editorOpen;
-  }
-
-  /**
-   * This method returns whether a node's graph is open
-   *
-   * @param o is true if there is a graph open
-   */
-  public void setGraphOpen(boolean o) {
-    this.graphOpen = o;
-  }
-
-  /**
-   * This method returns whether the graph is open
-   *
-   * @return whether the graph is open
-   */
-  public boolean getGraphOpen() {
-    return this.graphOpen;
   }
 
   public boolean getHasBlueBorder() {
@@ -1120,19 +905,16 @@ public class Vertex extends Selectable {
     g.setColor(getColor(color));
     switch (typeNode)
     {
-      case NOTYPE:
+      case EditorConstants.UNDEFINED_TYPE:
         paintNone(g);
         break;
-      case FLOW:
+      case EditorConstants.FLOW:
         paintFlow(g);
         break;
-      case STOCK:
+      case EditorConstants.STOCK:
         paintStock(g);
         break;
-      case AUXILIARY:
-        paintAuxiliary(g);
-        break;
-      case CONSTANT:
+      case EditorConstants.CONSTANT:
         paintConstant(g);
         break;
     }
@@ -1310,7 +1092,7 @@ public class Vertex extends Selectable {
    * THIS IS PRIVATE AND SHOULD NOT BE CHANGED. TO MODIFY FORMULA FROM ANOTHER CLASS, USE ADDTOFORMULA or REMOVEFROMFORMULA or COPY, no set defined.
    * @param formula
    */
-  private void setNodeEquation(String equation) {
+  public void setNodeEquation(String equation) {
     try {
       nodeEquation.setNodeEquation(equation);
     } catch (InvalidEquationException ex) {
@@ -1318,6 +1100,9 @@ public class Vertex extends Selectable {
     }
   }
 
+  public void clearNodeEquation(){
+    nodeEquation.clear();
+  }
 
   /**
    * This method exists to make it easier to see when and where classes are changing the formula
@@ -1405,6 +1190,37 @@ public class Vertex extends Selectable {
     hasCorrectInputs = flag;
   }
   
+  public void setVertex(Vertex sourceVertex){
+    position = sourceVertex.getPosition();
+    setNodeName(sourceVertex.getNodeName());
+    setCorrectDescription(sourceVertex.getCorrectDescription());
+    editorOpen = false;
+    initialValue = sourceVertex.initialValue;
+    nodeEquation = sourceVertex.nodeEquation;
+    typeNode = sourceVertex.typeNode;
+    nodePlan = sourceVertex.nodePlan;
+    
+    // Set In and Out Edges
+    inedges = new LinkedList<Edge>();
+    for(Edge e : sourceVertex.inedges){
+      Edge n = new Edge(e);
+      inedges.add(n);
+    }
+    
+    outedges = new LinkedList<Edge>();
+    for(Edge e : sourceVertex.outedges){
+      Edge n = new Edge(e);
+      outedges.add(n);
+    }
+    
+    correctValues = new LinkedList<Double>(sourceVertex.correctValues);
+    
+    setDescriptionDefined(sourceVertex.isDescriptionDefined());
+    setPlanDefined(sourceVertex.isPlanDefined());
+    setInputsDefined(sourceVertex.isInputsDefined());
+    setCalculationsDefined(sourceVertex.isCalculationsDefined());
+    setGraphsDefined(sourceVertex.isGraphDefined());
+  }
   
   /** Logger **/
 

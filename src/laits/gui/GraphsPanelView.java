@@ -16,6 +16,7 @@ import laits.model.Vertex;
 import laits.plot.PlotPanel;
 import java.awt.*;
 import javax.swing.JPanel;
+import laits.common.EditorConstants;
 import org.apache.log4j.Logger;
 
 /**
@@ -62,8 +63,8 @@ public class GraphsPanelView extends javax.swing.JPanel {
     if (grafica != null)
       userAnswerPanel.remove(grafica);
 
-    if ((modelCanvas.getModelHasBeenRun() == true) && (currentVertex.getType() != Vertex.NOTYPE)
-            && ((!currentVertex.isNodeEquationEmpty()) || (currentVertex.getType() == Vertex.CONSTANT)))
+    if ((modelCanvas.getModelHasBeenRun() == true) && (currentVertex.getType() != EditorConstants.UNDEFINED_TYPE)
+            && ((!currentVertex.isNodeEquationEmpty()) || (currentVertex.getType() == EditorConstants.CONSTANT)))
 
       userAnswerPanel = new PlotPanel(currentVertex);
 
@@ -124,7 +125,7 @@ public class GraphsPanelView extends javax.swing.JPanel {
    * currently being edited
    */
   public void updateDescription() {
-    descriptionLabel.setText("<html><b>Description:</b> <br/>" + currentVertex.getSelectedDescription() + "</html>");
+    descriptionLabel.setText("<html><b>Description:</b> <br/>" + currentVertex.getCorrectDescription() + "</html>");
   }
 
   public void resetLayout() {

@@ -104,22 +104,6 @@ public class Graph extends Selectable {
   }
 
   /**
-   * This method gets the value of taskID
-   * @return
-   */
-  public int getTaskID() {
-    return taskID;
-  }
-
-  /**
-   * This method sets the value of taskID
-   * @param taskID
-   */
-  public void setTaskID(int taskID) {
-    this.taskID = taskID;
-  }
-
-  /**
    * Method to get the sum of all the input degrees of the vertexes on the graph
    *
    * @return sum of all input degrees of the vertexes on the graph
@@ -162,7 +146,22 @@ public class Graph extends Selectable {
    * @return the inserted vertex
    */
   public final Vertex addVertex(Vertex v) {
+    int n = v.inedges.size();
+    Object a[] = v.inedges.toArray();
+    for (int j = 0; j < n; j++) {
+      Edge e = (Edge) a[j];
+      edges.add(e);
+      e.start.addOutEdge(e);
+    }
+    n = v.outedges.size();
+    Object b[] = v.outedges.toArray();
+    for (int j = 0; j < n; j++) {
+      Edge e = (Edge) b[j];
+      edges.add(e);
+      e.end.addInEdge(e);
+    }
     vertexes.push(v);
+    
     return v;
   }
 
@@ -217,6 +216,7 @@ public class Graph extends Selectable {
       edges.remove(e);
       e.start.delOutEdge(e);
     }
+    
     n = v.outedges.size();
     Object b[] = v.outedges.toArray();
     for (int j = 0; j < n; j++) {
@@ -224,9 +224,11 @@ public class Graph extends Selectable {
       edges.remove(e);
       e.end.delInEdge(e);
     }
+    
     vertexes.remove(v);
   }
-
+  
+  
   /**
    * This method adds a new edge
    *

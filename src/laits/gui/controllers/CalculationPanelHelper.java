@@ -4,6 +4,7 @@
  */
 package laits.gui.controllers;
 
+import laits.common.EditorConstants;
 import laits.model.Graph;
 import laits.model.GraphCanvas;
 import laits.model.Vertex;
@@ -36,15 +37,15 @@ public class CalculationPanelHelper {
 
     modelCanvas.setCalculationsPanelChanged(false, currentVertex);
 
-    if(currentVertex.getType() == Vertex.CONSTANT){
+    if(currentVertex.getType() == EditorConstants.CONSTANT){
       processConstantVertex();
     }
 
-    else if(currentVertex.getType() == Vertex.STOCK ){
+    else if(currentVertex.getType() == EditorConstants.STOCK ){
       processStockVertex();
     }
 
-    else if(currentVertex.getType() == Vertex.FLOW ){
+    else if(currentVertex.getType() == EditorConstants.FLOW ){
       processFlowVertex();
     }
 
@@ -80,10 +81,6 @@ public class CalculationPanelHelper {
       throw new CalculationPanelException("Initial Value Not Provided.");
     }
 
-    //for (int i = 0; i < currentVertex.inedges.size(); i++) {
-      //  currentVertex.inedges.get(i).showInListModel = false;
-    //}
-
     if(!currentVertex.checkForCorrectSyntax()){
       throw new CalculationPanelException("Incorrect Formula.");
     }
@@ -92,10 +89,7 @@ public class CalculationPanelHelper {
   }
 
   private void processFlowVertex() throws CalculationPanelException{
-    //for (int i = 0; i < currentVertex.inedges.size(); i++) {
-      //  currentVertex.inedges.get(i).showInListModel = false;
-    //}
-
+   
     if(!currentVertex.checkForCorrectSyntax()){
       throw new CalculationPanelException("Incorrect Formula.");
     }

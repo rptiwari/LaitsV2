@@ -106,7 +106,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     }
 
     initTreeSelectionListener();
-    quantityDescriptionTextField.setText(currentVertex.getSelectedDescription());
+    quantityDescriptionTextField.setText(currentVertex.getCorrectDescription());
   }
   
   public void initPanelForNewNode(){
@@ -476,7 +476,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
     dTree.updateNodeName(dTreeNodeName, inputNodeName);
     */
     currentVertex.setNodeName(nodeNameTextField.getText());
-    currentVertex.setSelectedDescription(quantityDescriptionTextField.getText());
+    currentVertex.setCorrectDescription(quantityDescriptionTextField.getText());
     
     // Moves the Label below the node
     currentVertex.defaultLabel();
@@ -588,7 +588,7 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
           //Get the data from the tree to fill the nodeName. A leaf node has a label and an answer.
           nodeNameTextField.setText(n.getAnswer());
 
-          currentVertex.setSelectedDescription(quantityDescriptionTextField.getText());
+          currentVertex.setCorrectDescription(quantityDescriptionTextField.getText());
           currentVertex.setNodeName(nodeNameTextField.getText());
           currentVertex.defaultLabel();
 
@@ -605,13 +605,13 @@ public class DescriptionPanelView extends JPanel implements TreeSelectionListene
             }
           }
           quantityDescriptionTextField.setText(description);
-          currentVertex.setSelectedDescription(description);
+          currentVertex.setCorrectDescription(description);
           
           NodeEditor.getInstance().getInputsPanel().updateNodeDescription();
           NodeEditor.getInstance().getGraphsPanel().updateDescription();
           
 
-          if (currentVertex.getSelectedDescription().trim().equals(description)) {
+          if (currentVertex.getCorrectDescription().trim().equals(description)) {
             logs.trace( "DescriptionPanel.valueChanged.1 "+ "legal_" + currentVertex.getNodeName());
           } else {
             logs.trace( "DescriptionPanel.valueChanged.1 "+ "!legal");

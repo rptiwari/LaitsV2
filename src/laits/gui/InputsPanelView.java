@@ -18,6 +18,7 @@ import java.awt.event.ItemListener;
 import java.util.LinkedList;
 import java.util.Stack;
 import javax.swing.*;
+import laits.common.EditorConstants;
 import laits.gui.controllers.InputsPanelController;
 import org.apache.log4j.Logger;
 
@@ -126,7 +127,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * Method to set the Node Description in the UI
    */
   public void updateNodeDescription() {
-    nodeDescriptionLabel.setText(currentVertex.getSelectedDescription());
+    nodeDescriptionLabel.setText(currentVertex.getCorrectDescription());
   }
   
   /**
@@ -226,10 +227,10 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
   public void loadSavedInputState() {
     logs.trace("Loading Saved Inputs for Vertex "+currentVertex.getNodeName());
     
-    if (currentVertex.getType() == Vertex.CONSTANT) {
+    if (currentVertex.getType() == EditorConstants.CONSTANT) {
       fixedValueOptionButton.setSelected(true);
-    } else if ((currentVertex.getType() == Vertex.FLOW) || 
-            (currentVertex.getType() == Vertex.STOCK)) {
+    } else if ((currentVertex.getType() == EditorConstants.FLOW) || 
+            (currentVertex.getType() == EditorConstants.STOCK)) {
       inputNodesSelectionOptionButton.setSelected(true);
       loadSavedInputsForStockAndFlow();
     }
@@ -260,13 +261,13 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
    * available input nodes
    */
   public void itemStateChanged(ItemEvent e) {
-    if(extraChangeEvent){
+    if (extraChangeEvent) {
       extraChangeEvent = false;
       return;
     }
-    
+
     logs.trace("Input Node selection changed");
-    
+
     //Reset the Status of Current Node
     modelCanvas.setInputsPanelChanged(true, currentVertex);
     currentVertex.setCalculationsDefined(false);
@@ -286,6 +287,9 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       return;
     }
 
+    logs.info("Changed Vertex: " + changedVertex.getNodeName());
+    logs.info("Current Vertex: " + currentVertex.getNodeName());
+
     if (e.getStateChange() == ItemEvent.SELECTED) {
       modelGraph.addEdge(changedVertex, currentVertex);
 
@@ -301,10 +305,12 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       changedVertex.setListOutputs(changedVertex.getListOutputs() + currentVertex.getNodeName());
       modelCanvas.repaint(0);
     } else {
+      
       for (int j = 0; j < currentVertex.inedges.size(); j++) {
         Edge edge = currentVertex.inedges.get(j);
 
-        if (edge.start == changedVertex && edge.end == currentVertex) {
+        if (edge.start.getNodeName().compareTo(changedVertex.getNodeName()) == 0 &&
+                edge.end.getNodeName().compareTo(currentVertex.getNodeName()) == 0) {
           currentVertex.inedges.remove(edge);
           changedVertex.outedges.remove(edge);
           modelGraph.getEdges().remove(edge);
@@ -320,6 +326,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
           modelCanvas.repaint();
         }
       }
+      
     }
 
     NodeEditor.getInstance().getCalculationsPanel().restart_calc_panel(TYPE_CHANGE);
@@ -510,8 +517,8 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
       // This method is called when Node has a fixed value.
      modelCanvas.setInputsPanelChanged(true, currentVertex);
 
-     if(currentVertex.getType() == Vertex.STOCK || 
-             currentVertex.getType() == Vertex.FLOW){
+     if(currentVertex.getType() == EditorConstants.STOCK || 
+             currentVertex.getType() == EditorConstants.FLOW){
         
        for (int i = 0; i < checkboxList.size(); i++){
          if(checkboxList.get(i).isSelected()){
@@ -524,7 +531,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
        NodeEditor.getInstance().getCalculationsPanel().clearEquationArea(TYPE_CHANGE);
      }
       
-     currentVertex.setType(Vertex.CONSTANT);
+     currentVertex.setType(EditorConstants.CONSTANT);
      NodeEditor.getInstance().getCalculationsPanel().update();
      NodeEditor.getInstance().setEditorMessage("");
      displayCurrentInputsPanel(false);
@@ -540,8 +547,8 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
 
       modelCanvas.setInputsPanelChanged(true, currentVertex);
 
-      if ((currentVertex.getType() == Vertex.FLOW) || 
-              (currentVertex.getType() == Vertex.STOCK)) {
+      if ((currentVertex.getType() == EditorConstants.FLOW) || 
+              (currentVertex.getType() == EditorConstants.STOCK)) {
         
         currentVertex.setInputsDefined(false);
         currentVertex.setInputsSelected(true);
@@ -552,7 +559,7 @@ public class InputsPanelView extends javax.swing.JPanel implements ItemListener 
         
       }
      
-      currentVertex.setType(Vertex.NOTYPE);
+      currentVertex.setType(EditorConstants.UNDEFINED_TYPE);
       
       if(modelGraph.getVertexes().size() < 2)
         displayInappropriteInputsMsg();
