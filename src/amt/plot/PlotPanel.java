@@ -34,6 +34,10 @@ public class PlotPanel extends JPanel {
   private Vertex vertex;
   private String units;
   Graph graph;
+  /**
+   * Log4j Logger
+   */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(PlotPanel.class);
 
   /**
    * Constructor
@@ -46,6 +50,8 @@ public class PlotPanel extends JPanel {
    * @param units  
    */
   public PlotPanel(Vertex vertex, int x0, int xf, Graph g, String units) {
+    devLogs.trace("Initializing Plot Panel");
+    
     this.vertex = vertex;
     this.units = units;
     this.graph = g;
@@ -74,6 +80,8 @@ public class PlotPanel extends JPanel {
    * @param units  
    */
   public PlotPanel(Vertex vertex, int x0, String taskName, String units) {
+    devLogs.trace("Initializing Plot Panel");
+    
     this.vertex = vertex;
     this.units = units;
     final XYDataset dataset = createSolutionDataset(vertex, x0);
@@ -101,6 +109,8 @@ public class PlotPanel extends JPanel {
    * @param xf is the final value for the x-axis
    */
   public PlotPanel(int x0, int xf, GraphCanvas gc) {
+    devLogs.trace("Initializing Plot Panel");
+    
     final XYDataset dataset = createScoreDataset(x0, xf, gc);
     final JFreeChart chart = createChart(dataset);
     final ChartPanel chartPanel = new ChartPanel(chart);

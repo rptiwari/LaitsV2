@@ -91,7 +91,7 @@ public class Vertex extends Selectable {
   private boolean graphOpen = false;
   private boolean inputsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
   private boolean calculationsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
-  public int paintNoneHeight = 6 * size; // elements needed to display the node
+  public  int paintNoneHeight = 6 * size; // elements needed to display the node
   public int width = 11 * size; // elements needed to display the node
   public int height = 6 * size; // elements needed to display the node
   private boolean isDebug = false; // if the node is a debug node this is true
@@ -100,6 +100,7 @@ public class Vertex extends Selectable {
   private boolean didUseAllInputs = false;
   
   private amt.log.Logger log = amt.log.Logger.getLogger();
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Vertex.class);
 
   /**
    * Constructor Creates a new Vertex on the position 0,0 and an empty label
@@ -127,6 +128,8 @@ public class Vertex extends Selectable {
    * @param nodeName is the name of the vertex
    */
   public Vertex(int x, int y, String nodeName) {
+    devLogs.trace("Creating New Vertex with name "+nodeName);
+    
     position = new Point(x, y);
     this.setNodeName(nodeName);
     this.editorOpen = false;
@@ -135,6 +138,7 @@ public class Vertex extends Selectable {
     this.typeNode = NOTYPE;
     this.init_currentStatePanel(Selectable.NOSTATUS);
     defaultLabel();
+    
   }
 
 /**

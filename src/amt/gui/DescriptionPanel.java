@@ -56,6 +56,11 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
   
   // this boolean is used to detect whether the user has tried to create a duplicate node
   private boolean triedDuplicate = false;
+  
+  /**
+   * Log4j Logger
+   */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(DescriptionPanel.class);
 
 
   /**
@@ -66,6 +71,8 @@ public class DescriptionPanel extends javax.swing.JPanel implements TreeSelectio
    * @param gc
    */
   public DescriptionPanel(InputsPanel parent, Vertex v, Graph g, GraphCanvas gc){
+    devLogs.trace("Initializing Description Panel");
+    
     initComponents();
     this.currentVertex = v;
     this.graph = g;

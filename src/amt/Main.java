@@ -69,6 +69,9 @@ public class Main extends JFrame implements WindowListener {
   public static boolean debuggingModeOn = false;
   public static boolean switchedTasksViaMenu = false;
   public static DepthDetector segment_DepthDetector;
+  
+  /**Logger */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Main.class);
 
   /**
    *
@@ -94,35 +97,43 @@ public class Main extends JFrame implements WindowListener {
   public static void main(String args[]) {
 
      // Switches between Student and Author Mode
-       // ModeSelector m = new ModeSelector();
-        //m.showModeSelector();
+     //  ModeSelector m = new ModeSelector();
+     //  m.showModeSelector();
         // ApplicationEnvironment class contains all the appplication wide properties in static form
-        //if (ApplicationEnvironment.applicationMode == 1) {
+       //if (ApplicationEnvironment.applicationMode == 1) {
             // Mode 1 is for Student
           // Dialog box that asks the user which version to use: either turning the metatutor ON or OFF
-          //setMetaTutor();
-        //}
+       //   setMetaTutor();
+       //}
 
     java.awt.EventQueue.invokeLater(new Runnable() {
 
       @Override
       public void run() {
-         /*if (ApplicationEnvironment.applicationMode == 1) {
-           UserRegistration reg = new UserRegistration(null, true);
-           
-           if(ApplicationUser.isUserValid()){
+       /* if (ApplicationEnvironment.applicationMode == 1) {   
+          UserRegistration reg = new UserRegistration(null, true);
+          
+          devLogs.trace("Registering User, Current User is "+
+            ApplicationUser.getUserFirstName()+" "+
+            ApplicationUser.getUserLastName()
+          );
+
+          if(ApplicationUser.isUserValid()){
+            devLogs.info("Starting AMT....");
             Main principal = new Main();
             principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
             principal.setVisible(true);
             principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-           }
+            devLogs.info("AMT Loaded Successfully....");
+         }
            
-         }else{*/
-           laits.Main principal = new laits.Main();
-           principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
-           principal.setVisible(true);
-           principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        // }
+         } 
+        else{ */
+          laits.Main principal = new laits.Main();
+          principal.setSize(java.awt.Toolkit.getDefaultToolkit().getScreenSize().width, java.awt.Toolkit.getDefaultToolkit().getScreenSize().height);
+          principal.setVisible(true);
+          principal.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    //   }
       }
     });
   }
@@ -143,7 +154,7 @@ public class Main extends JFrame implements WindowListener {
       //creates the connection to the database to update the tasks
       taskFactory = TaskFactory.getInstance();
       // gets the filename and general elements needed for each task, in taskFactory.task, and orders them for the experiment
-      taskFactory.getTasks();
+      taskFactory.loadAllTasks();
       segment_DepthDetector = new DepthDetector();
     } catch (CommException dbe1) {
       logger.concatOut(Logger.DEBUG, "Main.Main.1", dbe1.getMessage());
@@ -164,7 +175,9 @@ public class Main extends JFrame implements WindowListener {
     menuItemUpdate.setEnabled(false);
     menuItemFeedback.setEnabled(false);
 
-
+    // Hiding Debuggint Mode
+    menuItemDebuggingMode.setVisible(false);
+    
     taskView = new TaskView();
     instructionView = new InstructionPanel(this);
     graphCanvasScroll = new GraphCanvasScroll(this);
@@ -263,8 +276,8 @@ public class Main extends JFrame implements WindowListener {
               }
             }
 
-            tab = "Student clicked on the Instructions tab.";
-            System.out.println(tab);
+            devLogs.trace("Student clicked on the Instructions tab.");
+            
             //ALC DEPTH_DETECROR
             if ((Main.segment_DepthDetector.getchangeHasBeenMade())&&(!Main.segment_DepthDetector.segmentNotStarted()))
             {
@@ -294,8 +307,8 @@ public class Main extends JFrame implements WindowListener {
             }
             logger.out(Logger.ACTIVITY, "Main.setTabListener.1", "The user clicks on the Situation tab");
             graphCanvasScroll.getGraphCanvas().getCover().hideSomeComponents(true);
-            tab = "Student clicked on the Situation tab.";
-            System.out.println(tab);
+            devLogs.trace("Student clicked on the Situation tab.");
+           
             //ALC DEPTH_DETECROR
             if (Main.segment_DepthDetector.getchangeHasBeenMade())
             {
@@ -319,9 +332,8 @@ public class Main extends JFrame implements WindowListener {
               }
 
             logger.out(Logger.ACTIVITY, "Main.setTabListener.2", "The user clicks on the Modeling tab");
-            tab = "Student clicked on the Modeling tab.";
-            System.out.println(tab);
-
+            devLogs.trace("Student clicked on the Modeling tab.");
+            
             if (openTabs.size() > 0) {
               NodeEditor opentab;
               opentab = openTabs.get(0);
@@ -386,7 +398,7 @@ public class Main extends JFrame implements WindowListener {
     menuItemNewTask.removeAll();
     JMenuItem mt;
     try {
-      if (taskFactory.getTasks() != null) {
+      if (taskFactory.isAllTasksLoaded()) {
         int level = taskFactory.getTasks().get(0).getLevel();
 
         // The tabPane should initially show the Situation Tab
@@ -527,8 +539,8 @@ public class Main extends JFrame implements WindowListener {
       } else {
         System.exit(0);
       }
-    } catch (DataException de) {
-      System.out.println("Main.loadMenuTask.1");
+    } catch (Exception de) {
+      devLogs.error("Error in Loading MenuTasks");
       System.exit(0);
     }
   }
@@ -561,171 +573,172 @@ public class Main extends JFrame implements WindowListener {
    * NETBEANS CODE ---------------------------------------------------------
    */
   @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+  // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+  private void initComponents() {
 
-        statusBar = new javax.swing.JPanel();
-        ticketPanel = new javax.swing.JPanel();
-        statusBarLabel = new javax.swing.JLabel();
-        ticketButton = new javax.swing.JButton();
-        tabPane = new javax.swing.JTabbedPane();
-        instructionPanel = new javax.swing.JPanel();
-        problemPanel = new javax.swing.JPanel();
-        mainPanel = new javax.swing.JPanel();
-        centerPanel = new javax.swing.JPanel();
-        graphCanvasScrollPane = new javax.swing.JPanel();
-        menuBar = new javax.swing.JMenuBar();
-        menuFile = new javax.swing.JMenu();
-        menuItemNewTask = new javax.swing.JMenu();
-        menuItemDebuggingMode = new javax.swing.JCheckBoxMenuItem();
-        menuItemOpenTask = new javax.swing.JMenuItem();
-        menuItemSaveTask = new javax.swing.JMenuItem();
-        menuItemExit = new javax.swing.JMenuItem();
-        menuModel = new javax.swing.JMenu();
-        menuItemRun = new javax.swing.JMenuItem();
-        menuHelp = new javax.swing.JMenu();
-        menuItemAbout = new javax.swing.JMenuItem();
-        menuItemHelp = new javax.swing.JMenuItem();
-        separator = new javax.swing.JPopupMenu.Separator();
-        menuItemUpdate = new javax.swing.JMenuItem();
-        menuItemFeedback = new javax.swing.JMenuItem();
+    statusBar = new javax.swing.JPanel();
+    ticketPanel = new javax.swing.JPanel();
+    statusBarLabel = new javax.swing.JLabel();
+    ticketButton = new javax.swing.JButton();
+    tabPane = new javax.swing.JTabbedPane();
+    instructionPanel = new javax.swing.JPanel();
+    problemPanel = new javax.swing.JPanel();
+    mainPanel = new javax.swing.JPanel();
+    centerPanel = new javax.swing.JPanel();
+    graphCanvasScrollPane = new javax.swing.JPanel();
+    menuBar = new javax.swing.JMenuBar();
+    menuFile = new javax.swing.JMenu();
+    menuItemNewTask = new javax.swing.JMenu();
+    menuItemDebuggingMode = new javax.swing.JCheckBoxMenuItem();
+    menuItemOpenTask = new javax.swing.JMenuItem();
+    menuItemSaveTask = new javax.swing.JMenuItem();
+    menuItemExit = new javax.swing.JMenuItem();
+    menuModel = new javax.swing.JMenu();
+    menuItemRun = new javax.swing.JMenuItem();
+    menuHelp = new javax.swing.JMenu();
+    menuItemAbout = new javax.swing.JMenuItem();
+    menuItemHelp = new javax.swing.JMenuItem();
+    separator = new javax.swing.JPopupMenu.Separator();
+    menuItemUpdate = new javax.swing.JMenuItem();
+    menuItemFeedback = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Affective Meta Tutor");
+    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setTitle("Affective Meta Tutor");
 
-        statusBar.setLayout(new java.awt.BorderLayout());
+    statusBar.setLayout(new java.awt.BorderLayout());
 
-        ticketPanel.setLayout(new java.awt.BorderLayout());
+    ticketPanel.setLayout(new java.awt.BorderLayout());
 
-        statusBarLabel.setText("*");
-        ticketPanel.add(statusBarLabel, java.awt.BorderLayout.CENTER);
+    statusBarLabel.setText("*");
+    ticketPanel.add(statusBarLabel, java.awt.BorderLayout.CENTER);
 
-        ticketButton.setText("Send Feedback");
-        ticketButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ticketButtonActionPerformed(evt);
-            }
-        });
-        ticketPanel.add(ticketButton, java.awt.BorderLayout.EAST);
+    ticketButton.setText("Send Feedback");
+    ticketButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        ticketButtonActionPerformed(evt);
+      }
+    });
+    ticketPanel.add(ticketButton, java.awt.BorderLayout.EAST);
 
-        statusBar.add(ticketPanel, java.awt.BorderLayout.CENTER);
+    statusBar.add(ticketPanel, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(statusBar, java.awt.BorderLayout.SOUTH);
+    getContentPane().add(statusBar, java.awt.BorderLayout.SOUTH);
 
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Instructions</body></html>", instructionPanel);
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Situation</body></html>", problemPanel);
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Instructions</body></html>", instructionPanel);
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Situation</body></html>", problemPanel);
 
-        mainPanel.setLayout(new java.awt.BorderLayout());
+    mainPanel.setLayout(new java.awt.BorderLayout());
 
-        centerPanel.setLayout(new java.awt.BorderLayout());
+    centerPanel.setLayout(new java.awt.BorderLayout());
 
-        graphCanvasScrollPane.setLayout(new java.awt.GridLayout(1, 0));
-        centerPanel.add(graphCanvasScrollPane, java.awt.BorderLayout.CENTER);
+    graphCanvasScrollPane.setLayout(new java.awt.GridLayout(1, 0));
+    centerPanel.add(graphCanvasScrollPane, java.awt.BorderLayout.CENTER);
 
-        mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
+    mainPanel.add(centerPanel, java.awt.BorderLayout.CENTER);
 
-        tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Model</body></html>", mainPanel);
+    tabPane.addTab("<html><body marginwidth = 75 marginheight = 3 >Model</body></html>", mainPanel);
 
-        getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
+    getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
 
-        menuFile.setBorder(null);
-        menuFile.setText("File");
+    menuFile.setBorder(null);
+    menuFile.setText("File");
 
-        menuItemNewTask.setBorder(null);
-        menuItemNewTask.setText("New Task");
-        menuFile.add(menuItemNewTask);
-        menuItemNewTask.getAccessibleContext().setAccessibleName("menuTask");
+    menuItemNewTask.setBorder(null);
+    menuItemNewTask.setText("New Task");
+    menuFile.add(menuItemNewTask);
+    menuItemNewTask.getAccessibleContext().setAccessibleName("menuTask");
 
-        menuItemDebuggingMode.setText("Enable Debugging Mode");
-        menuItemDebuggingMode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemDebuggingModeActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemDebuggingMode);
+    menuItemDebuggingMode.setText("Enable Debugging Mode");
+    menuItemDebuggingMode.setEnabled(false);
+    menuItemDebuggingMode.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemDebuggingModeActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemDebuggingMode);
 
-        menuItemOpenTask.setText("Open Task...");
-        menuItemOpenTask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemOpenTaskActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemOpenTask);
+    menuItemOpenTask.setText("Open Task...");
+    menuItemOpenTask.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemOpenTaskActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemOpenTask);
 
-        menuItemSaveTask.setText("Save Task...");
-        menuItemSaveTask.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemSaveTaskActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemSaveTask);
+    menuItemSaveTask.setText("Save Task...");
+    menuItemSaveTask.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemSaveTaskActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemSaveTask);
 
-        menuItemExit.setText("Exit");
-        menuItemExit.setActionCommand("ExitCommand");
-        menuItemExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemExitActionPerformed(evt);
-            }
-        });
-        menuFile.add(menuItemExit);
+    menuItemExit.setText("Exit");
+    menuItemExit.setActionCommand("ExitCommand");
+    menuItemExit.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemExitActionPerformed(evt);
+      }
+    });
+    menuFile.add(menuItemExit);
 
-        menuBar.add(menuFile);
+    menuBar.add(menuFile);
 
-        menuModel.setText("Model");
+    menuModel.setText("Model");
 
-        menuItemRun.setText("Run");
-        menuItemRun.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemRunActionPerformed(evt);
-            }
-        });
-        menuModel.add(menuItemRun);
+    menuItemRun.setText("Run");
+    menuItemRun.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemRunActionPerformed(evt);
+      }
+    });
+    menuModel.add(menuItemRun);
 
-        menuBar.add(menuModel);
+    menuBar.add(menuModel);
 
-        menuHelp.setText("Help");
+    menuHelp.setText("Help");
 
-        menuItemAbout.setText("About...");
-        menuItemAbout.setActionCommand("menuItemAbout");
-        menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemAboutActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemAbout);
+    menuItemAbout.setText("About...");
+    menuItemAbout.setActionCommand("menuItemAbout");
+    menuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemAboutActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemAbout);
 
-        menuItemHelp.setText("Help");
-        menuItemHelp.setActionCommand("menuItemAbout");
-        menuItemHelp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemHelpActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemHelp);
-        menuHelp.add(separator);
+    menuItemHelp.setText("Help");
+    menuItemHelp.setActionCommand("menuItemAbout");
+    menuItemHelp.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemHelpActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemHelp);
+    menuHelp.add(separator);
 
-        menuItemUpdate.setText("Search for Updates");
-        menuItemUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                systemUpdateActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemUpdate);
+    menuItemUpdate.setText("Search for Updates");
+    menuItemUpdate.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        systemUpdateActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemUpdate);
 
-        menuItemFeedback.setText("Send Feedback...");
-        menuItemFeedback.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuItemFeedbackActionPerformed(evt);
-            }
-        });
-        menuHelp.add(menuItemFeedback);
+    menuItemFeedback.setText("Send Feedback...");
+    menuItemFeedback.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuItemFeedbackActionPerformed(evt);
+      }
+    });
+    menuHelp.add(menuItemFeedback);
 
-        menuBar.add(menuHelp);
+    menuBar.add(menuHelp);
 
-        setJMenuBar(menuBar);
+    setJMenuBar(menuBar);
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+    pack();
+  }// </editor-fold>//GEN-END:initComponents
 
   /**
    * Method to display the dialog box of "About..." from the "Help" menu at the
@@ -776,7 +789,7 @@ public class Main extends JFrame implements WindowListener {
       br.close();
     } catch (Exception e) {
     }
-    try {
+    
       LinkedList<Task> tmp = taskFactory.getTasks();
       if (tmp != null) {
         for (Task t : tmp) {
@@ -789,10 +802,6 @@ public class Main extends JFrame implements WindowListener {
           }
         }
       }
-
-    } catch (DataException de) {
-      //REPROTE DE ERROR
-    }
   }//GEN-LAST:event_systemUpdateActionPerformed
 
   /**
@@ -1015,33 +1024,33 @@ System.out.println("Main.menuItemRunActionPerformed.1");
    */
   public void windowDeactivated(WindowEvent e) {
   }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel centerPanel;
-    private javax.swing.JPanel graphCanvasScrollPane;
-    private javax.swing.JPanel instructionPanel;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenu menuFile;
-    private javax.swing.JMenu menuHelp;
-    private javax.swing.JMenuItem menuItemAbout;
-    private javax.swing.JCheckBoxMenuItem menuItemDebuggingMode;
-    private javax.swing.JMenuItem menuItemExit;
-    private javax.swing.JMenuItem menuItemFeedback;
-    private javax.swing.JMenuItem menuItemHelp;
-    private javax.swing.JMenu menuItemNewTask;
-    private javax.swing.JMenuItem menuItemOpenTask;
-    private javax.swing.JMenuItem menuItemRun;
-    private javax.swing.JMenuItem menuItemSaveTask;
-    private javax.swing.JMenuItem menuItemUpdate;
-    private javax.swing.JMenu menuModel;
-    private javax.swing.JPanel problemPanel;
-    private javax.swing.JPopupMenu.Separator separator;
-    private javax.swing.JPanel statusBar;
-    private javax.swing.JLabel statusBarLabel;
-    private javax.swing.JTabbedPane tabPane;
-    private static javax.swing.JButton ticketButton;
-    private javax.swing.JPanel ticketPanel;
-    // End of variables declaration//GEN-END:variables
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JPanel centerPanel;
+  private javax.swing.JPanel graphCanvasScrollPane;
+  private javax.swing.JPanel instructionPanel;
+  private javax.swing.JPanel mainPanel;
+  private javax.swing.JMenuBar menuBar;
+  private javax.swing.JMenu menuFile;
+  private javax.swing.JMenu menuHelp;
+  private javax.swing.JMenuItem menuItemAbout;
+  private javax.swing.JCheckBoxMenuItem menuItemDebuggingMode;
+  private javax.swing.JMenuItem menuItemExit;
+  private javax.swing.JMenuItem menuItemFeedback;
+  private javax.swing.JMenuItem menuItemHelp;
+  private javax.swing.JMenu menuItemNewTask;
+  private javax.swing.JMenuItem menuItemOpenTask;
+  private javax.swing.JMenuItem menuItemRun;
+  private javax.swing.JMenuItem menuItemSaveTask;
+  private javax.swing.JMenuItem menuItemUpdate;
+  private javax.swing.JMenu menuModel;
+  private javax.swing.JPanel problemPanel;
+  private javax.swing.JPopupMenu.Separator separator;
+  private javax.swing.JPanel statusBar;
+  private javax.swing.JLabel statusBarLabel;
+  private javax.swing.JTabbedPane tabPane;
+  private static javax.swing.JButton ticketButton;
+  private javax.swing.JPanel ticketPanel;
+  // End of variables declaration//GEN-END:variables
   private JScrollPane scroller;
 
   /**

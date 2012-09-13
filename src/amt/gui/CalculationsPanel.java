@@ -57,6 +57,10 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
   private boolean colorChange;
   private Task currentTask;
   /**
+   * Log4j Logger
+   */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(CalculationsPanel.class);
+  /**
    * Creates new form CalculationsPanel
    * @param parent 
    * @param v
@@ -64,6 +68,8 @@ public class CalculationsPanel extends javax.swing.JPanel implements PropertyCha
    * @param gc  
    */
   public CalculationsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) {
+    devLogs.trace("Initializing Calculations Panel");
+    
     initializing = true;
     initComponents();      
     parent.addWindowListener(new java.awt.event.WindowAdapter() {

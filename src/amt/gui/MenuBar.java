@@ -1,5 +1,6 @@
 package amt.gui;
 
+import amt.ApplicationUser;
 import amt.Main;
 import amt.alc.PromptDialog;
 import amt.comm.CommException;
@@ -13,8 +14,11 @@ import amt.gui.dialog.MessageDialog;
 import amt.log.Logger;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import javax.swing.*;
@@ -34,18 +38,19 @@ public class MenuBar {
   private Font n;
   private int startPosition = 0, hintLocation = 0;
   private boolean usedHint = false;
-  private static Desktop desktop = null;
   private static Logger logs = Logger.getLogger();
   private JButton diagramButton, equationButton, glossaryButton, nodesDemoButton, linksDemoButton, equationsDemoButton, finishingDemoButton, newAvatarButton;
   private JButton predictButton;
   private JButton newNodeButton;
   private JButton doneButton;
-  private JLabel scoreLabel = new JLabel("");
   private Frame parent;
   private int runBtnClickCount = 0;
   private Logger logger = Logger.getLogger();
   private Query query = Query.getBlockQuery();
 
+  /**Logger */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(MenuBar.class);
+    
   /**
    *
    * @param gc
@@ -54,6 +59,7 @@ public class MenuBar {
    * @param frame
    */
   public MenuBar(GraphCanvas gc, Graph graph, Font n, Frame frame) {
+    devLogs.trace("Initializing Menu Bar");
     this.gc = gc;
     this.graph = graph;
     this.n = n;
@@ -99,62 +105,6 @@ public class MenuBar {
     gc.setLayout(f);
     buttonPanel.setOpaque(false);
     gc.add(buttonPanel);
-  }
-
-  private void initButtonFormat() {
-    buttonPanel = new JPanel();
-    //create placeholders
-    JButton placeHolder1 = new JButton("");
-    JButton placeHolder2 = new JButton("");
-    JButton placeHolder3 = new JButton("");
-    JButton placeHolder4 = new JButton("");
-    JButton placeHolder5 = new JButton("");
-    placeHolder1.setVisible(false);
-    placeHolder2.setVisible(false);
-    placeHolder3.setVisible(false);
-    placeHolder4.setVisible(false);
-    placeHolder5.setVisible(false);
-
-    GridLayout buttonLayout = new GridLayout(16, 2);
-    buttonPanel.setLayout(buttonLayout);
-    buttonPanel.add(placeHolder1);
-
-    for (int i = 0; i < 30; i++) {
-
-      if (i == 5) {
-        buttonPanel.add(gc.getShortDescriptionButton());
-      } else if (i == 7) {
-        buttonPanel.add(gc.getRunButton());
-      } else if (i == 13) {
-        buttonPanel.add(glossaryButton);
-      } else if (i == 15) {
-        buttonPanel.add(nodesDemoButton);
-      } else if (i == 17) {
-        buttonPanel.add(linksDemoButton);
-      } else if (i == 19) {
-        buttonPanel.add(equationsDemoButton);
-      } else if (i == 21) {
-        buttonPanel.add(finishingDemoButton);
-      } else if (i == 27) {
-        buttonPanel.add(diagramButton);
-      } else if (i == 29) {
-        buttonPanel.add(equationButton);
-      } //else add a placeholder button
-      else {
-        JButton button = new JButton("");
-        button.setVisible(false);
-        buttonPanel.add(button);
-      }
-    }
-
-    startPosition = Toolkit.getDefaultToolkit().getFontMetrics(n).stringWidth("00:00:00:000") - 10;
-
-    FlowLayout f = new FlowLayout(FlowLayout.RIGHT, 18, startPosition);
-    gc.setLayout(f);
-    buttonPanel.setOpaque(false);
-    gc.add(buttonPanel);
-    //cannot get height of buttonPanel or glossaryButton at this time
-    hintLocation = startPosition;
   }
 
   /**
@@ -270,8 +220,7 @@ public class MenuBar {
    */
   public boolean isMissingNode() {
     int actualSize = gc.listOfVertexes.size() - gc.extraNodes.size();
-    System.out.println("actualSize " + actualSize);
-    System.out.println("#vertexNodes " + graph.getVertexes().size());
+    
     int effCreatedCount=graph.getVertexes().size();
     for(String exNodeName : gc.extraNodes){
       for(int i=0; i<graph.getVertexes().size(); i++){
@@ -606,6 +555,8 @@ public class MenuBar {
         }*/
         
         int num1 = currentTask.getLevel();
+        
+        updateStudentTasks(currentTask.getTitle());
      
         LinkedList<int[]> problemList = gc.getProblemList();
         gc.loadLevel(problemList.get(num1)[0]);
@@ -616,12 +567,42 @@ public class MenuBar {
           GraphCanvas.openTabs.get(i).dispose();
           GraphCanvas.openTabs.clear();
         }
+        
+        // Add the current problem to solved list of problems
+        
      } catch (CommException ex) {
             java.util.logging.Logger.getLogger(MenuBar.class.getName()).log(Level.SEVERE, null, ex);
      }
       }
       
     });
+  }
+  
+  private void updateStudentTasks(String taskTitle) {
+    
+    final String WEB = "http://laits.engineering.asu.edu/updateprob.php";
+
+    try {
+      //idtask taskID of the current task
+      String fname = ApplicationUser.getUserFirstName();
+      String lname = ApplicationUser.getUserLastName();
+      String asuid = ApplicationUser.getUserASUID();
+      taskTitle = taskTitle.replaceAll(" ", "_");
+      
+      devLogs.trace("Writing Student "+fname+" "+lname+" Task: "+taskTitle+" to server");
+
+      String url = WEB;
+      url += "?id=" + asuid + "&fname=" + fname + "&lname=" + lname + "&title=" + taskTitle;
+      URL myURL = new URL(url);
+      
+      BufferedReader in = new BufferedReader(new InputStreamReader(myURL.openStream()));
+
+      in.close();
+
+    } catch (Exception e) {
+      devLogs.trace("Error in Updating student completed prob. "+e.getMessage());
+    }
+
   }
 
   /**
@@ -655,64 +636,6 @@ public class MenuBar {
             java.util.logging.Logger.getLogger(MenuBar.class.getName()).log(Level.SEVERE, null, ex);
      }
 
-  }
-
-  /**
-   * This method initializes the Finishing Demo button
-   */
-  private void initNewAvatarButton() {
-    newAvatarButton = new JButton("New Avatar");
-    newAvatarButton.setBackground(Color.WHITE);
-
-    Font normal = new Font("Arial", Font.PLAIN, 16);
-    newAvatarButton.setFont(normal);
-
-    newAvatarButton.addActionListener(new java.awt.event.ActionListener() {
-
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        newAvatarButtonActionPerformed(evt);
-      }
-
-      private void newAvatarButtonActionPerformed(ActionEvent evt) {
-        logs.out(Logger.ACTIVITY, "GraphCanvas.initNewAvatarButton.1");
-        Avatar avatar = new Avatar(100, 100, gc, n, false, true);
-        gc.getAvatarList().add(avatar);
-      }
-    });
-  }
-
-  /**
-   * This method initializes the Finishing Demo button
-   */
-  private void initGlossaryButton() {
-    glossaryButton = new JButton("Glossary");
-    glossaryButton.setBackground(Color.WHITE);
-
-    glossaryButton.addActionListener(new java.awt.event.ActionListener() {
-
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        glossaryButtonActionPerformed(evt);
-      }
-
-      private void glossaryButtonActionPerformed(ActionEvent evt) {
-        logs.out(Logger.ACTIVITY, "MenuBar.initGlossaryButton.1");
-        if (Desktop.isDesktopSupported()) {
-          desktop = Desktop.getDesktop();
-        }
-        if (desktop.isSupported(Desktop.Action.BROWSE)) {
-          URI uri = null;
-          File f = new File("localhtml/i-glossary.html");
-          String path = f.getAbsolutePath().toString();
-          String url = path.replace("\\", "/");
-          try {
-            uri = new URI("file:///" + url);
-            desktop.browse(uri);
-          } catch (Exception ioe) {
-            ioe.printStackTrace();
-          }
-        }
-      }
-    });
   }
 
   /**

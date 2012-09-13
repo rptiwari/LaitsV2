@@ -65,7 +65,11 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
   // no scope here because it should be a package variable, only accessed by the members of the NodeEditor
   Vertex correctVertex;
   private Point initialClick = new Point();
-
+  
+  /**
+   * Log4j Logger
+   */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(NodeEditor.class);
 
   /**
    * This method returns an instance of the NodeEditor
@@ -94,7 +98,7 @@ public class NodeEditor extends javax.swing.JFrame implements WindowListener {
    * @param show
    */
   public NodeEditor(Vertex v, Graph g, GraphCanvas gc, boolean show, boolean turnOffLogging) {
-   
+   devLogs.trace("Creating New NodeEditor");
     graph = g;
     graphCanvas = gc;
     currentVertex = v;

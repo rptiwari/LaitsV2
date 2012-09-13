@@ -25,6 +25,8 @@ public final class TaskFactory extends Factory{
 
   private static TaskFactory entity;
   private LinkedList<int[]> tasksPerLevel;
+  
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(TaskFactory.class);
 
   /**
    * 
@@ -56,6 +58,7 @@ public final class TaskFactory extends Factory{
    */
   private TaskFactory() throws CommException {
     super();
+    devLogs.trace("Creating new TaskFactory Instance");
   }
 
   /**
@@ -63,7 +66,7 @@ public final class TaskFactory extends Factory{
    *
    * @return
    */
-    public LinkedList<Task> getTasks() throws DataException {
+    public LinkedList<Task> loadAllTasks() throws DataException {
     tasks.clear();
     try {
 /* THIS CODE WILL BE USED BY THE SYNCHER
@@ -89,6 +92,11 @@ public final class TaskFactory extends Factory{
     return tasks;
   }
 
+    
+   public LinkedList<Task> getTasks(){
+     return tasks;
+   }
+    
   /**
    * This method get one Task from database or file
    *
@@ -231,6 +239,13 @@ public final class TaskFactory extends Factory{
       }
     }
     return indices;
+  }
+  
+  public boolean isAllTasksLoaded(){
+    if(tasks == null)
+      return false;
+    else 
+      return true;
   }
   
  }

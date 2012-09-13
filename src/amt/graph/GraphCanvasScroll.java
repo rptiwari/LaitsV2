@@ -51,7 +51,7 @@ public class GraphCanvasScroll extends JPanel implements MouseListener, KeyListe
     area = new Dimension(0, 0);
     this.jf = jf;
     this.graph = jf.getGraph();      
-    graphCanvas = new GraphCanvas(jf);
+    graphCanvas = GraphCanvas.getInstance(jf);
     graphCanvas.setBackground(Color.white);
     graphCanvas.addMouseListener(this);
     graphCanvas.setFocusable(true);

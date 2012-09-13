@@ -32,7 +32,7 @@ public class Formula {
    */
   private int nextEntry;
 
-  
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Formula.class);
   
   /***************************************************************************
   * CONSTRUCTORS: the object can be creates from void, a String 
@@ -46,6 +46,8 @@ public class Formula {
   */
   public Formula() 
   {
+    devLogs.trace("Initializing empty formula...");
+    
     nb_leaves = 0;
     nextEntry = 0;
     opList = new LinkedList<TreeCell>();
@@ -57,7 +59,8 @@ public class Formula {
   */
   public Formula(String formulaAsString) throws SyntaxErrorException
   {
-
+    devLogs.trace("Initializing formula from String "+formulaAsString+"...");
+    
     nb_leaves = 0;
     nextEntry = 0;
     opList = new LinkedList<TreeCell>();

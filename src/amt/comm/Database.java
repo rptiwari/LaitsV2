@@ -31,6 +31,8 @@ public final class Database {
   private String user;
   private LinkedList<String> activityList = new LinkedList<String>();
   private LinkedList<String> logList = new LinkedList<String>();
+  /**Logger */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Database.class);
 
   /**
    * Constructor
@@ -48,7 +50,7 @@ public final class Database {
       }
     }*/
     
-    String userName = ApplicationUser.getUserFirstName()+"  "+
+    String userName = ApplicationUser.getUserFirstName()+"_"+
             ApplicationUser.getUserLastName();
     
     logs.trace("Application User : "+userName);

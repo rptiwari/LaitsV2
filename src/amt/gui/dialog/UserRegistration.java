@@ -5,7 +5,7 @@
 package amt.gui.dialog;
 
 import amt.ApplicationUser;
-import laits.model.Graph;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -14,6 +14,9 @@ import org.apache.log4j.Logger;
  */
 public class UserRegistration extends javax.swing.JDialog {
 
+  /**Logger */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(UserRegistration.class);
+  
   /**
    * Creates new form UserRegistration2
    */

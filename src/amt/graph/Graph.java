@@ -39,7 +39,21 @@ public class Graph extends Selectable {
   private LinkedList<String> professorOutputFile = new LinkedList<String>();
   private int dialogueValue;
   private boolean errorRun;
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Graph.class);
 
+  /**
+   * Default Constructor
+   */
+  public Graph() {
+    devLogs.trace("Initializing Empty Graph");
+    try {
+      this.server = TaskFactory.getInstance();
+    } catch (CommException ex) {
+      devLogs.error("Error in Initializing Graph "+ex.getMessage());
+    }
+  }
+  
+  
   /**
    * Method to set an object as the one currently selected
    *
@@ -126,36 +140,7 @@ public class Graph extends Selectable {
     return sum;
   }
 
-  /**
-   * Default Constructor
-   */
-  public Graph() {
-    try {
-      this.server = TaskFactory.getInstance();
-    } catch (CommException ex) {
-      // catch exception
-    }
-  }
-
-  /**
-   * Constructor Creates a graph with the elements in a file
-   *
-   * @param filename is the name of the file that contents the data for the
-   * graph
-   */
-  public Graph(String filename) {
-    try {
-      FileInputStream f = new FileInputStream(filename);
-      ObjectInputStream s = new ObjectInputStream(f);
-      Graph g = (Graph) s.readObject();
-      f.close();
-      vertexes = g.vertexes;
-      edges = g.edges;
-    } catch (Exception ex) {
-      logs.concatOut(Logger.DEBUG, "Graph.Graph.1", ex.toString());
-    }
-  }
-
+  
   /**
    * Method to get the vertex in the given position
    *

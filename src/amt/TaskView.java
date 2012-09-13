@@ -47,12 +47,16 @@ public class TaskView extends JPanel implements ActionListener {
   static  final private int toolBarHeight = 33;
   private int index;
   private JPanel toolBarPanel;
+  
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(TaskView.class);
 
   /**
    * Constructor
    */
   public TaskView() {
     super();
+    devLogs.trace("Initializing TaskView...");
+    
     FlowLayout f = new FlowLayout(FlowLayout.LEFT, 5, 20);
     this.setLayout(f);
     taskDescriptionLabel = new JLabel("");
@@ -348,67 +352,7 @@ public class TaskView extends JPanel implements ActionListener {
     return button;
   }
 
-  /**
-   * This method split the task description in several lines
-   *
-   * @param description is the task description
-   */
-  private LinkedList<String> splitLines(String description) {
-    Font titleFont = new Font("Arial", Font.BOLD, 30);
-    Font textFont = new Font("Arial", Font.PLAIN, 18);
-    FontMetrics textfm = Toolkit.getDefaultToolkit().getFontMetrics(textFont);
-    int pictureWidth = (int) imageSize.getSize().getWidth() / 2;
-    int margin = 50;
-    LinkedList<String> taskLinesProbView = new LinkedList<String>();
-    String tempProblemView = ""; //holds the current line
-    String tempHolder = ""; //holds the current word
-    int problemViewSize = 0;
-    char currentChar;
-    //necessary for the calculation to be correct
-    if (this.getParent() != null) {
-      imageSize = this.getParent().size();
-    } else {
-      //this calculation is only necessary for the first problem to load
-      imageSize = Toolkit.getDefaultToolkit().getScreenSize();
-      imageSize.setSize(imageSize.getHeight(), imageSize.getWidth() - 24);
-    }
-    //size of an image MUST be factored in to include it to the left or right of the text
-    //this is for a task description when a picture is involved
-    for (int i = 0; i < description.length(); i++) {
-      currentChar = description.charAt(i);
-      problemViewSize = textfm.stringWidth(tempProblemView) + textfm.stringWidth(tempHolder);
-
-      if (problemViewSize < imageSize.width - pictureWidth - margin * 3 / 2 && currentChar != '\\') {
-        if (currentChar == ' ') {
-          tempHolder += currentChar;
-          tempProblemView += tempHolder;
-          tempHolder = "";
-        } else {
-          tempHolder += currentChar;
-        }
-      } else if (currentChar == '\\') {
-        i++;
-        if (i < description.length()) {
-          currentChar = description.charAt(i);
-          if (currentChar == 'n') {
-            tempProblemView += tempHolder;
-            taskLinesProbView.add(tempProblemView);
-            tempHolder = "";
-            tempProblemView = "";
-          }
-        } else {
-          tempHolder += currentChar;
-        }
-      } else {
-        taskLinesProbView.add(tempProblemView);
-        tempHolder += currentChar;
-        tempProblemView = "";
-      }
-    }
-    tempProblemView += tempHolder;
-    taskLinesProbView.add(tempProblemView);
-    return taskLinesProbView;
-  }
+ 
 
   /**
    * This method active the desktop browser to show starting page //Quanwei Zhao

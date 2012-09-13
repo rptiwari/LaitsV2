@@ -19,7 +19,7 @@ public class Graph extends Selectable {
 
   private static Graph authorGraph = null;
   private Selectable selected = null;
-  private LinkedList<Vertex> vertexes;
+  private LinkedList<Vertex> vertices;
   private LinkedList<Edge> edges;
   private LinkedList<PlotDialog> plots;
   private int taskID;
@@ -36,7 +36,7 @@ public class Graph extends Selectable {
    */
   private Graph() {
     logs.info("Instantiating Model Graph.");
-    vertexes = new LinkedList<Vertex>();
+    vertices = new LinkedList<Vertex>();
     edges = new LinkedList<Edge>();
     plots = new LinkedList<PlotDialog>();
   }
@@ -104,14 +104,30 @@ public class Graph extends Selectable {
   }
 
   /**
+   * This method gets the value of taskID
+   * @return
+   */
+  public int getTaskID() {
+    return taskID;
+  }
+
+  /**
+   * This method sets the value of taskID
+   * @param taskID
+   */
+  public void setTaskID(int taskID) {
+    this.taskID = taskID;
+  }
+
+  /**
    * Method to get the sum of all the input degrees of the vertexes on the graph
    *
    * @return sum of all input degrees of the vertexes on the graph
    */
   public int getSumOfInputDegrees() {
     int sum = 0;
-    int n = vertexes.size();
-    Object a[] = vertexes.toArray();
+    int n = vertices.size();
+    Object a[] = vertices.toArray();
     for (int i = 0; i < n; i++) {
       sum = sum + ((Vertex) a[i]).inDegree();
     }
@@ -126,7 +142,7 @@ public class Graph extends Selectable {
    * @return the vertex in the given position
    */
   public final Vertex vertex(int position) {
-    return ((Vertex) (vertexes.toArray()[position]));
+    return ((Vertex) (vertices.toArray()[position]));
   }
 
   /**
@@ -160,7 +176,7 @@ public class Graph extends Selectable {
       edges.add(e);
       e.end.addInEdge(e);
     }
-    vertexes.push(v);
+    vertices.push(v);
     
     return v;
   }
@@ -172,7 +188,7 @@ public class Graph extends Selectable {
    */
   public final Vertex addVertex() {
     Vertex v = new Vertex();
-    vertexes.push(v);
+    vertices.push(v);
     return v;
   }
 
@@ -185,7 +201,7 @@ public class Graph extends Selectable {
    */
   public final Vertex addVertex(int x, int y) {
     Vertex v = new Vertex(x, y);
-    vertexes.push(v);
+    vertices.push(v);
     return v;
   }
 
@@ -216,7 +232,6 @@ public class Graph extends Selectable {
       edges.remove(e);
       e.start.delOutEdge(e);
     }
-    
     n = v.outedges.size();
     Object b[] = v.outedges.toArray();
     for (int j = 0; j < n; j++) {
@@ -224,8 +239,7 @@ public class Graph extends Selectable {
       edges.remove(e);
       e.end.delInEdge(e);
     }
-    
-    vertexes.remove(v);
+    vertices.remove(v);
   }
   
   
@@ -281,8 +295,8 @@ public class Graph extends Selectable {
    * @return the new inserted edge
    */
   public final Edge addEdge(int a, int b) {
-    Vertex v1 = (Vertex) vertexes.toArray()[a];
-    Vertex v2 = (Vertex) vertexes.toArray()[b];
+    Vertex v1 = (Vertex) vertices.toArray()[a];
+    Vertex v2 = (Vertex) vertices.toArray()[b];
     return addEdge(v1, v2);
   }
 
@@ -294,7 +308,7 @@ public class Graph extends Selectable {
   @Override
   public String toString() {
     String s = "(graph\n";
-    s += vertexes.toString() + "\n";
+    s += vertices.toString() + "\n";
     s += edges.toString();
     s = s + "\n)";
     return s;
@@ -313,8 +327,8 @@ public class Graph extends Selectable {
     for (j = 0; j < n; j++) {
       ((Edge) x[j]).paint(g);
     }
-    n = vertexes.size();
-    x = vertexes.toArray();
+    n = vertices.size();
+    x = vertices.toArray();
     for (j = 0; j < n; j++) {
       ((Vertex) x[j]).paint(g);
     }
@@ -359,8 +373,8 @@ public class Graph extends Selectable {
     for (j = 0; j < n; j++) {
       ((Edge) a[j]).moveRelative(x, y);
     }
-    n = vertexes.size();
-    a = vertexes.toArray();
+    n = vertices.size();
+    a = vertices.toArray();
     for (j = 0; j < n; j++) {
       ((Vertex) a[j]).moveRelative(x, y);
     }
@@ -373,8 +387,8 @@ public class Graph extends Selectable {
    * @return
    */
   public Vertex searchVertexByName(String name) {
-    for (int i = 0; i < vertexes.size(); i++) {
-      Vertex v = ((Vertex) vertexes.toArray()[i]);
+    for (int i = 0; i < vertices.size(); i++) {
+      Vertex v = ((Vertex) vertices.toArray()[i]);
       if (name.toUpperCase().equals(v.getNodeName().toUpperCase())) {
         return v;
       }
@@ -420,11 +434,11 @@ public class Graph extends Selectable {
    * @return a List with all the vertexes in the graph
    */
   public LinkedList<Vertex> getVertexes() {
-    return vertexes;
+    return vertices;
   }
 
   public void setVertexes(LinkedList vertexes) {
-    this.vertexes = vertexes;
+    this.vertices = vertexes;
   }
 
   /**
@@ -448,7 +462,7 @@ public class Graph extends Selectable {
    * @return: Vertex with provided name (if found), Null otherwise 
    */
   public Vertex getVertexByName(String vertexName){
-    for(Vertex currentVer:vertexes){
+    for(Vertex currentVer:vertices){
       if(currentVer.getNodeName().compareTo(vertexName)==0){
         return currentVer;
       }
@@ -473,7 +487,7 @@ public class Graph extends Selectable {
   }
 
   public void clear(){
-    vertexes.clear();
+    vertices.clear();
     edges.clear();
     plots.clear();   
   }

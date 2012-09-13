@@ -53,6 +53,11 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
   public static final int CORRECT_TYPE = 0;
   public static final int CORRECT_INPUTS = 1;
   public static final int ALL_CORRECT = 2;
+  
+  /**
+   * Log4j Logger
+   */
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(InputsPanel.class);
 
   /** Creates new form InputsPanel
    * @param parent
@@ -62,6 +67,8 @@ public class InputsPanel extends javax.swing.JPanel implements ItemListener {
    */
   public InputsPanel(NodeEditor parent, Vertex v, Graph g, GraphCanvas gc) 
   {
+    devLogs.trace("Initializing Inputs Panel");
+    
     initComponents();
     this.parent = parent;
     this.g = g;

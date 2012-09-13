@@ -43,8 +43,8 @@ public class Vertex extends Selectable {
   private boolean inputsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
   private boolean calculationsPanelChanged = false; // changed from inputs panel class. Used for the new system of feedback
   public int paintNoneHeight = 6 * size; // elements needed to display the node
-  public int width = 11 * size; // elements needed to display the node
-  public int height = 6 * size; // elements needed to display the node
+  public  int width = 11 * size; // elements needed to display the node
+  public  int height = 6 * size; // elements needed to display the node
   private boolean hasBlueBorder = false;
  // private boolean isUsingAllAvailableInputs = false;
 
@@ -77,6 +77,7 @@ public class Vertex extends Selectable {
    * @param nodeName is the name of the vertex
    */
   public Vertex(int x, int y, String nodeName) {
+    logs.trace("Creating New Vertex "+nodeName+" at Position "+x+" "+y);
     position = new Point(x, y);
     setNodeName(nodeName);
     editorOpen = false;

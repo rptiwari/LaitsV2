@@ -51,8 +51,12 @@ public class DepthDetector
   private int tabs_no_change,nb_tries_red_check_panel1,nb_tries_red_check_panel2,check_answer;
   private boolean segmentationBegun;
 
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(DepthDetector.class);
+  
  public DepthDetector ()
  {
+   devLogs.trace("Instantiating DepthDetector...");
+   
   logger = Logger.getLogger();
   this.init_detectors();
   student="NONE";
@@ -352,7 +356,7 @@ public class DepthDetector
         this.condition="ALC";
         break;
     }    
-    System.out.println("The user and condition have been entered for the segment_DepthDetector:"+this.toString());
+    devLogs.trace("The user and condition have been entered for the segment_DepthDetector:"+this.toString());
     this.segmentationBegun=false;
   }
 

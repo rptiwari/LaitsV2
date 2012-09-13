@@ -154,7 +154,6 @@ public class Main extends JFrame implements WindowListener {
     menuItemEditTimeRange = new javax.swing.JMenuItem();
     menuItemGenerateSolution = new javax.swing.JMenuItem();
     menuItemExit = new javax.swing.JMenuItem();
-    jMenuItem1 = new javax.swing.JMenuItem();
     menuHelp = new javax.swing.JMenu();
     menuItemAbout = new javax.swing.JMenuItem();
     menuItemHelp = new javax.swing.JMenuItem();
@@ -258,14 +257,6 @@ public class Main extends JFrame implements WindowListener {
       }
     });
     menuFile.add(menuItemExit);
-
-    jMenuItem1.setText("jMenuItem1");
-    jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jMenuItem1ActionPerformed(evt);
-      }
-    });
-    menuFile.add(jMenuItem1);
 
     menuBar.add(menuFile);
 
@@ -434,12 +425,6 @@ public class Main extends JFrame implements WindowListener {
     resetStatusMessage();
   }//GEN-LAST:event_tabPaneMouseClicked
 
-  private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-    // TODO add your handling code here:
-    logs.info("Vertices: "+GraphCanvas.getInstance().getGraph().getVertexes().size());
-    logs.info("Vertices: "+GraphCanvas.getInstance().getGraph().getEdges().size());
-  }//GEN-LAST:event_jMenuItem1ActionPerformed
-
   private void openNewTask() {
     JFileChooser fc = new JFileChooser();
 
@@ -502,7 +487,6 @@ public class Main extends JFrame implements WindowListener {
   private javax.swing.JPanel centerPanel;
   private javax.swing.JPanel graphCanvasScrollPane;
   private javax.swing.JPanel instructionPanel;
-  private javax.swing.JMenuItem jMenuItem1;
   private javax.swing.JPanel mainPanel;
   private javax.swing.JMenuBar menuBar;
   private javax.swing.JMenu menuFile;

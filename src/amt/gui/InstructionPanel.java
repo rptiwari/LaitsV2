@@ -24,13 +24,6 @@ import javax.swing.tree.*;
 public class InstructionPanel extends javax.swing.JPanel implements java.beans.Customizer, ActionListener 
 {
 
-  public void testNewStopsActive() {
-    if (this.slideList.currentLastSlide.getSlideNumber()>=67)
-      InstructionPanel.stopIntroductionActive = false;
-    else
-      InstructionPanel.stopIntroductionActive= true;
-  }
-
   // The below variables were taken directly from TaskView.java
   // I'm not sure what is needed out of the below, I will try to find that out and clean this up as soon as I can
   private Dimension imageSize = new Dimension(0, 0);
@@ -49,15 +42,11 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   // The below variables were variables that I added as apart of the new intro   
   private ListSlides slideList; // This array list contains all of the slides that have been viewed thus far in the program
   private boolean firstSlidePlacedOnDisplay = false;
-  private static int SLIDE_FRAMES = 76; //Number of slides in the deck
-  private static int PROGRESS_FRAMES = 4;
   private static int FIRST_STOP = 15; 
   private static int SECOND_STOP = 60;
   private static int THIRD_STOP = 67;
   
-  private static int IP1_NODE_CREATION = 20;
-  private static int IP2_NODE_CREATION = 40;
-  private static int IP3_NODE_CREATION = 50;
+  
   
   private static int IP1_START = 20;
   private static int IP2_START = 38;
@@ -98,7 +87,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   public static boolean goBackwardsSlides = false;
   private static int currentStop=0;
 
-
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(InstructionPanel.class);
   /**
    * Constructor
    */
@@ -129,19 +118,24 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
     toolBar.setBounds(290, 5, toolBarWidth, toolBarHeight);
     add(taskDescriptionLabel);
     
- //   if (cover != null) 
-   //     checkNewNodeButton();
-    
     checkForwardButton();
 
   }
 
+  public void testNewStopsActive() {
+    if (this.slideList.currentLastSlide.getSlideNumber()>=67)
+      InstructionPanel.stopIntroductionActive = false;
+    else
+      InstructionPanel.stopIntroductionActive= true;
+  }
+  
   /**
    * Called from: Constructor
    *
    * Creates the tree
    */
   public void initTree() {
+    devLogs.trace("Initializing InstructionPanel Tree.");
 
     /*
      * Created by Andrew according to Sylvie's instructions
@@ -483,7 +477,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
    */
   public void createSlides() 
   {
-
+    devLogs.trace("Creating All the Slides.");
     SlideObject slide = new SlideObject(1,SlideObject.STOP_NONE, SlideObject.PROBLEM_BEFORE, SlideObject.PROGRESS_INIT);
     slideList = new ListSlides(slide);
     slideList.setFirstSlide(slide);
@@ -1136,6 +1130,8 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
   }//GEN-LAST:event_allForwardButtonActionPerformed
 
   private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
+    devLogs.trace("Forward Action on Instruction Panel");
+            
     if (InstructionPanel.stopIntroductionActive
             && !InstructionPanel.goBackwardsSlides
             && problemBeingSolved < SlideObject.PROBLEM_AFTER
@@ -1143,7 +1139,7 @@ public class InstructionPanel extends javax.swing.JPanel implements java.beans.C
             && slideList.currentSlide.getStopDetection() != SlideObject.STOP_NONE
             && lastActionPerformed < slideList.currentSlide.getStopDetection()) 
     {
-              JOptionPane.showMessageDialog(this, "Finish all the instructions in this slide before going to the next one.");
+              JOptionPane.showMessageDialog(this, "Finish all the instructions in this\nslide before going to the next one.");
     }
     else 
     {

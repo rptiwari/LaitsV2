@@ -308,7 +308,7 @@ public class Logger {
         activitySubs.listen(newLine);
         }
         if (!Main.MetaTutorIsOn) {
-          System.out.println("log: " + newLine);
+          //System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
         LogWriter.write(time + " + " + student + " + " + taskID + " + " + LOGMSG.get(key) + " + " + Main.VERSIONID);
@@ -375,7 +375,7 @@ public class Logger {
         this.activitySubs.listen(newLine);
         }
         if (!Main.MetaTutorIsOn) {
-          System.out.println("log: " + newLine);
+         // System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
 //          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);
@@ -428,7 +428,7 @@ public class Logger {
         ActivityWriter.flush();
         
         if (!Main.MetaTutorIsOn) {
-          System.out.println("log: " + newLine);
+          //System.out.println("log: " + newLine);
         }
       } else if (type == DEBUG) {
 //          LogWriter.write(time + " + " + LOGMSG.get(key) + msg);

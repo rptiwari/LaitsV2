@@ -95,18 +95,17 @@ public class Clock {
     }
     else componentWidth = (int)jpanel.getToolkit().getDefaultToolkit().getScreenSize().getWidth();
 
-    Vertex v = new Vertex();
     //font for the clock:
     Font normal = new Font("Arial", Font.PLAIN, 14);
     //font metrics:
     FontMetrics normalFontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(normal);
     g.setFont(normal);
     int x = jpanel.getWidth() - 130; //x and y are the location of the image
-    int y = screenHeight - v.paintNoneHeight + 10;
+    int y = screenHeight - 60 + 10;
     //The following is used for VERSION 1.1.2 of the software:
     if(panelName.equalsIgnoreCase("problemView"))
     {
-        y = screenHeight - v.paintNoneHeight;
+        y = screenHeight - 60;
     }
 
     //CLOCK

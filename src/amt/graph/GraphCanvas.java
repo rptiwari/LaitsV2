@@ -84,7 +84,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   private Image inputsCorrect = null;
   private Image inputsGaveUp = null;
   private Image inputsWrong = null;
-  private Vertex menuVertex = new Vertex();
+  private Vertex menuVertex ;
   private boolean enableMenu = false;   //Enable the menu
   private boolean enableEdge = false;
   private boolean modelChanged = false;
@@ -135,15 +135,32 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   public LinkedList<String> listOfVertexes = null; //the list of all the possible created nodes for the current task. 
   public LinkedList<String> extraNodes = null;
   private Query query = Query.getBlockQuery();
+  
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(GraphCanvas.class);
 
+  private static GraphCanvas graphCanvas;
+  
+  
+  public static GraphCanvas getInstance(Main jf){
+    if(graphCanvas == null){
+      graphCanvas = new GraphCanvas(jf);
+    } 
+    return graphCanvas;
+  }
+  
+  
   /**
    * Constructor Creates the main frame
    *
    * @param jf 
    */
-  public GraphCanvas(Main jf) {
+  private GraphCanvas(Main jf) {    
     super();
+    
+    devLogs.trace("Initializing Graph Canvas..");
+    
     setFocusable(true);
+    menuVertex = new Vertex();
     imageSize = new Dimension(0, 0);
     area = new Dimension(0, 0);
     this.graph = jf.getGraph();
@@ -934,14 +951,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
       }
     }
 
-    if (enableMenu == true && menuVertex != new Vertex() && menuVertex != null) {
-      Point pos = menuVertex.getPosition();
-      int x = pos.x;
-      int y = pos.y;
-
-    }
-
-    boolean complete = false;
+    
     //determine if the user has passed a level
     if (passed == true) {
       //increment points if they were earned
@@ -2692,7 +2702,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
   
   public void resetGraphStatus(Vertex currentVertex)
   {
-    Vertex v = new Vertex();
+    Vertex v;
     int firstNodeWithNoStatus = -1;
     int firstIndexOfNoStatus = -1;
     boolean restart = true;
@@ -2700,7 +2710,7 @@ public class GraphCanvas extends JPanel implements FocusListener, ActionListener
 
     while (restart) 
     {
-      currentVertex.setGraphsButtonStatus(v.NOSTATUS);
+      currentVertex.setGraphsButtonStatus(Vertex.NOSTATUS);
       this.checkNodeForLinksToOtherNodes(currentVertex); // check to see if the current vertex is an input of another vertex
       for (int a = 0; a < graph.getVertexes().size(); a++) 
       {

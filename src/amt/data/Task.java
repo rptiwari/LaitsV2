@@ -47,10 +47,12 @@ public final class Task implements Product {
   public LinkedList<Vertex> listOfVertexes = null;
   public LinkedList<Edge> alledges = null;
 
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Task.class);
   /**
    * Constructor
    */
   public Task() {
+    devLogs.trace("Instantiating an Empty task");
     setId(-1); //Initialize to -1 to indicate no task selected
     setLevel(1);
     setTitle("");
@@ -76,6 +78,8 @@ public final class Task implements Product {
    * @param title
    */
   public Task(int id, int level, String title, String phase) {
+    devLogs.trace("Instantiating a Task with ID:"+id+" and title:"+title);
+    
     setId(id);
     setLevel(level);
     setTitle(title);

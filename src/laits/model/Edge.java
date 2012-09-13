@@ -28,9 +28,7 @@ public class Edge extends Selectable {
   private int height = 5 * size;
   private static Logger logs = Logger.getLogger(Edge.class);
 
-  public Edge(){
-    super();
-  }
+  
   public Edge(Edge sourceEdge){
     multi = sourceEdge.multi;
     pMid = sourceEdge.pMid;
@@ -185,6 +183,8 @@ public class Edge extends Selectable {
   @Override
   public String toString() {
     String s = "(Edge de: ";
+    s += " " + start.getNodeName() + " a ";
+    s += " " + end.getNodeName() + " de tipo: ";
     s += " " + edgetype;
     return s + " )";
   }

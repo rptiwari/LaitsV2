@@ -32,6 +32,25 @@ public class Edge extends Selectable {
   private int width  = 10 * size;
   private int height = 5 * size;
   
+  private static org.apache.log4j.Logger devLogs = org.apache.log4j.Logger.getLogger(Edge.class);
+  
+  /**
+   * Constructor
+   * Creates a new Edge between Vertex a and Vertex b
+   *
+   * @param a is the starting Vertex
+   * @param b is the ending Vertex
+   * @param edges all edges in the Graph class
+   */
+  public Edge(Vertex a, Vertex b, LinkedList edges) {
+    super();
+    devLogs.trace("Creating New Edge");
+    start = a;
+    end = b;
+    allEdges = edges;
+    revalidate();
+  }
+  
   /**
    * 
    * @param x
@@ -146,21 +165,7 @@ public class Edge extends Selectable {
     validate();
   }
 
-  /**
-   * Constructor
-   * Creates a new Edge between Vertex a and Vertex b
-   *
-   * @param a is the starting Vertex
-   * @param b is the ending Vertex
-   * @param edges all edges in the Graph class
-   */
-  public Edge(Vertex a, Vertex b, LinkedList edges) {
-    super();
-    start = a;
-    end = b;
-    allEdges = edges;
-    revalidate();
-  }
+  
 
   /**
    * Method to get all the information of the Edge
@@ -288,178 +293,6 @@ public class Edge extends Selectable {
       pMid.y = p1y + (p2y - p1y) / 2;
   }
 
-
-  /**
-     * Method that review if there is an edge between Vertex a and Vertex b
-     * @param a is a Vertex
-     * @param b is a Vertex
-     * @return true if there is an edge, false otherwise
-     */
-  private int existEdgeBetween(Vertex a, Vertex b){
-       Object[] edges = allEdges.toArray();
-       int lenE = allEdges.size();
-       Edge edge;
-       boolean exist = false;
-
-       int cont = 0;
-
-       for (int i=0; i<lenE; i++){
-         edge = (Edge) edges[i];
-         // There is an edge between these two nodes
-         if ((a.getNodeName().equals(edge.start.getNodeName()) && b.getNodeName().equals(edge.end.getNodeName())) || (a.getNodeName().equals(edge.end.getNodeName()) && b.getNodeName().equals(edge.start.getNodeName()))) {
-           cont++;
-           exist=true;
-         }
-       }
-       if (exist && cont==1){
-          cont = 0;
-          exist=false;
-       } else{
-          cont--;
-          exist=true;
-       }
-       //return exist;
-       System.out.println("EDGE Cont: " + cont);
-       return cont;
-    }
-
-  /* PRIVATE AUXILIAR METHODS ----------------------------------------------- */
-
-  /**
-   * This method is used to draw the regular link for version 2
-   *
-   * @param g
-   */
-  private void paintRegularLink(Graphics g) {
-    double startX = start.getPositionX() + width/2 ;
-    double startY = start.getPositionY() + height/2;
-    double endX = end.getPositionX() + width/2;
-    double endY = end.getPositionY() + height/2;
-    g.setColor(getColor(color));
-    g.drawLine((int)startX, (int)startY, (int)endX, (int)endY);
-  }
-
-
-  /**
-   * Method used by flow link to draw an arrow.
-   *
-   * @param g Graphic object
-   */
-  private void paintFlowArrow(Graphics g) {
-    revalidate();
-    if (length == 0) return;
-    int[] xval = new int[3];
-    int[] yval = new int[3];
-    double longitude = 11;
-    double angle = 77;
-    double startX = start.getPositionX() + width/2 ;
-    double startY = start.getPositionY() + height/2;
-    double endX = end.getPositionX() + width/2;
-    double endY = end.getPositionY() + height/2;
-    double midx =(startX + (endX - startX)/2);
-    double midy =(startY + (endY - startY)/2);
-    double r = Math.sqrt((startX - endX) * (startX - endX) + (startY - endY) * ( startY - endY));
-    double sinAngle = (endY - startY)/r;
-    double cosAngle = (endX - startX)/r;
-    double pointAx = midx + longitude * cosAngle;
-    double pointAy = midy + longitude * sinAngle;
-    double pointBx = (pointAx - midx) * Math.cos(angle) - (pointAy -  midy) * Math.sin(angle) + midx;
-    double pointBy = (pointAx - midx) * Math.sin(angle) + (pointAy -  midy) * Math.cos(angle) + midy;
-    double pointCx = (pointAx - midx) * Math.cos(-angle) - (pointAy -  midy) * Math.sin(-angle) + midx;
-    double pointCy = (pointAx - midx) * Math.sin(-angle) + (pointAy -  midy) * Math.cos(-angle) + midy;
-    xval[0] = (int) pointBx;
-    xval[1] = (int) pointAx;
-    xval[2] = (int) pointCx;
-    yval[0] = (int) pointBy;
-    yval[1] = (int) pointAy;
-    yval[2] = (int) pointCy;
-    Color temp = g.getColor();
-    g.setColor(getColor(color));
-    g.fillPolygon(xval, yval, 3);
-    g.setColor(temp);
-  }
-
-  /**
-   *
-   * @param g
-   */
-  private void paintTemporalLink(Graphics g) {
-    validate();
-    int x = start.getPositionX();
-    int y = start.getPositionY();
-    int widthx  = 10 * size;
-    int heighx  = 5  * size;
-    int centerx = x + widthx /2;
-    int centery = y + heighx /2;
-    Graphics2D g2d = (Graphics2D) g;
-    g2d.setColor(getColor(color));
-    Point p2 = end.getPosition();
-    float dashes[] = {6f, 3f };
-    BasicStroke stroke = new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 1f, dashes, 0f);
-    Stroke oldStroke = g2d.getStroke();
-    g2d.setStroke(stroke);
-    g2d.drawLine(centerx, centery, p2.x, p2.y);
-    g2d.setStroke(oldStroke);
-  }
-
-  /**
-   *
-   * @param g
-   */
-  private void paintTemporalArrow(Graphics g) {
-    revalidate();
-    if (length == 0) return;
-    int[] jxvals = new int[3];
-    int[] jyvals = new int[3];
-    int sizeArrow = 5;
-    double jp1x = start.getPositionX();
-    double jp1y = start.getPositionY();
-    jp1x = jp1x + 50;
-    jp1y = jp1y + 25;
-    length = Point.distance(jp1x, jp1y, end.getPositionX(), end.getPositionY());
-    if (length == 0) return;
-    double dy = end.getPositionY() - jp1y;
-    double dx = end.getPositionX() - jp1x;
-    double sin = dy / length;
-    double cos = dx / length;
-    double ax = start.getPositionX() + 50; //width/2
-    double ay = start.getPositionY() + 25; //height/2
-    double px = length;
-    double py = 0;
-    double lx = length - (sizeArrow*2);
-    double ly = sizeArrow;
-    double rx = lx;
-    double ry = -ly;
-    double tx, ty;
-    tx = px * cos - py * sin;
-    ty = px * sin + py * cos;
-    px = tx;
-    py = ty;
-    tx = lx * cos - ly * sin;
-    ty = lx * sin + ly * cos;
-    lx = tx;
-    ly = ty;
-    tx = rx * cos - ry * sin;
-    ty = rx * sin + ry * cos;
-    rx = tx;
-    ry = ty;
-    px += ax;
-    py += ay;
-    lx += ax;
-    ly += ay;
-    rx += ax;
-    ry += ay;
-    jxvals[0] = (int) px;
-    jxvals[1] = (int) lx;
-    jxvals[2] = (int) rx;
-    jyvals[0] = (int) py;
-    jyvals[1] = (int) ly;
-    jyvals[2] = (int) ry;
-    Color temp = g.getColor();
-    g.setColor(getColor(color));
-    g.fillPolygon(jxvals, jyvals, 3);
-    g.setColor(temp);
-  }
 
   /**
    * 
